@@ -112,6 +112,10 @@
                 <td><g:message code="order.label.billing.type"/>:</td>
                 <td class="value">${order?.billingTypeStr}</td>
             </tr>
+            <tr>
+                <td><g:message code="order.label.master"/>:</td>
+                <td class="value">${order?.isMaster}</td>
+            </tr>
         </table>
     </div>
 

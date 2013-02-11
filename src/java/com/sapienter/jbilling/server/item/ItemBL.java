@@ -16,10 +16,12 @@
 
 package com.sapienter.jbilling.server.item;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import com.sapienter.jbilling.server.customer.CustomerSQL;
 import com.sapienter.jbilling.server.item.event.ItemDeletedEvent;
 import com.sapienter.jbilling.server.item.event.ItemUpdatedEvent;
 import com.sapienter.jbilling.server.item.event.NewItemEvent;
@@ -38,6 +40,7 @@ import com.sapienter.jbilling.server.item.db.ItemPriceDAS;
 import com.sapienter.jbilling.server.item.db.ItemPriceDTO;
 import com.sapienter.jbilling.server.item.db.ItemTypeDTO;
 import com.sapienter.jbilling.server.item.tasks.IPricing;
+import com.sapienter.jbilling.server.list.ResultList;
 import com.sapienter.jbilling.server.order.db.OrderLineDAS;
 import com.sapienter.jbilling.server.pluggableTask.admin.PluggableTaskManager;
 import com.sapienter.jbilling.server.user.EntityBL;
@@ -52,7 +55,7 @@ import com.sapienter.jbilling.server.util.db.CurrencyDTO;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-public class ItemBL {
+public class ItemBL extends ResultList{
 
     private static final Logger LOG = Logger.getLogger(ItemBL.class);
 
@@ -247,7 +250,7 @@ public class ItemBL {
     
     public void delete(Integer executorId) {
         item.setDeleted(new Integer(1));
-
+        
         eLogger.audit(executorId, null, Constants.TABLE_ITEM, item.getId(),
                 EventLogger.MODULE_ITEM_MAINTENANCE, 
                 EventLogger.ROW_DELETED, null, null, null);

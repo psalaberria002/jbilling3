@@ -103,6 +103,7 @@ public class OrderDTO implements Serializable, Exportable {
      private List<OrderLineDTO> lines = new ArrayList<OrderLineDTO>(0);
      private Integer isCurrent;
      private Integer versionNum;
+     private Integer isMaster;
      // other non-persitent fields
      private Collection<OrderProcessDTO> nonReviewPeriods = new ArrayList<OrderProcessDTO>(0);
      private Collection<InvoiceDTO> invoices = new ArrayList<InvoiceDTO>(0);
@@ -115,6 +116,7 @@ public class OrderDTO implements Serializable, Exportable {
      private String currencyName = null;
      private BigDecimal total = null;
      private List<PricingField> pricingFields = null;
+     
 
     public OrderDTO() {
     }
@@ -152,8 +154,10 @@ public class OrderDTO implements Serializable, Exportable {
     }
         this.isCurrent = other.getIsCurrent();
         this.versionNum = other.getVersionNum();
+        this.isMaster = other.getIsMaster();
         this.cycleStarts = other.getCycleStarts();
         this.pricingFields = other.getPricingFields();
+        
     }
     
     public OrderDTO(int id, UserDTO baseUserByCreatedBy, CurrencyDTO currencyDTO, OrderStatusDTO orderStatusDTO, OrderBillingTypeDTO orderBillingTypeDTO, Date createDatetime, Integer deleted) {
@@ -171,7 +175,7 @@ public class OrderDTO implements Serializable, Exportable {
             Date nextBillableDay, Integer deleted, Integer notify, Date lastNotified, Integer notificationStep, 
             Integer dueDateUnitId, Integer dueDateValue, Integer dfFm, Integer anticipatePeriods, 
             Integer ownInvoice, String notes, Integer notesInInvoice, Set<OrderProcessDTO> orderProcesses, 
-            List<OrderLineDTO> orderLineDTOs, Integer isCurrent) {
+            List<OrderLineDTO> orderLineDTOs, Integer isCurrent, Integer isMaster) {
        this.id = id;
        this.baseUserByUserId = baseUserByUserId;
        this.baseUserByCreatedBy = baseUserByCreatedBy;
@@ -197,6 +201,7 @@ public class OrderDTO implements Serializable, Exportable {
        this.orderProcesses = orderProcesses;
        this.lines = orderLineDTOs;
        this.isCurrent = isCurrent;
+       this.isMaster = isMaster;
     }
    
     @Id @GeneratedValue(strategy=GenerationType.TABLE, generator="purchase_order_GEN")
@@ -452,6 +457,14 @@ public class OrderDTO implements Serializable, Exportable {
     }
     public void setIsCurrent(Integer isCurrent) {
         this.isCurrent = isCurrent;
+    }
+    
+    @Column(name="is_master")
+    public Integer getIsMaster() {
+        return isMaster;
+    }
+    public void setIsMaster(Integer isMaster) {
+        this.isMaster = isMaster;
     }
     
     @Version
@@ -744,7 +757,8 @@ public class OrderDTO implements Serializable, Exportable {
          "notesInInvoice=" + notesInInvoice + "," +
          "orderProcesses=" + orderProcesses + "," +
          "isCurrent=" + isCurrent + "," +
-         "versionNum=" + versionNum +
+         "versionNum=" + versionNum + "," +
+         "isMaster=" + isMaster +
          " lines:[");
         
         for (OrderLineDTO line: getLines()) {

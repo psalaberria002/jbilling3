@@ -101,6 +101,7 @@ public final class CustomerBL extends ResultList implements CustomerSQL {
                 userRole.equals(Constants.TYPE_CLERK)) {
             prepareStatement(CustomerSQL.listCustomers);
             cachedResults.setInt(1,entityID);
+   
         } else if(userRole.equals(Constants.TYPE_PARTNER)) {
             prepareStatement(CustomerSQL.listPartner);
             cachedResults.setInt(1, entityID);

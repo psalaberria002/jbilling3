@@ -129,6 +129,12 @@
                 <content tag="label.for">notify</content>
                 <g:checkBox class="cb checkbox" name="notify" checked="${order?.notify > 0}"/>
             </g:applyLayout>
+            
+            <g:applyLayout name="form/checkbox">
+                <content tag="label"><g:message code="order.label.master.order"/></content>
+                <content tag="label.for">master</content>
+                <g:checkBox class="cb checkbox" name="isMaster" checked="${order?.isMaster = 1}"/>
+            </g:applyLayout>
         </div>
 
         <hr/>
