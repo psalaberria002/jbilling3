@@ -135,6 +135,13 @@
                 <content tag="label.for">master</content>
                 <g:checkBox class="cb checkbox" name="isMaster" checked="${order?.isMaster > 0}"/>
             </g:applyLayout>
+            <g:if test="${order?.statusStr != 'Finished'}">
+            <g:applyLayout name="form/checkbox">
+                <content tag="label"><g:message code="order.label.addToMaster"/></content>
+                <content tag="label.for">addToMaster</content>
+                <g:checkBox class="cb checkbox" name="addToMaster" checked="${order?.addToMaster > 0}"/>
+            </g:applyLayout>
+            </g:if>
         </div>
 
         <hr/>

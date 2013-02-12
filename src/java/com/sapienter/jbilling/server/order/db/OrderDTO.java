@@ -104,6 +104,7 @@ public class OrderDTO implements Serializable, Exportable {
      private Integer isCurrent;
      private Integer versionNum;
      private Integer isMaster;
+     private Integer addToMaster;
      // other non-persitent fields
      private Collection<OrderProcessDTO> nonReviewPeriods = new ArrayList<OrderProcessDTO>(0);
      private Collection<InvoiceDTO> invoices = new ArrayList<InvoiceDTO>(0);
@@ -465,6 +466,13 @@ public class OrderDTO implements Serializable, Exportable {
     }
     public void setIsMaster(Integer isMaster) {
         this.isMaster = isMaster;
+    }
+    @Column(name="add_to_master")
+    public Integer getAddToMaster() {
+		return addToMaster;
+	}
+    public void setAddToMaster(Integer addToMaster){
+    	this.addToMaster = addToMaster;
     }
     
     @Version
@@ -859,6 +867,8 @@ public class OrderDTO implements Serializable, Exportable {
 
         return values.toArray(new Object[values.size()][]);
     }
+
+	
 }
 
 

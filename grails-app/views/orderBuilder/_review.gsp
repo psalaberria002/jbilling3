@@ -120,7 +120,7 @@
     </div>
 
     <div class="btn-box">
-        <g:link class="submit save" action="edit" params="[_eventId: 'save']">
+        <g:link class="submit save" action="edit" params="[_eventId: 'save', addToMaster: '${order.addToMaster }']">
             <span><g:message code="button.save"/></span>
         </g:link>
 

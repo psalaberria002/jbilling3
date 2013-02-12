@@ -86,6 +86,7 @@ public class OrderWS implements WSSecured, Serializable {
     private Integer versionNum;
     
     private Integer isMaster;
+    private Integer addToMaster;
 
     public OrderWS() {
     }
@@ -94,7 +95,7 @@ public class OrderWS implements WSSecured, Serializable {
                    Date createDate, Date nextBillableDay, Integer createdBy, Integer statusId, Integer deleted,
                    Integer currencyId, Date lastNotified, Integer notifStep, Integer dueDateUnitId, Integer dueDateValue,
                    Integer anticipatePeriods, Integer dfFm, Integer isCurrent, String notes, Integer notesInInvoice,
-                   Integer ownInvoice, Integer period, Integer userId, Integer version, Date cycleStarts, Integer isMaster) {
+                   Integer ownInvoice, Integer period, Integer userId, Integer version, Date cycleStarts, Integer isMaster, Integer addToMaster) {
         setId(id);
         setBillingTypeId(billingTypeId);
         setNotify(notify);
@@ -121,6 +122,7 @@ public class OrderWS implements WSSecured, Serializable {
         setVersionNum(version);
         setCycleStarts(cycleStarts);
         setIsMaster(isMaster);
+        setAddToMaster(addToMaster);
     }
 
     public InvoiceWS[] getGeneratedInvoices() {
@@ -401,6 +403,14 @@ public class OrderWS implements WSSecured, Serializable {
 
     public void setIsMaster(Integer isMaster) {
         this.isMaster = isMaster;
+    }
+    
+    public Integer getAddToMaster() {
+        return addToMaster;
+    }
+
+    public void setAddToMaster(Integer addToMaster) {
+        this.addToMaster = addToMaster;
     }
 
     /**

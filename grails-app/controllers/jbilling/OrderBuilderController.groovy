@@ -141,6 +141,8 @@ class OrderBuilderController {
                 conversation.order = order
                 conversation.products = productService.getFilteredProducts(company, params)
                 conversation.deletedLines = []
+				
+				
             }
             on("success").to("build")
         }
@@ -324,6 +326,8 @@ class OrderBuilderController {
                 order.notify = params.notify ? 1 : 0
                 order.notesInInvoice = params.notesInInvoice ? 1 : 0
 				order.isMaster = params.isMaster ? 1 : 0
+				order.addToMaster = params.addToMaster ? 1 : 0
+				 
 				
 
                 // one time orders are ALWAYS post-paid
@@ -411,19 +415,27 @@ class OrderBuilderController {
                     def order = conversation.order
 
                     if (!order.id || order.id == 0) {
-                        if (SpringSecurityUtils.ifAllGranted("ORDER_20")) {
+                        if (SpringSecurityUtils.ifAllGranted("ORDER_20"))  {
+							//Creating a new order. Not adding to the master order
+							if(order.addToMaster != 1 ){
+								log.debug("creating order ${order}")
+								order.id = webServicesSession.createOrder(order)
 
-                            log.debug("creating order ${order}")
-                            order.id = webServicesSession.createOrder(order)
-
-                            // set success message in session, contents of the flash scope doesn't survive
-                            // the redirect to the order list when the web-flow finishes
-                            session.message = 'order.created'
-                            session.args = [ order.id, order.userId ]
-
-                        } else {
+								// set success message in session, contents of the flash scope doesn't survive
+								// the redirect to the order list when the web-flow finishes
+								session.message = 'order.created'
+								session.args = [ order.id, order.userId ]
+							}
+							//Creating and adding a new order to the master
+							else {
+								System.out.println("Adding to master");
+							}
+							
+						}
+                         else {
                             redirect controller: 'login', action: 'denied'
                         }
+						
 
                     } else {
                         if (SpringSecurityUtils.ifAllGranted("ORDER_21")) {
