@@ -324,6 +324,7 @@ class OrderBuilderController {
                 order.notify = params.notify ? 1 : 0
                 order.notesInInvoice = params.notesInInvoice ? 1 : 0
 				order.isMaster = params.isMaster ? 1 : 0
+				
 
                 // one time orders are ALWAYS post-paid
                 if (order.period == Constants.ORDER_PERIOD_ONCE)
