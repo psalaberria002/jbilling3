@@ -54,6 +54,25 @@ public class OrderDAS extends AbstractDAS<OrderDTO> {
 
         return findFirst(criteria);
     }
+    
+    /**
+     * Returns the newest active order for the given user id and period.
+     *
+     * @param userId user id
+     * @param period period
+     * @return newest active order for user and period.
+     */
+    @SuppressWarnings("unchecked")
+    public OrderDTO findMasterByUser(Integer userId) {
+    	Criteria criteria = getSession().createCriteria(OrderDTO.class)
+                .add(Restrictions.eq("deleted", 0))
+                .add(Restrictions.eq("isMaster", 1))
+                .createAlias("baseUserByUserId", "u")
+                    .add(Restrictions.eq("u.id", userId));
+
+        return findFirst(criteria);
+    }
+    
 
     public OrderProcessDTO findProcessByEndDate(Integer id, Date myDate) {
         return (OrderProcessDTO) getSession().createFilter(find(id).getOrderProcesses(), 

@@ -1161,6 +1161,23 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
         }
         return bl.getWS(languageId);
     }
+    
+    public OrderWS getMasterOrder(Integer userId) throws SessionInternalError {
+        // get the info from the caller
+    Integer languageId = getCallerLanguageId();
+
+    // now get the order. Avoid the proxy since this is for the client
+    OrderDAS das = new OrderDAS();
+    OrderDTO order = das.findMasterByUser(userId);
+    if (order == null) { // not found
+        return null;
+    }
+    OrderBL bl = new OrderBL(order);
+    if (order.getDeleted() == 1) {
+        LOG.debug("Returning deleted order " + order.getId());
+    }
+    return bl.getWS(languageId);
+}
 
     public Integer[] getOrderByPeriod(Integer userId, Integer periodId)
             throws SessionInternalError {

@@ -426,9 +426,44 @@ class OrderBuilderController {
 								session.message = 'order.created'
 								session.args = [ order.id, order.userId ]
 							}
-							//Creating and adding a new order to the master
+							//Creating and adding a new order to the master order
 							else {
-								System.out.println("Adding to master");
+								log.debug("creating edited order ${order}")
+								def masterOrder = webServicesSession.getMasterOrder(order.userId)
+								//Getting next billable day of the master order
+								def masterOrderNextBillableDay = masterOrder.getNextBillableDay()
+								Calendar cal = Calendar.getInstance();
+								cal.setTime(masterOrderNextBillableDay);
+								def monthNext = cal.get(Calendar.MONTH)+12;
+								//Getting the starting day of the new order
+								def orderActiveDay = order.getActiveSince()
+								cal.setTime(orderActiveDay);
+								def monthStart = cal.get(Calendar.MONTH);
+								//Months for the new order
+								def monthsLeft = monthNext-monthStart
+								
+								
+								def masterOrderLines = masterOrder.getOrderLines()
+								def newOrderLines = order.getOrderLines()
+								newOrderLines.each { 
+									item -> println "${item}"
+									masterOrderLines.each { item1 ->  println "${item1}"}
+								}
+								
+								//System.out.println(masterOrderLines.getAt(0));
+								//System.out.println(newOrderLines.getAt(0));
+								
+								
+								//order.id = webServicesSession.createOrder(order)
+
+								// set success message in session, contents of the flash scope doesn't survive
+								// the redirect to the order list when the web-flow finishes
+								//log.debug("adding order ${order} to master order")
+								
+								
+								//session.message = 'order.created'
+								//session.args = [ order.id, order.userId ]
+								
 							}
 							
 						}
