@@ -133,7 +133,7 @@
             <g:applyLayout name="form/checkbox">
                 <content tag="label"><g:message code="order.label.master.order"/></content>
                 <content tag="label.for">master</content>
-                <g:checkBox class="cb checkbox" name="isMaster" checked="${order?.isMaster = 1}"/>
+                <g:checkBox class="cb checkbox" name="isMaster" checked="${order?.isMaster > 0}"/>
             </g:applyLayout>
         </div>
 

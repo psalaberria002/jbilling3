@@ -113,8 +113,15 @@
                 <td class="value">${order?.billingTypeStr}</td>
             </tr>
             <tr>
-                <td><g:message code="order.label.master"/>:</td>
-                <td class="value">${order?.isMaster}</td>
+            	<g:if test="${order?.isMaster==1}">
+                	<td><g:message code="order.label.master"/>:</td>
+                	<td class="value">True</td>
+                </g:if>
+                <g:else>
+                	<td><g:message code="order.label.master"/>:</td>
+                	<td class="value">False</td>
+                </g:else>
+                
             </tr>
         </table>
     </div>
