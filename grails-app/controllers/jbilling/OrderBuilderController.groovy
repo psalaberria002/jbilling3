@@ -38,8 +38,12 @@ import com.sapienter.jbilling.server.order.db.OrderStatusDTO
 import java.math.RoundingMode
 import com.sapienter.jbilling.server.process.db.PeriodUnitDTO
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import org.jopendocument.dom.spreadsheet.Sheet
+import org.jopendocument.dom.spreadsheet.SpreadSheet;
 import org.apache.commons.lang.StringUtils
 import com.sapienter.jbilling.server.item.CurrencyBL
+
+
 
 /**
  * OrderController
@@ -420,6 +424,8 @@ class OrderBuilderController {
 							if(order.addToMaster != 1 ){
 								log.debug("creating order ${order}")
 								order.id = webServicesSession.createOrder(order)
+								
+								
 
 								// set success message in session, contents of the flash scope doesn't survive
 								// the redirect to the order list when the web-flow finishes
@@ -430,25 +436,11 @@ class OrderBuilderController {
 							else {
 								log.debug("creating edited order ${order}")
 								def masterOrder = webServicesSession.getMasterOrder(order.userId)
-								//Getting next billable day of the master order
-								def masterOrderNextBillableDay = masterOrder.getNextBillableDay()
-								Calendar cal = Calendar.getInstance();
-								cal.setTime(masterOrderNextBillableDay);
-								def monthNext = cal.get(Calendar.MONTH)+12;
-								//Getting the starting day of the new order
-								def orderActiveDay = order.getActiveSince()
-								cal.setTime(orderActiveDay);
-								def monthStart = cal.get(Calendar.MONTH);
-								//Months for the new order
-								def monthsLeft = monthNext-monthStart
 								
 								
-								def masterOrderLines = masterOrder.getOrderLines()
-								def newOrderLines = order.getOrderLines()
-								newOrderLines.each { 
-									item -> println "${item}"
-									masterOrderLines.each { item1 ->  println "${item1}"}
-								}
+								
+								editOrders(order,masterOrder,monthsLeft(order, masterOrder));
+								
 								
 								//System.out.println(masterOrderLines.getAt(0));
 								//System.out.println(newOrderLines.getAt(0));
@@ -508,5 +500,99 @@ class OrderBuilderController {
             redirect controller: 'order', action: 'list', id: conversation.order?.id
         }
     }
-
+	
+	def int monthsLeft(order,masterOrder) {
+		
+		//Getting next billable day of the master order
+		def masterOrderNextBillableDay = masterOrder.getNextBillableDay()
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(masterOrderNextBillableDay);
+		def monthNext = cal.get(Calendar.MONTH)+12;
+		//Getting the starting day of the new order
+		def orderActiveDay = order.getActiveSince()
+		cal.setTime(orderActiveDay);
+		def monthStart = cal.get(Calendar.MONTH);
+		//Months for the new order
+		return monthNext-monthStart
+		
+    }
+	
+	def editOrders(order, masterOrder,monthsLeft){
+		def back=0
+		def masterOrderLines = masterOrder.getOrderLines()
+		def newOrderLines = order.getOrderLines()
+		def nolQuantity=0
+		def molQuantity=0
+		def totalQuantity=0
+		newOrderLines.each { nol -> 
+			totalQuantity=0
+			boolean found=false
+			nolQuantity=nol.getQuantityAsDecimal().intValue()
+			masterOrderLines.each { mol ->
+				if(found==false){
+					if (nol.getItemId()==mol.getItemId()){
+						found=true;
+						molQuantity=mol.getQuantityAsDecimal().intValue()
+						totalQuantity=molQuantity+nolQuantity
+						def payPlan=masterOrder.getPayPlan()
+						if(hasPriceChanged(mol.getPriceAsDecimal(), totalQuantity,payPlan)){
+							switch (payPlan) {
+								case 'New':
+									back=mol.getPriceAsDecimal()*molQuantity*monthsLeft/12
+									println back
+									//editMasterOrderLine();
+									//editNewOrderLine();
+									//addOrderLineToNew();
+									break
+								case 'Old':
+									println "ok you are old"
+									break
+								case 'Other':
+									println "your name starts with G and ends in e!"
+									break
+								default:
+									back=mol.getPriceAsDecimal()*molQuantity*monthsLeft/12
+									println back
+									editMasterOrderLine();
+									editNewOrderLine();
+									addOrderLineToNew();
+							 }
+							
+						}
+						else{
+						
+							//changeQuantityMasterLine();
+						}
+					}
+					else{
+						//addOrderLineToMaster();
+					}
+				}
+				
+				
+			}
+		}
+	}
+	
+	//Checks if the new price is going to be different to the old one
+	def boolean hasPriceChanged(oldPrice, totalQuantity,payPlan){
+		def hasChanged=false
+		BigDecimal newPrice = checkPrice(totalQuantity, payPlan);
+		int np=newPrice.intValue()
+		int op=oldPrice.intValue()
+		println "NP"+np
+		println "OP"+op
+		if(op!=np){
+			hasChanged=true
+		}
+		return hasChanged;
+	}
+	
+	//Reads the payPlan .ods file containing the prices depending on users. Returns the price per user
+	def BigDecimal checkPrice(quantity,payPlan){
+		def file = new File("resources/pay_plans/${payPlan}.ods");
+		def sheet = SpreadSheet.createFromFile(file).getSheet(0);
+		
+		return sheet.getCellAt("B${quantity}").getValue();
+	}
 }

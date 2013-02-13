@@ -2069,7 +2069,7 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
                 order.getNotesInInvoice(), order.getOwnInvoice(),
                 order.getOrderPeriod().getId(),
                 order.getBaseUserByUserId().getId(),
-                order.getVersionNum(), order.getCycleStarts(),order.getIsMaster(), order.getAddToMaster());
+                order.getVersionNum(), order.getCycleStarts(),order.getIsMaster(), order.getAddToMaster(), order.getPayPlan());
 
         retValue.setPeriodStr(order.getOrderPeriod().getDescription(languageId));
         retValue.setBillingTypeStr(order.getOrderBillingType().getDescription(languageId));

@@ -163,7 +163,7 @@ public class OrderBL extends ResultList
                                        order.getNotesInInvoice(), order.getOwnInvoice(),
                                        order.getOrderPeriod().getId(),
                                        order.getBaseUserByUserId().getId(),
-                                       order.getVersionNum(), order.getCycleStarts(),order.getIsMaster(),order.getAddToMaster());
+                                       order.getVersionNum(), order.getCycleStarts(),order.getIsMaster(),order.getAddToMaster(),order.getPayPlan());
 
         retValue.setTotal(order.getTotal());
 
@@ -523,6 +523,7 @@ public class OrderBL extends ResultList
         order.setCycleStarts(dto.getCycleStarts());
         order.setIsMaster(dto.getIsMaster());
         order.setAddToMaster(dto.getAddToMaster());
+        order.setPayPlan(dto.getPayPlan());
         if (dto.getIsCurrent() != null && dto.getIsCurrent().intValue() == 1) {
             setMainSubscription(executorId);
         }
@@ -1415,7 +1416,8 @@ public class OrderBL extends ResultList
         retValue.setNotesInInvoice(other.getNotesInInvoice());
         retValue.setIsMaster(other.getIsMaster());
         retValue.setAddToMaster(other.getAddToMaster());
-
+        retValue.setPayPlan(other.getPayPlan());
+        
         for (OrderLineWS line : other.getOrderLines()) {
             if (line != null) {
                 retValue.getLines().add(getOrderLine(line));

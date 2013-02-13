@@ -32,10 +32,12 @@
             <g:applyLayout name="form/select">
                 <content tag="label"><g:message code="order.label.period"/></content>
                 <content tag="label.for">period</content>
-                <g:select from="${orderPeriods}"
+                	<g:select from="${orderPeriods}"
                           optionKey="id" optionValue="${{it.getDescription(session['language_id'])}}"
                           name="period"
-                          value="${order?.period}"/>
+                          value="${order?.period}"
+                	 />
+                 
             </g:applyLayout>
 
             <g:applyLayout name="form/select">
@@ -172,6 +174,15 @@
                     $('#billingTypeId').attr('disabled', '');
                 }
             }).change();
+
+            $('#addToMaster').click(function(){
+                if ($('#addToMaster').attr('checked')) {
+                	$('#period').val(${Constants.ORDER_PERIOD_ONCE});
+                    $('#period').attr('disabled', true);
+                } else {
+                    $('#period').attr('disabled', '');
+                }
+            }) 
 
             $('#statusId').change(function() {
                 if ($(this).val() == ${Constants.ORDER_STATUS_SUSPENDED}) {

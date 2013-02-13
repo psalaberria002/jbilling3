@@ -105,6 +105,7 @@ public class OrderDTO implements Serializable, Exportable {
      private Integer versionNum;
      private Integer isMaster;
      private Integer addToMaster;
+     private String payPlan;
      // other non-persitent fields
      private Collection<OrderProcessDTO> nonReviewPeriods = new ArrayList<OrderProcessDTO>(0);
      private Collection<InvoiceDTO> invoices = new ArrayList<InvoiceDTO>(0);
@@ -158,6 +159,8 @@ public class OrderDTO implements Serializable, Exportable {
         this.isMaster = other.getIsMaster();
         this.cycleStarts = other.getCycleStarts();
         this.pricingFields = other.getPricingFields();
+        this.addToMaster = other.getAddToMaster();
+        this.payPlan = other.getPayPlan();
         
     }
     
@@ -176,7 +179,7 @@ public class OrderDTO implements Serializable, Exportable {
             Date nextBillableDay, Integer deleted, Integer notify, Date lastNotified, Integer notificationStep, 
             Integer dueDateUnitId, Integer dueDateValue, Integer dfFm, Integer anticipatePeriods, 
             Integer ownInvoice, String notes, Integer notesInInvoice, Set<OrderProcessDTO> orderProcesses, 
-            List<OrderLineDTO> orderLineDTOs, Integer isCurrent, Integer isMaster) {
+            List<OrderLineDTO> orderLineDTOs, Integer isCurrent, Integer isMaster, Integer addToMaster, String payPlan) {
        this.id = id;
        this.baseUserByUserId = baseUserByUserId;
        this.baseUserByCreatedBy = baseUserByCreatedBy;
@@ -203,6 +206,8 @@ public class OrderDTO implements Serializable, Exportable {
        this.lines = orderLineDTOs;
        this.isCurrent = isCurrent;
        this.isMaster = isMaster;
+       this.addToMaster = addToMaster;
+       this.payPlan = payPlan;
     }
    
     @Id @GeneratedValue(strategy=GenerationType.TABLE, generator="purchase_order_GEN")
@@ -473,6 +478,14 @@ public class OrderDTO implements Serializable, Exportable {
 	}
     public void setAddToMaster(Integer addToMaster){
     	this.addToMaster = addToMaster;
+    }
+    
+    @Column(name="pay_plan")
+    public String getPayPlan() {
+		return payPlan;
+	}
+    public void setPayPlan(String payPlan){
+    	this.payPlan = payPlan;
     }
     
     @Version
@@ -766,7 +779,9 @@ public class OrderDTO implements Serializable, Exportable {
          "orderProcesses=" + orderProcesses + "," +
          "isCurrent=" + isCurrent + "," +
          "versionNum=" + versionNum + "," +
-         "isMaster=" + isMaster +
+         "isMaster=" + isMaster + "," +
+         "addToMaster=" + addToMaster + "," +
+         "payPlan=" + payPlan +
          " lines:[");
         
         for (OrderLineDTO line: getLines()) {
@@ -867,6 +882,7 @@ public class OrderDTO implements Serializable, Exportable {
 
         return values.toArray(new Object[values.size()][]);
     }
+
 
 	
 }
