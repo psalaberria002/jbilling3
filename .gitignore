@@ -23,7 +23,7 @@
 # logs
 /stacktrace.log
 /test/reports
-/logs
+logs/
 
 # project release file
 /*.war
@@ -37,8 +37,9 @@
 /web-app/WEB-INF/classes
 
 # "temporary" build files
-/target
-/target-eclipse
+target/
+target-eclipse/
+activemq-data/
 
 # other
 *.iws
