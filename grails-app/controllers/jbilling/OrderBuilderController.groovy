@@ -527,12 +527,12 @@ class OrderBuilderController {
 		newOrderLines.each { nol -> 
 			totalQuantity=0
 			boolean found=false
-			nolQuantity=nol.getQuantityAsDecimal().intValue()
+			nolQuantity=nol.getQuantityAsDecimal()
 			masterOrderLines.each { mol ->
 				if(found==false){
 					if (nol.getItemId()==mol.getItemId()){
 						found=true;
-						molQuantity=mol.getQuantityAsDecimal().intValue()
+						molQuantity=mol.getQuantityAsDecimal()
 						totalQuantity=molQuantity+nolQuantity
 						def payPlan=masterOrder.getPayPlan()
 						if(hasPriceChanged(mol.getPriceAsDecimal(), totalQuantity,payPlan)){
@@ -540,6 +540,14 @@ class OrderBuilderController {
 								case 'New':
 									back=mol.getPriceAsDecimal()*molQuantity*monthsLeft/12
 									println back
+									def file = new File("resources/pay_plans/${payPlan}.ods");
+									def sheet = SpreadSheet.createFromFile(file).getSheet(0);
+									BigInteger value=sheet.getCellAt("B${totalQuantity.intValue()}").getValue()
+									println value+" "+totalQuantity
+									mol.setPrice(value)
+									mol.setQuantityAsDecimal(totalQuantity)
+									webServicesSession.updateOrder(masterOrder)
+									println mol.getPrice()
 									//editMasterOrderLine();
 									//editNewOrderLine();
 									//addOrderLineToNew();
@@ -577,9 +585,11 @@ class OrderBuilderController {
 	//Checks if the new price is going to be different to the old one
 	def boolean hasPriceChanged(oldPrice, totalQuantity,payPlan){
 		def hasChanged=false
+		
 		BigDecimal newPrice = checkPrice(totalQuantity, payPlan);
 		int np=newPrice.intValue()
 		int op=oldPrice.intValue()
+		
 		println "NP"+np
 		println "OP"+op
 		if(op!=np){
@@ -590,9 +600,10 @@ class OrderBuilderController {
 	
 	//Reads the payPlan .ods file containing the prices depending on users. Returns the price per user
 	def BigDecimal checkPrice(quantity,payPlan){
+		int q=quantity.intValue()
 		def file = new File("resources/pay_plans/${payPlan}.ods");
 		def sheet = SpreadSheet.createFromFile(file).getSheet(0);
 		
-		return sheet.getCellAt("B${quantity}").getValue();
+		return sheet.getCellAt("B${q}").getValue();
 	}
 }

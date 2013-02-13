@@ -217,6 +217,7 @@ public class OrderLineDTO implements Serializable, Comparable {
     public void setPrice(BigDecimal price) {
         this.price = price;
     }
+    
 
     @Column(name="create_datetime", nullable=false, length=29)
     public Date getCreateDatetime() {
