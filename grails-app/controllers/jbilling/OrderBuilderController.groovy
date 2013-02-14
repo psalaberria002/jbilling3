@@ -40,6 +40,7 @@ import com.sapienter.jbilling.server.process.db.PeriodUnitDTO
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import org.jopendocument.dom.spreadsheet.Sheet
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
+import org.springframework.webflow.conversation.Conversation;
 import org.apache.commons.lang.StringUtils
 import com.sapienter.jbilling.server.item.CurrencyBL
 
@@ -210,6 +211,7 @@ class OrderBuilderController {
             }
             on("success").to("build")
         }
+		
 
         /**
          * Updates an order line  and renders the review panel.
@@ -436,25 +438,33 @@ class OrderBuilderController {
 							else {
 								log.debug("creating edited order ${order}")
 								def masterOrder = webServicesSession.getMasterOrder(order.userId)
-								
-								
-								
+								println "Bai"+order
 								editOrders(order,masterOrder,monthsLeft(order, masterOrder));
 								
-								
+								println "Bai"+order
+								println "conv "+conversation.order
+								//println "Bai"+order1.toString()
 								//System.out.println(masterOrderLines.getAt(0));
 								//System.out.println(newOrderLines.getAt(0));
 								
 								
-								//order.id = webServicesSession.createOrder(order)
+								
+								//println conversation.order
+								
+								order.id = webServicesSession.createUpdateOrder(order)
+								
+								
+								
+								println order.id+" id "+order.userId+" uid"
+								
 
 								// set success message in session, contents of the flash scope doesn't survive
 								// the redirect to the order list when the web-flow finishes
 								//log.debug("adding order ${order} to master order")
 								
-								
-								//session.message = 'order.created'
-								//session.args = [ order.id, order.userId ]
+								//order=conversation.order
+								session.message = 'order.created'
+								session.args = [ order.id, order.userId ]
 								
 							}
 							
@@ -517,7 +527,7 @@ class OrderBuilderController {
 		
     }
 	
-	def editOrders(order, masterOrder,monthsLeft){
+	def  editOrders(order, masterOrder,monthsLeft){
 		def back=0
 		def masterOrderLines = masterOrder.getOrderLines()
 		def newOrderLines = order.getOrderLines()
@@ -535,42 +545,57 @@ class OrderBuilderController {
 						molQuantity=mol.getQuantityAsDecimal()
 						totalQuantity=molQuantity+nolQuantity
 						def payPlan=masterOrder.getPayPlan()
-						if(hasPriceChanged(mol.getPriceAsDecimal(), totalQuantity,payPlan)){
-							switch (payPlan) {
-								case 'New':
-									back=mol.getPriceAsDecimal()*molQuantity*monthsLeft/12
-									println back
-									def file = new File("resources/pay_plans/${payPlan}.ods");
-									def sheet = SpreadSheet.createFromFile(file).getSheet(0);
-									BigInteger value=sheet.getCellAt("B${totalQuantity.intValue()}").getValue()
-									println value+" "+totalQuantity
-									mol.setPrice(value)
-									mol.setQuantityAsDecimal(totalQuantity)
-									webServicesSession.updateOrder(masterOrder)
-									println mol.getPrice()
-									//editMasterOrderLine();
-									//editNewOrderLine();
-									//addOrderLineToNew();
-									break
-								case 'Old':
-									println "ok you are old"
-									break
-								case 'Other':
-									println "your name starts with G and ends in e!"
-									break
-								default:
-									back=mol.getPriceAsDecimal()*molQuantity*monthsLeft/12
-									println back
-									editMasterOrderLine();
-									editNewOrderLine();
-									addOrderLineToNew();
-							 }
+						BigDecimal molOldAvgPrice = mol.getPriceAsDecimal()
+						
+						back=molOldAvgPrice*molQuantity*monthsLeft/12
+						println back
+						def file = new File("resources/pay_plans/${payPlan}.ods");
+						def sheet = SpreadSheet.createFromFile(file).getSheet(0);
+						BigDecimal value=sheet.getCellAt("B${totalQuantity.intValue()}").getValue()
+						BigDecimal amount=sheet.getCellAt("C${totalQuantity.intValue()}").getValue()
+						println value+" "+totalQuantity+" "+amount
+						
+						BigDecimal avgPrice=(BigDecimal)(amount/totalQuantity)
+						println avgPrice+" avgPrice"
+						mol.setPrice(avgPrice)
+						mol.setQuantityAsDecimal(totalQuantity)
+						mol.setAmount(amount)
+						
+						//webServicesSession.updateOrderLine(mol)
+						println mol.getPrice()+" "+mol.getAmount()
+						
+						println "Order before"+order
+						// build line
+						def line = new OrderLineWS()
+						line.typeId = Constants.ORDER_LINE_TYPE_ITEM
+						line.quantity = (-1)*molQuantity
+						line.setPrice(molOldAvgPrice*monthsLeft/12)
+						line.setAmount(back*(-1))
+						line.itemId=200
+						line.useItem = false
+						//println line.toString()
+		
+						// add line to order
+						
+						def lines = order.orderLines as List
+						lines.add(line)
+						order.orderLines = lines.toArray()
+		
+						
+						
+						//editMasterOrderLine();
+						//editNewOrderLine();
+						//addOrderLineToNew();
+						
+						/*if(hasPriceChanged(mol.getPriceAsDecimal(), totalQuantity,payPlan)){
+							
+									
 							
 						}
 						else{
 						
 							//changeQuantityMasterLine();
-						}
+						}*/
 					}
 					else{
 						//addOrderLineToMaster();
@@ -579,7 +604,17 @@ class OrderBuilderController {
 				
 				
 			}
+			//webServicesSession.updateOrder(masterOrder)
 		}
+		System.out.println("Order submethod "+order);
+		
+		
+		// set success message in session, contents of the flash scope doesn't survive
+		// the redirect to the order list when the web-flow finishes
+		//session.message = 'order.created'
+		//session.args = [ order.id, order.userId ]
+		
+		
 	}
 	
 	//Checks if the new price is going to be different to the old one

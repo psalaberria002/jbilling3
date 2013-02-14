@@ -1118,25 +1118,29 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
             // start by locking the order
             OrderBL oldOrder = new OrderBL();
             oldOrder.setForUpdate(order.getId());
+            
 
             // do some transformation from WS to DTO :(
             OrderBL orderBL = new OrderBL();
             OrderDTO dto = orderBL.getDTO(order);
+            
 
             // get the info from the caller
             Integer executorId = getCallerId(); 
             Integer entityId = getCallerCompanyId();
             Integer languageId = getCallerLanguageId(); 
-
+            
+            
             // see if the related items should provide info
             processLines(dto, languageId, entityId, order.getUserId(), order.getCurrencyId(), order.getPricingFields());
-
+            
             // recalculate
             orderBL.set(dto);
             orderBL.recalculate(entityId);
 
             // update
             oldOrder.update(executorId, dto);
+         
 
         } catch (Exception e) {
             LOG.error("WS - updateOrder", e);
@@ -1893,6 +1897,7 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
         // the lines
         for (int f = 0; f < order.getOrderLines().length; f++) {
             OrderLineWS line = order.getOrderLines()[f];
+            System.out.println(line.toString());
             if (line.getUseItem() == null) {
             line.setUseItem(false);
             }
