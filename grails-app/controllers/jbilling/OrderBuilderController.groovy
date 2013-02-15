@@ -109,7 +109,7 @@ class OrderBuilderController {
                     order.currencyId    = (currencies.find{ it.id == user.currency.id} ?: company.currency).id
                     order.statusId      = Constants.ORDER_STATUS_ACTIVE
                     order.period        = Constants.ORDER_PERIOD_ONCE
-                    order.billingTypeId = Constants.ORDER_BILLING_POST_PAID
+                    order.billingTypeId = Constants.ORDER_BILLING_PRE_PAID
                     order.activeSince   = new Date()
                     order.isCurrent     = 0
                     order.orderLines    = []
@@ -333,12 +333,19 @@ class OrderBuilderController {
                 order.notesInInvoice = params.notesInInvoice ? 1 : 0
 				order.isMaster = params.isMaster ? 1 : 0
 				order.addToMaster = params.addToMaster ? 1 : 0
+				order.payPlan= params.plan 
+				println params.period+" 1"
+				println order.period+" 2"
+				order.period = Integer.parseInt(params.period)
+				println order.period+" 3"
 				 
 				
 
                 // one time orders are ALWAYS post-paid
                 if (order.period == Constants.ORDER_PERIOD_ONCE)
                     order.billingTypeId = Constants.ORDER_BILLING_POST_PAID
+				
+					
 
                 // rate order
                 if (order.orderLines) {
@@ -424,11 +431,10 @@ class OrderBuilderController {
                         if (SpringSecurityUtils.ifAllGranted("ORDER_20"))  {
 							//Creating a new order. Not adding to the master order
 							if(order.addToMaster != 1 ){
+								println "create new order, not to master"
 								log.debug("creating order ${order}")
 								order.id = webServicesSession.createOrder(order)
 								
-								
-
 								// set success message in session, contents of the flash scope doesn't survive
 								// the redirect to the order list when the web-flow finishes
 								session.message = 'order.created'
@@ -436,36 +442,22 @@ class OrderBuilderController {
 							}
 							//Creating and adding a new order to the master order
 							else {
+								println "editOrders!!!"
 								log.debug("creating edited order ${order}")
 								def masterOrder = webServicesSession.getMasterOrder(order.userId)
-								println "Bai"+order
-								editOrders(order,masterOrder,monthsLeft(order, masterOrder));
-								
-								println "Bai"+order
-								println "conv "+conversation.order
-								//println "Bai"+order1.toString()
-								//System.out.println(masterOrderLines.getAt(0));
-								//System.out.println(newOrderLines.getAt(0));
 								
 								
+									//Edit master order and new order
+									editOrders(order,masterOrder,monthsLeft(order, masterOrder));
 								
-								//println conversation.order
 								
+							
 								order.id = webServicesSession.createUpdateOrder(order)
-								
-								
-								
-								println order.id+" id "+order.userId+" uid"
-								
 
 								// set success message in session, contents of the flash scope doesn't survive
 								// the redirect to the order list when the web-flow finishes
-								//log.debug("adding order ${order} to master order")
-								
-								//order=conversation.order
 								session.message = 'order.created'
 								session.args = [ order.id, order.userId ]
-								
 							}
 							
 						}
@@ -476,7 +468,7 @@ class OrderBuilderController {
 
                     } else {
                         if (SpringSecurityUtils.ifAllGranted("ORDER_21")) {
-
+							println "Editing"
                             // add deleted lines to our order so that updateOrder() can save them
                             def deletedLines = conversation.deletedLines
                             def lines = order.orderLines as List
@@ -526,7 +518,14 @@ class OrderBuilderController {
 		return monthNext-monthStart
 		
     }
-	
+	/**
+	 * Having a new order, this method edits the master order with the new quantity, price and amount.
+	 * Also edits the new order adding lines with the money back in case they have paid from before
+	 * @param order
+	 * @param masterOrder
+	 * @param monthsLeft
+	 * @return
+	 */
 	def  editOrders(order, masterOrder,monthsLeft){
 		def back=0
 		def masterOrderLines = masterOrder.getOrderLines()
@@ -557,22 +556,29 @@ class OrderBuilderController {
 						
 						BigDecimal avgPrice=(BigDecimal)(amount/totalQuantity)
 						println avgPrice+" avgPrice"
+						//Edit master order line
 						mol.setPrice(avgPrice)
 						mol.setQuantityAsDecimal(totalQuantity)
 						mol.setAmount(amount)
+						mol.setDescription(mol.getDescription()+" "+monthsLeft+" months")
 						
-						//webServicesSession.updateOrderLine(mol)
+						webServicesSession.updateOrderLine(mol) //update Master Order Line
 						println mol.getPrice()+" "+mol.getAmount()
 						
 						println "Order before"+order
+						nol.quantity= totalQuantity
+						nol.setAmount(amount*monthsLeft/12)
+						nol.setPrice(amount*monthsLeft/12/totalQuantity)
+						
 						// build line
 						def line = new OrderLineWS()
 						line.typeId = Constants.ORDER_LINE_TYPE_ITEM
 						line.quantity = (-1)*molQuantity
 						line.setPrice(molOldAvgPrice*monthsLeft/12)
 						line.setAmount(back*(-1))
-						line.itemId=200
+						line.itemId=mol.getItemId()
 						line.useItem = false
+						line.description=mol.getDescription()
 						//println line.toString()
 		
 						// add line to order
@@ -583,7 +589,7 @@ class OrderBuilderController {
 		
 						
 						
-						//editMasterOrderLine();
+						
 						//editNewOrderLine();
 						//addOrderLineToNew();
 						

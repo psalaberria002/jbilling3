@@ -14,6 +14,7 @@
   is strictly forbidden.
   --}%
 
+<%@page import="java.lang.invoke.MethodHandleNatives.Constants"%>
 <%@ page import="com.sapienter.jbilling.server.util.Constants" %>
 
 <%--
@@ -29,6 +30,29 @@
         <g:hiddenField name="execution" value="${flowExecutionKey}"/>
 
         <div class="form-columns">
+            <g:applyLayout name="form/checkbox">
+                <content tag="label"><g:message code="order.label.master"/></content>
+                <content tag="label.for">master</content>
+                <g:checkBox class="cb checkbox" name="isMaster" checked="${order?.isMaster > 0}"/>
+            </g:applyLayout>
+            <g:if test="${(order?.isMaster != 1)}">
+            <g:applyLayout name="form/checkbox">
+                <content tag="label"><g:message code="order.label.addToMaster"/></content>
+                <content tag="label.for">addToMaster</content>
+                <g:checkBox class="cb checkbox" name="addToMaster" checked="${order?.addToMaster > 0}"/>
+            </g:applyLayout>
+            </g:if>
+            
+            <g:applyLayout name="form/select">
+                <content tag="label"><g:message code="order.label.payPlan"/></content>
+                <content tag="label.for">plan</content>
+                	<g:select from="${['New','Old']}"
+                          name="plan"
+                       
+                	 />
+                 
+            </g:applyLayout>
+            
             <g:applyLayout name="form/select">
                 <content tag="label"><g:message code="order.label.period"/></content>
                 <content tag="label.for">period</content>
@@ -125,25 +149,13 @@
                     <g:checkBox class="cb checkbox" name="isCurrent" value="${order?.isCurrent > 0}"/>
                 </g:applyLayout>
             </g:preferenceEquals>
-
-            <g:applyLayout name="form/checkbox">
+            
+			<g:applyLayout name="form/checkbox">
                 <content tag="label"><g:message code="order.label.notify.on.expire"/></content>
                 <content tag="label.for">notify</content>
                 <g:checkBox class="cb checkbox" name="notify" checked="${order?.notify > 0}"/>
             </g:applyLayout>
             
-            <g:applyLayout name="form/checkbox">
-                <content tag="label"><g:message code="order.label.master"/></content>
-                <content tag="label.for">master</content>
-                <g:checkBox class="cb checkbox" name="isMaster" checked="${order?.isMaster > 0}"/>
-            </g:applyLayout>
-            <g:if test="${order?.statusStr != 'Finished'}">
-            <g:applyLayout name="form/checkbox">
-                <content tag="label"><g:message code="order.label.addToMaster"/></content>
-                <content tag="label.for">addToMaster</content>
-                <g:checkBox class="cb checkbox" name="addToMaster" checked="${order?.addToMaster > 0}"/>
-            </g:applyLayout>
-            </g:if>
         </div>
 
         <hr/>
@@ -177,12 +189,21 @@
 
             $('#addToMaster').click(function(){
                 if ($('#addToMaster').attr('checked')) {
-                	$('#period').val(${Constants.ORDER_PERIOD_ONCE});
-                    $('#period').attr('disabled', true);
+                     $('#period').val(${Constants.ORDER_PERIOD_ONCE});
+                     $('#period').attr('disabled', true);
+                     $('#isMaster').attr('checked', false)
                 } else {
                     $('#period').attr('disabled', '');
                 }
-            }) 
+            });
+            
+             $('#isMaster').click(function(){
+                if ($('#isMaster').attr('checked')) {
+                    $('#addToMaster').attr('checked', false)
+                } else {
+                    
+                }
+            });
 
             $('#statusId').change(function() {
                 if ($(this).val() == ${Constants.ORDER_STATUS_SUSPENDED}) {

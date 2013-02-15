@@ -132,6 +132,7 @@ public final class Constants implements CommonConstants {
     // order periods. This are those NOT related with any single entity
     public static final Integer ORDER_PERIOD_ONCE = new Integer(1);
     
+    
     // period unit types
     public static final Integer PERIOD_UNIT_MONTH = new Integer(1);
     public static final Integer PERIOD_UNIT_WEEK = new Integer(2);
