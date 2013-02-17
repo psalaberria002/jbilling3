@@ -328,6 +328,7 @@ public class OrderBL extends ResultList
             orderDto.setDefaults();
 
             order = orderDas.save(orderDto);
+            
 
             // link the lines to the new order
             for (OrderLineDTO line : order.getLines()) {
@@ -574,6 +575,9 @@ public class OrderBL extends ResultList
         }
 
         order = orderDas.save(order);
+        
+        //TRYING THE DATABASE QUERIES
+        System.out.println(orderDas.addOrderMaster(order.getId(),true));
 
         if (oldLine != null && nonDeletedLines == 1) {
             OrderLineDTO newLine = null;
