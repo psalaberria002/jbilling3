@@ -448,11 +448,12 @@ class OrderBuilderController {
 								
 								
 									//Edit master order and new order
-									editOrders(order,masterOrder,monthsLeft(order, masterOrder));
+								masterOrder=editOrders(order,masterOrder,monthsLeft(order, masterOrder));
 								
 								
 							
 								order.id = webServicesSession.createUpdateOrder(order)
+								//webServicesSession.updateOrder(masterOrder)
 
 								// set success message in session, contents of the flash scope doesn't survive
 								// the redirect to the order list when the web-flow finishes
@@ -560,7 +561,7 @@ class OrderBuilderController {
 						mol.setPrice(avgPrice)
 						mol.setQuantityAsDecimal(totalQuantity)
 						mol.setAmount(amount)
-						mol.setDescription(mol.getDescription()+" "+monthsLeft+" months")
+						mol.setDescription(mol.getDescription())
 						
 						webServicesSession.updateOrderLine(mol) //update Master Order Line
 						println mol.getPrice()+" "+mol.getAmount()
@@ -569,6 +570,7 @@ class OrderBuilderController {
 						nol.quantity= totalQuantity
 						nol.setAmount(amount*monthsLeft/12)
 						nol.setPrice(amount*monthsLeft/12/totalQuantity)
+						nol.description=mol.getDescription()+" "+monthsLeft+" months"
 						
 						// build line
 						def line = new OrderLineWS()
@@ -578,7 +580,7 @@ class OrderBuilderController {
 						line.setAmount(back*(-1))
 						line.itemId=mol.getItemId()
 						line.useItem = false
-						line.description=mol.getDescription()
+						line.description=mol.getDescription()+" "+monthsLeft+" months"
 						//println line.toString()
 		
 						// add line to order
@@ -588,32 +590,35 @@ class OrderBuilderController {
 						order.orderLines = lines.toArray()
 		
 						
-						
-						
-						//editNewOrderLine();
-						//addOrderLineToNew();
-						
-						/*if(hasPriceChanged(mol.getPriceAsDecimal(), totalQuantity,payPlan)){
-							
-									
-							
-						}
-						else{
-						
-							//changeQuantityMasterLine();
-						}*/
-					}
-					else{
-						//addOrderLineToMaster();
 					}
 				}
 				
 				
 			}
-			//webServicesSession.updateOrder(masterOrder)
+			if(found==false){
+				// build line
+				def nolclone = new OrderLineWS()
+				nolclone.typeId = Constants.ORDER_LINE_TYPE_ITEM
+				nolclone.quantity = nol.quantity
+				nolclone.setPrice(nol.price)
+				nolclone.setAmount(nol.amount)
+				nolclone.itemId=nol.itemId
+				nolclone.useItem = nol.useItem
+				nolclone.description=nol.description
+				//println line.toString()
+				
+				def linesm = masterOrder.orderLines as List
+				linesm.add(nolclone)
+				masterOrder.orderLines = linesm.toArray()
+				//webServicesSession.addOrderLine(masterOrder,nolclone)
+				
+			}
+			
+			
 		}
-		System.out.println("Order submethod "+order);
 		
+		System.out.println("Order submethod "+order);
+		return masterOrder;
 		
 		// set success message in session, contents of the flash scope doesn't survive
 		// the redirect to the order list when the web-flow finishes

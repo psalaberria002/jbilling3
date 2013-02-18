@@ -2937,4 +2937,11 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
         }
         return retVal;
     }
+    
+    public void addOrderLine(OrderWS order, OrderLineWS ol){
+    	OrderBL bl=new OrderBL(order.getId());
+    	
+    	bl.addOrderLine(bl.getDTO(), ol);
+    	
+    }
 }

@@ -1475,4 +1475,22 @@ public class OrderBL extends ResultList
 
         return new OrderDAS().save(newOrder);
     }
+    
+    public OrderLineDTO addOrderLine(OrderDTO ordr, OrderLineWS ol){
+    	System.out.println("add "+ol);
+    	OrderLineDTO oldto= new OrderLineDTO();
+    	oldto.setPurchaseOrder(ordr);
+    	oldto.setTypeId(ol.getTypeId());
+		oldto.setQuantity(ol.getQuantityAsDecimal());
+		oldto.setPrice(ol.getPriceAsDecimal());
+	    oldto.setAmount(ol.getAmountAsDecimal());
+		oldto.setItemId(ol.getItemId());
+		oldto.setUseItem(ol.getUseItem());
+		oldto.setDescription(ol.getDescription());
+    	
+    	//OrderLineBL.addLine(ordr, oldto, true);
+    	System.out.println(ordr.getLines().get(0).toString());
+    	System.out.println(ordr.getLines().get(1).toString());
+    	return new OrderLineDAS().save(oldto);
+    }
 }
