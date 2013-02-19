@@ -291,7 +291,7 @@ public class OrderDAS extends AbstractDAS<OrderDTO> {
         return retValue;
     }
     
-    public int addOrderMaster(Integer orderId,boolean b){
+    public int addOrderMaster(Integer orderId,Integer b){ 
     	Query query = getSession().createSQLQuery(
     			"INSERT INTO purchase_order_master VALUES ( :orderId, :b)")
     			.setParameter("orderId", orderId)
@@ -300,7 +300,7 @@ public class OrderDAS extends AbstractDAS<OrderDTO> {
     			
     	return query.executeUpdate();
     }
-    public int updateOrderMaster(Integer orderId,boolean b){
+    public int updateOrderMaster(Integer orderId,Integer b){
     	
     			Query query = getSession().createSQLQuery(
     	    			"update purchase_order_master SET master=:b WHERE order_id=:orderId")

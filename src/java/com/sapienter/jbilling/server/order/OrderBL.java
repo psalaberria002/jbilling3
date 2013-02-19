@@ -484,6 +484,7 @@ public class OrderBL extends ResultList
     }
 
     public void update(Integer executorId, OrderDTO dto) {
+    	System.out.println("update()");
         // update first the order own fields
         if (!Util.equal(order.getActiveUntil(), dto.getActiveUntil())) {
             updateActiveUntil(executorId, dto.getActiveUntil(), dto);
@@ -577,7 +578,7 @@ public class OrderBL extends ResultList
         order = orderDas.save(order);
         
         //TRYING THE DATABASE QUERIES
-        System.out.println(orderDas.addOrderMaster(order.getId(),true));
+        //System.out.println(orderDas.addOrderMaster(order.getId(),1)); 
 
         if (oldLine != null && nonDeletedLines == 1) {
             OrderLineDTO newLine = null;

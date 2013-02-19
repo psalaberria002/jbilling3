@@ -123,6 +123,7 @@
         <g:link class="submit save" action="edit" params="[_eventId: 'save', addToMaster: '${order.addToMaster }']">
             <span><g:message code="button.save"/></span>
         </g:link>
+        
 
         <g:link class="submit cancel" action="edit" params="[_eventId: 'cancel']">
             <span><g:message code="button.cancel"/></span>

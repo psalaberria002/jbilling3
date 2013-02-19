@@ -380,6 +380,7 @@ class OrderBuilderController {
             on("updateLine").to("updateOrderLine")
             on("removeLine").to("removeOrderLine")
             on("update").to("updateOrder")
+			
 
             on("save").to("saveOrder")
             // on("save").to("checkItem")  // check to see if an item exists, and show an information page before saving
@@ -451,6 +452,8 @@ class OrderBuilderController {
 								masterOrder=editOrders(order,masterOrder,monthsLeft(order, masterOrder));
 								
 								
+								
+								order.orderLines = order.orderLines.sort { it.itemId }
 							
 								order.id = webServicesSession.createUpdateOrder(order)
 								//webServicesSession.updateOrder(masterOrder)
@@ -484,6 +487,7 @@ class OrderBuilderController {
 
                             session.message = 'order.updated'
                             session.args = [ order.id, order.userId ]
+							
 
                         } else {
                             redirect controller: 'login', action: 'denied'
@@ -502,7 +506,11 @@ class OrderBuilderController {
         finish {
             redirect controller: 'order', action: 'list', id: conversation.order?.id
         }
+		
+		
     }
+	
+	
 	
 	def int monthsLeft(order,masterOrder) {
 		
@@ -563,7 +571,7 @@ class OrderBuilderController {
 						mol.setAmount(amount)
 						mol.setDescription(mol.getDescription())
 						
-						webServicesSession.updateOrderLine(mol) //update Master Order Line
+						//webServicesSession.updateOrderLine(mol) //update Master Order Line
 						println mol.getPrice()+" "+mol.getAmount()
 						
 						println "Order before"+order
@@ -610,14 +618,14 @@ class OrderBuilderController {
 				def linesm = masterOrder.orderLines as List
 				linesm.add(nolclone)
 				masterOrder.orderLines = linesm.toArray()
-				//webServicesSession.addOrderLine(masterOrder,nolclone)
+				
 				
 			}
 			
 			
 		}
-		
-		System.out.println("Order submethod "+order);
+		masterOrder.orderLines = masterOrder.orderLines.sort { it.itemId }
+		webServicesSession.updateOrder(masterOrder)
 		return masterOrder;
 		
 		// set success message in session, contents of the flash scope doesn't survive
