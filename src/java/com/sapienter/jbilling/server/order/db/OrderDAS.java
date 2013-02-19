@@ -291,23 +291,38 @@ public class OrderDAS extends AbstractDAS<OrderDTO> {
         return retValue;
     }
     
-    public int addOrderMaster(Integer orderId,Integer b){ 
-    	Query query = getSession().createSQLQuery(
-    			"INSERT INTO purchase_order_master VALUES ( :orderId, :b)")
-    			.setParameter("orderId", orderId)
-    			.setParameter("b", b);
-    	
+    /**Changes the value of master, setting an order as Master or not. 
+     * UPDATE OR INSERT
+     * table purchase_order_master
+     * 
+     * @param orderId
+     * @param b
+     * @return
+     */
+    public int updateOrInsertOrderMaster(Integer orderId,Integer b){
     			
-    	return query.executeUpdate();
-    }
-    public int updateOrderMaster(Integer orderId,Integer b){
-    	
-    			Query query = getSession().createSQLQuery(
-    	    			"update purchase_order_master SET master=:b WHERE order_id=:orderId")
+    	 Object result = (Object) getSession()
+                 .createSQLQuery("select master from purchase_order_master where order_id=:orderId")
+                 .setParameter("orderId", orderId)
+                 .uniqueResult();
+    	 System.out.println(result);
+    	 Query query=null; 
+    	 if(result!=null){
+    		 System.out.println("notnull");
+    		 query = getSession().createSQLQuery(
+  	    			"UPDATE purchase_order_master SET master=:b WHERE order_id=:orderId")
+  	    			.setParameter("orderId", orderId)
+  	    			.setParameter("b", b);
+    	 }
+    	 else{
+    		 System.out.println("yesnull");
+    		 query = getSession().createSQLQuery(
+    	    			"INSERT INTO purchase_order_master VALUES ( :orderId, :b)")
     	    			.setParameter("orderId", orderId)
     	    			.setParameter("b", b);
-    	    	
-    	    			
-    	    	return query.executeUpdate();
+    	 }
+    	 
+    	 
+    	 return query.executeUpdate();
     }
 }

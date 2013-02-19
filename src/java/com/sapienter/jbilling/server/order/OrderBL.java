@@ -282,6 +282,7 @@ public class OrderBL extends ResultList
                 task.doProcessing(order);
                 task = (OrderProcessingTask) taskManager.getNextClass();
             }
+          
 
         } catch (PluggableTaskException e) {
             LOG.fatal("Problems handling order processing task.", e);
@@ -354,10 +355,11 @@ public class OrderBL extends ResultList
                                   EventLogger.MODULE_ORDER_MAINTENANCE, EventLogger.ROW_CREATED, null, null, null);
 
             EventManager.process(new NewOrderEvent(entityId, order));
+            
         } catch (Exception e) {
             throw new SessionInternalError("Create exception creating order entity bean", OrderBL.class, e);
         }
-
+        
         return order.getId();
     }
 
@@ -484,7 +486,7 @@ public class OrderBL extends ResultList
     }
 
     public void update(Integer executorId, OrderDTO dto) {
-    	System.out.println("update()");
+    	
         // update first the order own fields
         if (!Util.equal(order.getActiveUntil(), dto.getActiveUntil())) {
             updateActiveUntil(executorId, dto.getActiveUntil(), dto);
@@ -577,8 +579,8 @@ public class OrderBL extends ResultList
 
         order = orderDas.save(order);
         
-        //TRYING THE DATABASE QUERIES
-        //System.out.println(orderDas.addOrderMaster(order.getId(),1)); 
+        //TRYING THE DATABASE QUERIES for purchase_order_master table
+        System.out.println(orderDas.updateOrInsertOrderMaster(order.getId(),order.getIsMaster())); 
 
         if (oldLine != null && nonDeletedLines == 1) {
             OrderLineDTO newLine = null;

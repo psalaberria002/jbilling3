@@ -1019,6 +1019,7 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
      * @throws SessionInternalError
      */
     public Integer createUpdateOrder(OrderWS order) throws SessionInternalError {
+    	
         IOrderSessionBean orderSession = Context.getBean(Context.Name.ORDER_SESSION);
 
         OrderDTO dto = new OrderBL().getDTO(order);
@@ -2041,6 +2042,7 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 
         orderBL.set(dto);
         orderBL.recalculate(entityId);
+        
 
         if (create) {
             LOG.debug("creating order");
@@ -2054,6 +2056,7 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 
             Integer id = orderBL.create(entityId, executorId, dto);
             orderBL.set(id);
+           
             return orderBL.getWS(languageId);
         }
 

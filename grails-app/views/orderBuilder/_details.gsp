@@ -48,7 +48,7 @@
                 <content tag="label.for">plan</content>
                 	<g:select from="${['New','Old']}"
                           name="plan"
-                       
+                       	value="${order?.payPlan}"
                 	 />
                  
             </g:applyLayout>
@@ -70,7 +70,8 @@
                 <g:select from="${orderBillingTypes}"
                           optionKey="id" optionValue="${{it.getDescription(session['language_id'])}}"
                           name="billingTypeId"
-                          value="${order?.billingTypeId}"/>
+                          value="${Constants.ORDER_BILLING_PRE_PAID}"
+                          />
             </g:applyLayout>
 
             <g:applyLayout name="form/select">

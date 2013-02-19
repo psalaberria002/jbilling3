@@ -336,7 +336,13 @@ class OrderBuilderController {
 				order.payPlan= params.plan 
 				println params.period+" 1"
 				println order.period+" 2"
-				order.period = Integer.parseInt(params.period)
+				try{
+					order.period = Integer.parseInt(params.period)
+				}
+				catch(NumberFormatException e){
+					order.period =Constants.ORDER_PERIOD_ONCE
+				}
+				
 				println order.period+" 3"
 				 
 				
@@ -436,6 +442,8 @@ class OrderBuilderController {
 								log.debug("creating order ${order}")
 								order.id = webServicesSession.createOrder(order)
 								
+							    //webServicesSession.updateOrder(order) //updates the order, adding a row into purchase_order_master
+								
 								// set success message in session, contents of the flash scope doesn't survive
 								// the redirect to the order list when the web-flow finishes
 								session.message = 'order.created'
@@ -449,14 +457,15 @@ class OrderBuilderController {
 								
 								
 									//Edit master order and new order
-								masterOrder=editOrders(order,masterOrder,monthsLeft(order, masterOrder));
+								masterOrder=editOrders(order,masterOrder);
 								
 								
 								
 								order.orderLines = order.orderLines.sort { it.itemId }
 							
 								order.id = webServicesSession.createUpdateOrder(order)
-								//webServicesSession.updateOrder(masterOrder)
+								
+								//webServicesSession.updateOrder(order) //updates the order, adding a row into purchase_order_master
 
 								// set success message in session, contents of the flash scope doesn't survive
 								// the redirect to the order list when the web-flow finishes
@@ -535,7 +544,21 @@ class OrderBuilderController {
 	 * @param monthsLeft
 	 * @return
 	 */
-	def  editOrders(order, masterOrder,monthsLeft){
+	def  editOrders(order, masterOrder){
+		//monthsLeft
+		//Getting the starting day of the new order
+		def orderActiveDay = order.getActiveSince()
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(orderActiveDay);
+		def monthStart = cal.get(Calendar.MONTH);
+		//Getting next billable day of the master order
+		def masterOrderNextBillableDay = masterOrder.getNextBillableDay()
+		cal.setTime(masterOrderNextBillableDay);
+		def monthNext = cal.get(Calendar.MONTH)+12;
+		def masterYear= cal.get(Calendar.YEAR)-1;
+		//Months for the new order
+		def monthsLeft=monthNext-monthStart
+		
 		def back=0
 		def masterOrderLines = masterOrder.getOrderLines()
 		def newOrderLines = order.getOrderLines()
@@ -558,7 +581,8 @@ class OrderBuilderController {
 						back=molOldAvgPrice*molQuantity*monthsLeft/12
 						println back
 						def file = new File("resources/pay_plans/${payPlan}.ods");
-						def sheet = SpreadSheet.createFromFile(file).getSheet(0);
+						def sheet = SpreadSheet.createFromFile(file).getSheet(""+masterYear)
+						
 						BigDecimal value=sheet.getCellAt("B${totalQuantity.intValue()}").getValue()
 						BigDecimal amount=sheet.getCellAt("C${totalQuantity.intValue()}").getValue()
 						println value+" "+totalQuantity+" "+amount

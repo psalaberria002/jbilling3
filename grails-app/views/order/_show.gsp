@@ -133,6 +133,10 @@
                 </g:else>
                 </g:if>
             </tr>
+            <tr>
+            	<td><g:message code="order.label.payPlan"/>:</td>
+                <td class="value">${order?.payPlan}</td>
+            </tr>
         </table>
     </div>
 
