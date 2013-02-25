@@ -189,6 +189,7 @@ class OrderBuilderController {
                 line.quantity = BigDecimal.ONE
                 line.itemId = params.int('id')
                 line.useItem = true
+				
 
                 // add line to order
                 def order = conversation.order
@@ -204,6 +205,8 @@ class OrderBuilderController {
                         viewUtils.resolveException(flow, session.locale, e)
                     }
                 }
+				
+				
                 conversation.order = order
 
                 params.newLineIndex = lines.size() - 1
@@ -438,6 +441,7 @@ class OrderBuilderController {
                         if (SpringSecurityUtils.ifAllGranted("ORDER_20"))  {
 							//Creating a new order. Not adding to the master order
 							if(order.addToMaster != 1 ){
+								
 								println "create new order, not to master"
 								log.debug("creating order ${order}")
 								order.id = webServicesSession.createOrder(order)
@@ -550,12 +554,20 @@ class OrderBuilderController {
 		def orderActiveDay = order.getActiveSince()
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(orderActiveDay);
+		def newOrderActiveSinceYear= cal.get(Calendar.YEAR);
 		def monthStart = cal.get(Calendar.MONTH);
 		//Getting next billable day of the master order
 		def masterOrderNextBillableDay = masterOrder.getNextBillableDay()
 		cal.setTime(masterOrderNextBillableDay);
-		def monthNext = cal.get(Calendar.MONTH)+12;
-		def masterYear= cal.get(Calendar.YEAR)-1;
+		def masterOrderNextBillableYear= cal.get(Calendar.YEAR);
+		def masterYear= masterOrderNextBillableYear-1;
+		def monthNext = cal.get(Calendar.MONTH);
+		//If the years are different
+		if(newOrderActiveSinceYear!=masterOrderNextBillableYear){
+			monthNext+=12;
+		}
+		
+		
 		//Months for the new order
 		def monthsLeft=monthNext-monthStart
 		
@@ -580,7 +592,8 @@ class OrderBuilderController {
 						
 						back=molOldAvgPrice*molQuantity*monthsLeft/12
 						println back
-						def file = new File("resources/pay_plans/${payPlan}.ods");
+						println "resources/pay_plans/${payPlan}${mol.description}.ods"
+						def file = new File("resources/pay_plans/${payPlan}_${mol.description}.ods");
 						def sheet = SpreadSheet.createFromFile(file).getSheet(""+masterYear)
 						
 						BigDecimal value=sheet.getCellAt("B${totalQuantity.intValue()}").getValue()
@@ -593,16 +606,18 @@ class OrderBuilderController {
 						mol.setPrice(avgPrice)
 						mol.setQuantityAsDecimal(totalQuantity)
 						mol.setAmount(amount)
-						mol.setDescription(mol.getDescription())
+						mol.useItem = false
 						
 						//webServicesSession.updateOrderLine(mol) //update Master Order Line
 						println mol.getPrice()+" "+mol.getAmount()
 						
+						//Edit new order line
 						println "Order before"+order
 						nol.quantity= totalQuantity
 						nol.setAmount(amount*monthsLeft/12)
 						nol.setPrice(amount*monthsLeft/12/totalQuantity)
 						nol.description=mol.getDescription()+" "+monthsLeft+" months"
+						nol.useItem = false
 						
 						// build line
 						def line = new OrderLineWS()
@@ -628,6 +643,8 @@ class OrderBuilderController {
 				
 			}
 			if(found==false){
+				
+				
 				// build line
 				def nolclone = new OrderLineWS()
 				nolclone.typeId = Constants.ORDER_LINE_TYPE_ITEM
@@ -643,6 +660,21 @@ class OrderBuilderController {
 				linesm.add(nolclone)
 				masterOrder.orderLines = linesm.toArray()
 				
+				def payPlan=masterOrder.getPayPlan()
+				def file = new File("resources/pay_plans/${payPlan}_${nol.description}.ods");
+				def sheet = SpreadSheet.createFromFile(file).getSheet(""+masterYear)
+				def q=nol.getQuantityAsDecimal()
+				println q
+				BigDecimal value=sheet.getCellAt("B${q.intValue()}").getValue()
+				BigDecimal amount=sheet.getCellAt("C${q.intValue()}").getValue()
+				println value+" "+q+" "+amount
+				
+				
+				//Edit new order line
+				nol.setAmount(amount*monthsLeft/12)
+				nol.setPrice(amount*monthsLeft/12/q)
+				nol.description=nol.getDescription()+" "+monthsLeft+" months"
+				nol.useItem = false
 				
 			}
 			
@@ -660,7 +692,7 @@ class OrderBuilderController {
 		
 	}
 	
-	//Checks if the new price is going to be different to the old one
+	/*//Checks if the new price is going to be different to the old one
 	def boolean hasPriceChanged(oldPrice, totalQuantity,payPlan){
 		def hasChanged=false
 		
@@ -683,5 +715,5 @@ class OrderBuilderController {
 		def sheet = SpreadSheet.createFromFile(file).getSheet(0);
 		
 		return sheet.getCellAt("B${q}").getValue();
-	}
+	}*/
 }
