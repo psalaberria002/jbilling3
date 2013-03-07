@@ -463,8 +463,10 @@ public class ItemDTO extends AbstractDescription implements Exportable {
     public Object[][] getFieldValues() {
         StringBuilder itemTypes = new StringBuilder();
         for (ItemTypeDTO type : this.itemTypes) {
+        	
             itemTypes.append(type.getDescription()).append(" ");
         }
+        
 
         StringBuilder prices = new StringBuilder();
         for (Iterator<ItemPriceDTO> it = this.itemPrices.iterator(); it.hasNext();) {

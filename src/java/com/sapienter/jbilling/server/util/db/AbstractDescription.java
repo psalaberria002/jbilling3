@@ -116,6 +116,7 @@ public abstract class AbstractDescription implements Serializable {
      * @param languageId language id
      */
     public void setDescription(String content, Integer languageId) {
+    	
         setDescription("description", languageId, content);
     }
 
