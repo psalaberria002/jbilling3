@@ -589,11 +589,13 @@ class OrderBuilderController {
 						totalQuantity=molQuantity+nolQuantity
 						def payPlan=masterOrder.getPayPlan()
 						BigDecimal molOldAvgPrice = mol.getPriceAsDecimal()
-						
+						println molOldAvgPrice+" masterOrderLineAvgPrice"
+						println molQuantity+" molQuantity"
 						back=molOldAvgPrice*molQuantity*monthsLeft/12
 						println back
 						println "resources/pay_plans/${payPlan}${mol.description}.ods"
 						def file = new File("resources/pay_plans/${payPlan}_${mol.description}.ods");
+						println file.toPath()
 						def sheet = SpreadSheet.createFromFile(file).getSheet(""+masterYear)
 						
 						BigDecimal value=sheet.getCellAt("B${totalQuantity.intValue()}").getValue()

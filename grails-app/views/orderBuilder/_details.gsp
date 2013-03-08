@@ -47,8 +47,9 @@
                 <content tag="label"><g:message code="order.label.payPlan"/></content>
                 <content tag="label.for">plan</content>
                 	<g:select from="${['New','Old']}"
-                          name="plan"
+                        name="plan"
                        	value="${order?.payPlan}"
+                       	noSelection="${['New':'Select Plan (default New)']}"
                 	 />
                  
             </g:applyLayout>
@@ -191,10 +192,10 @@
             $('#addToMaster').click(function(){
                 if ($('#addToMaster').attr('checked')) {
                      $('#period').val(${Constants.ORDER_PERIOD_ONCE});
-                     $('#period').attr('disabled', true);
+                     
                      $('#isMaster').attr('checked', false)
                 } else {
-                    $('#period').attr('disabled', '');
+                    
                 }
             });
             
