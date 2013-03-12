@@ -330,6 +330,7 @@ public class ItemBL extends ResultList{
 
         return retValue;
     }
+    
 
     public BigDecimal getPrice(Integer userId, BigDecimal quantity, Integer entityId) throws SessionInternalError {
         UserBL user = new UserBL(userId);
@@ -354,6 +355,7 @@ public class ItemBL extends ResultList{
      */
     public BigDecimal getPrice(Integer userId, Integer currencyId, BigDecimal quantity, Integer entityId, OrderDTO order, boolean singlePurchase)
             throws SessionInternalError {
+    	
 
         if (currencyId == null || entityId == null) {
             throw new SessionInternalError("Can't get a price with null parameters. "
@@ -371,20 +373,25 @@ public class ItemBL extends ResultList{
 
         // default "simple" price
         BigDecimal price = getPriceByCurrency(item, entityId, currencyId);
-        
+        System.out.println(price.toString()+" before task");
         // run a plug-in with external logic (rules), if available
-        try {
-            PluggableTaskManager<IPricing> taskManager
-                    = new PluggableTaskManager<IPricing>(entityId, Constants.PLUGGABLE_TASK_ITEM_PRICING);
-            IPricing myTask = taskManager.getNextClass();
-            
-            while(myTask != null) {
-                price = myTask.getPrice(item.getId(), quantity, userId, currencyId, pricingFields, price, order, singlePurchase);
-                myTask = taskManager.getNextClass();
+        if(order!=null){
+        	try {
+                PluggableTaskManager<IPricing> taskManager
+                        = new PluggableTaskManager<IPricing>(entityId, Constants.PLUGGABLE_TASK_ITEM_PRICING);
+                IPricing myTask = taskManager.getNextClass();
+                System.out.println(myTask);
+                System.out.println(userId+" useriD "+currencyId+" CURRENCYiD "+quantity.toString()+" Q "+entityId+" ENTITYiD ");
+                while(myTask != null) {
+                    price = myTask.getPrice(item.getId(), quantity, userId, currencyId, pricingFields, price, order, singlePurchase);
+                	System.out.println(price.toString()+" after task");
+                    myTask = taskManager.getNextClass();
+                }
+            } catch (Exception e) {
+                throw new SessionInternalError("Item pricing task error", ItemBL.class, e);
             }
-        } catch (Exception e) {
-            throw new SessionInternalError("Item pricing task error", ItemBL.class, e);
         }
+        
         
         return price;
     }
