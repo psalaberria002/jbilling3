@@ -174,6 +174,15 @@ class OrderController {
         def orderId = params.id?.toInteger()
 
         Integer invoiceID= null;
+		
+		//Updates the master order before invoicing. It will use new prices
+		OrderBL obl = new OrderBL(orderId);
+		OrderWS order=obl.getWS(session['language_id']);
+		if(order.getIsMaster()==1){
+			webServicesSession.rateOrder(order)
+			webServicesSession.updateOrder(order)
+		}
+		
         try {
             invoiceID = webServicesSession.createInvoiceFromOrder(orderId, null)
 

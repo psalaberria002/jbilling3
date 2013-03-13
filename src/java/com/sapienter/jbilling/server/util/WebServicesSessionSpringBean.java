@@ -1077,12 +1077,12 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 
     private void processLines(OrderDTO order, Integer languageId, Integer entityId, Integer userId, Integer currencyId,
                               String pricingFields) throws SessionInternalError {
-
+    	System.out.println("processLines");
         OrderHelper.synchronizeOrderLines(order);
 
         for (OrderLineDTO line : order.getLines()) {
             LOG.debug("Processing line " + line);
-
+            
             if (line.getUseItem()) {
                 List<PricingField> fields = pricingFields != null
                                             ? Arrays.asList(PricingField.getPricingFieldsValue(pricingFields))
