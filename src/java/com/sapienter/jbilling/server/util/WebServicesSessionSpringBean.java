@@ -551,6 +551,15 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
     public Integer createInvoiceFromOrder(Integer orderId, Integer invoiceId) throws SessionInternalError {
         if (orderId == null) throw new SessionInternalError("Order id cannot be null.");
 
+      //Updates the master order before invoicing. It will use new prices
+      OrderBL obl = new OrderBL(orderId);
+      OrderWS ows=obl.getWS(getCallerLanguageId());
+      if(ows.getIsMaster()==1){
+    	System.out.println("Andiamo");
+      	rateOrder(ows);
+      	updateOrder(ows);
+      }
+      		
         // validate order to be processed
         OrderDTO order = new OrderDAS().find(orderId);
         if (order == null || !Constants.ORDER_STATUS_ACTIVE.equals(order.getStatusId())) {

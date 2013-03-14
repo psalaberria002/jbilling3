@@ -69,17 +69,17 @@ public class DataloyPricingTask extends PluggableTask implements IPricing {
     	System.out.println(currencyId+" cId");
         // now we have the line with good defaults, the order and the item
         // These have to be visible to the rules
-        KnowledgeBase knowledgeBase;
+        /*KnowledgeBase knowledgeBase;
         try {
             knowledgeBase = readKnowledgeBase();
         } catch (Exception e) {
             throw new TaskException(e);
         }
         StatelessKnowledgeSession mySession = knowledgeBase.newStatelessKnowledgeSession();
-        List<Object> rulesMemoryContext = new ArrayList<Object>();
+        List<Object> rulesMemoryContext = new ArrayList<Object>();*/
         
         PricingManager manager = new PricingManager(itemId, userId, currencyId, defaultPrice);
-        mySession.setGlobal("manager", manager);
+        //mySession.setGlobal("manager", manager);
         
         System.out.println(pricingOrder.toString());
         ItemBL ibl=new ItemBL(itemId);
@@ -115,7 +115,23 @@ public class DataloyPricingTask extends PluggableTask implements IPricing {
         	}
         	else{
         		cal.setTime(masterOrderNextBillableDay);
-                year=cal.get(Calendar.YEAR)-1;
+        		//New price if the next billableDay is in less than 25 days from the current date
+        		Calendar calNow =Calendar.getInstance();
+        		System.out.println("Barruan!");
+        		long milliseconds1 = calNow.getTimeInMillis();
+        	    long milliseconds2 = cal.getTimeInMillis();
+        	    long diff = milliseconds2 - milliseconds1;
+        	    long diffDays = diff / (24 * 60 * 60 * 1000);
+        	    System.out.println(diffDays+" diffDays"); 
+        	    //Change the price for the master order
+        		if(diffDays<=25){
+        			year=cal.get(Calendar.YEAR);
+        		}
+        		//Editing master order during the year with master price (11months and first days of the 12th included)
+        		else{
+                    year=cal.get(Calendar.YEAR)-1;
+        		}
+        		
         	}
         	
         }
@@ -124,9 +140,9 @@ public class DataloyPricingTask extends PluggableTask implements IPricing {
             cal.setTime(pricingOrder.getActiveSince());
             year=cal.get(Calendar.YEAR);
         }
-      //Getting next billable day of the master order
+      
       		
-        System.out.println(year);
+        System.out.println(year+" year");
         
         BigDecimal avgPrice=defaultPrice;
 		if(payPlan!=null){
@@ -144,7 +160,7 @@ public class DataloyPricingTask extends PluggableTask implements IPricing {
 				System.out.println(value+" "+amount+" "+avgPrice);
 				
 			} catch (IOException e) {
-				System.out.println("Error");
+				System.out.println("Error reading from file");
 				e.printStackTrace();
 			}
 			
@@ -174,7 +190,7 @@ public class DataloyPricingTask extends PluggableTask implements IPricing {
 		
 		
 		
-		mySession.execute(rulesMemoryContext);
+		/*mySession.execute(rulesMemoryContext);*/
 
         return manager.getPrice();
     }
