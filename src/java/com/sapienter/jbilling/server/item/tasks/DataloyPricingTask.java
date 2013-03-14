@@ -154,9 +154,18 @@ public class DataloyPricingTask extends PluggableTask implements IPricing {
 				System.out.println("Aure");
 				sheet = SpreadSheet.createFromFile(file).getSheet(""+year);
 				System.out.println("gero");
+				//Negative number change to positive
+				boolean negative=false;
+				if(quantity.intValue()<0){
+					negative=true;
+					quantity=quantity.negate();
+				}
 				BigDecimal value=(BigDecimal) sheet.getCellAt("B"+quantity.intValue()).getValue();
 				BigDecimal amount=(BigDecimal) sheet.getCellAt("C"+quantity.intValue()).getValue();
 				avgPrice=amount.divide(quantity, 10, RoundingMode.HALF_EVEN);
+				if(negative=true){
+					amount=amount.negate();
+				}
 				System.out.println(value+" "+amount+" "+avgPrice);
 				
 			} catch (IOException e) {

@@ -246,7 +246,23 @@ public class OrderBL extends ResultList
         // the event is needed before the deletion
         EventManager.process(new OrderDeletedEvent(
                 order.getBaseUserByUserId().getCompany().getId(), order));
-
+        
+      //UPDATING THE NUMBER OF USERS FOR ITEM AND USER for deleted orders (master, add to master and normal)
+        for(Iterator i = order.getLines().iterator(); i.hasNext();){
+        	 OrderLineDTO temp = (OrderLineDTO) i.next();
+        	 System.out.println(temp.getQuantityInt()+" q");
+             if (temp.getDeleted() == 0) {
+            	 Integer oldQuantity=orderDas.findNumberUsers(temp.getItemId(), order.getUserId());
+   
+            	 if(oldQuantity==null){
+            		 oldQuantity=new Integer(0);
+            	 }
+            	Integer newQuantity=oldQuantity-(temp.getQuantityInt());
+            	System.out.println(newQuantity+" new q");
+            	orderDas.updateOrInsertItemUsers(temp.getItemId(), order.getUserId(),newQuantity);
+             }
+        	
+        }
         for (OrderLineDTO line : order.getLines()) {
             line.setDeleted(1);
         }
@@ -330,6 +346,22 @@ public class OrderBL extends ResultList
 
             order = orderDas.save(orderDto);
             
+          //UPDATING THE NUMBER OF USERS FOR ITEM AND USER for new orders (master, add to master and normal)
+            for(Iterator i = order.getLines().iterator(); i.hasNext();){
+            	 OrderLineDTO temp = (OrderLineDTO) i.next();
+            	 System.out.println(temp.getQuantityInt()+" q");
+                 if (temp.getDeleted() == 0) {
+                	 Integer oldQuantity=orderDas.findNumberUsers(temp.getItemId(), order.getUserId());
+       
+                	 if(oldQuantity==null){
+                		 oldQuantity=new Integer(0);
+                	 }
+                	Integer newQuantity=oldQuantity+(temp.getQuantityInt());
+                	System.out.println(newQuantity+" new q");
+                	orderDas.updateOrInsertItemUsers(temp.getItemId(), order.getUserId(),newQuantity);
+                 }
+            	
+            }
 
             // link the lines to the new order
             for (OrderLineDTO line : order.getLines()) {
@@ -581,6 +613,8 @@ public class OrderBL extends ResultList
         
         //TRYING THE DATABASE QUERIES for purchase_order_master table
         System.out.println(orderDas.updateOrInsertOrderMaster(order.getId(),order.getIsMaster())); 
+        
+      
 
         if (oldLine != null && nonDeletedLines == 1) {
             OrderLineDTO newLine = null;

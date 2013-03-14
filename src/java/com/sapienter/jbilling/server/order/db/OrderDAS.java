@@ -325,4 +325,52 @@ public class OrderDAS extends AbstractDAS<OrderDTO> {
     	 
     	 return query.executeUpdate();
     }
+    
+    /**Changes the value of master, setting an order as Master or not. 
+     * UPDATE OR INSERT
+     * table purchase_order_master
+     * 
+     * @param orderId
+     * @param b
+     * @return
+     */
+    public int updateOrInsertItemUsers(Integer itemId,Integer userId,Integer n){
+    			
+    	 Object result = (Object) getSession()
+                 .createSQLQuery("select users from item_users where item_id=:itemId AND user_id=:userId")
+                 .setParameter("itemId", itemId)
+                 .setParameter("userId", userId)
+                 .uniqueResult();
+    	 System.out.println(result);
+    	 Query query=null; 
+    	 if(result!=null){
+    		 System.out.println("notnull");
+    		 query = getSession().createSQLQuery(
+  	    			"UPDATE item_users SET users=:n WHERE item_id=:itemId AND user_id=:userId")
+  	    			.setParameter("itemId", itemId)
+  	    			.setParameter("userId", userId)
+  	    			.setParameter("n", n);
+    	 }
+    	 else{
+    		 System.out.println("yesnull");
+    		 query = getSession().createSQLQuery(
+    	    			"INSERT INTO item_users VALUES ( :itemId, :userId , :n)")
+    	    			.setParameter("itemId", itemId)
+      	    			.setParameter("userId", userId)
+      	    			.setParameter("n", n);
+    	 }
+    	 
+    	 
+    	 return query.executeUpdate();
+    }
+    public Integer findNumberUsers(Integer itemId, Integer userId){
+		
+   	 Object result = (Object) getSession()
+                .createSQLQuery("select users from item_users where item_id=:itemId AND user_id=:userId")
+                .setParameter("itemId", itemId)
+                .setParameter("userId", userId)
+                .uniqueResult();
+   	 	System.out.println(result+" number of users for item "+itemId+" and user "+userId);
+    	return (Integer)result;
+    }
 }
