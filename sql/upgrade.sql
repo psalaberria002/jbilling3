@@ -1,4 +1,4 @@
---- this script will upgrade a database schema from the latest jbilling release to the code currently at the tip of the trunk.
+--- this script will upgrade a database schema from the latest jbilling release to the code currently at the tip of the trunk.
 -- It is tested on postgreSQL, but it is meant to be ANSI SQL
 --
 -- MySQL does not support many of the ANSI SQL statements used in this file to upgrade the
