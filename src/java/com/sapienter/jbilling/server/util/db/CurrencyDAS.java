@@ -16,6 +16,19 @@
 
 package com.sapienter.jbilling.server.util.db;
 
+
+
 public class CurrencyDAS extends AbstractDAS<CurrencyDTO> {
 
+	public Integer findIdByCode(String code) {
+    	
+    	Object result = (Object) getSession()
+                .createSQLQuery("select id from currency where code=:code")
+                .setParameter("code", code)
+                .uniqueResult();
+   	 
+        
+        return (Integer)result;
+    }
+    
 }

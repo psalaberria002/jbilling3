@@ -15,9 +15,14 @@
  */
 package com.sapienter.jbilling.server.util.db;
 
+import java.math.BigDecimal;
 import java.util.List;
 
+import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
+
+import com.sapienter.jbilling.server.order.db.OrderDTO;
 
 
 public class CurrencyExchangeDAS extends AbstractDAS<CurrencyExchangeDTO> {
@@ -31,6 +36,28 @@ public class CurrencyExchangeDAS extends AbstractDAS<CurrencyExchangeDTO> {
         " SELECT a " +
         "   FROM CurrencyExchangeDTO a " +
         "  WHERE a.entityId = :entity";
+    
+    
+    public int updateExchangeRateById(int id,BigDecimal rate){
+   		 
+   		 Query query = getSession().createSQLQuery(
+ 	    			"UPDATE currency_exchange SET rate=:rate WHERE id=:id ")
+ 	    			.setParameter("id", id)
+ 	    			.setParameter("rate", rate);
+   		 
+   		 return query.executeUpdate();
+    }
+    
+    public Integer findExchangeId(int entityId, Integer cid) {
+    	Object result = (Object) getSession()
+                .createSQLQuery("select id from currency_exchange where currency_id=:cid AND entity_id=:entityId")
+                .setParameter("cid", cid)
+                .setParameter("entityId", entityId)
+                .uniqueResult();
+   	 
+        
+        return (Integer)result;
+	}
 
     public CurrencyExchangeDTO findExchange(Integer entityId,Integer currencyId) {
         Query query = getSession().createQuery(findExchangeSQL);
@@ -44,4 +71,7 @@ public class CurrencyExchangeDAS extends AbstractDAS<CurrencyExchangeDTO> {
         query.setParameter("entity", entityId);
         return query.list();
     }
+
+
+	
 }
