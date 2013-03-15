@@ -68,6 +68,7 @@ import com.sapienter.jbilling.server.util.PreferenceBL;
 import com.sapienter.jbilling.server.util.audit.EventLogger;
 import com.sapienter.jbilling.server.util.db.CurrencyDAS;
 import org.apache.log4j.Logger;
+import org.hibernate.ScrollableResults;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -263,6 +264,18 @@ public class OrderBL extends ResultList
              }
         	
         }
+        
+        //UPDATING MASTER ORDER WHEN addToMAster deleted (quantity and price)
+        if(order.getAddToMaster()==1){
+        	OrderDTO master=orderDas.findMasterByUser(order.getUserId());
+        	for(Iterator it=master.getLines().iterator();it.hasNext();){
+        		OrderLineDTO o=(OrderLineDTO) it.next();
+        		Integer q=orderDas.findNumberUsers(o.getItemId(), master.getUserId());
+        		o.setQuantity(q);
+        	}
+        	
+        }
+        
         for (OrderLineDTO line : order.getLines()) {
             line.setDeleted(1);
         }
@@ -346,22 +359,26 @@ public class OrderBL extends ResultList
 
             order = orderDas.save(orderDto);
             
-          //UPDATING THE NUMBER OF USERS FOR ITEM AND USER for new orders (master, add to master and normal)
-            for(Iterator i = order.getLines().iterator(); i.hasNext();){
-            	 OrderLineDTO temp = (OrderLineDTO) i.next();
-            	 System.out.println(temp.getQuantityInt()+" q");
-                 if (temp.getDeleted() == 0) {
-                	 Integer oldQuantity=orderDas.findNumberUsers(temp.getItemId(), order.getUserId());
-       
-                	 if(oldQuantity==null){
-                		 oldQuantity=new Integer(0);
-                	 }
-                	Integer newQuantity=oldQuantity+(temp.getQuantityInt());
-                	System.out.println(newQuantity+" new q");
-                	orderDas.updateOrInsertItemUsers(temp.getItemId(), order.getUserId(),newQuantity);
-                 }
-            	
+          //UPDATING THE NUMBER OF USERS FOR ITEM AND USER for new orders (master and normal) If addToMaster==1 then master edited automatically
+            if(order.getAddToMaster()!=1){
+            	for(Iterator i = order.getLines().iterator(); i.hasNext();){
+               	 OrderLineDTO temp = (OrderLineDTO) i.next();
+               	 System.out.println(temp.getQuantityInt()+" q cr");
+                    if (temp.getDeleted() == 0) {
+                   	 Integer oldQuantity=orderDas.findNumberUsers(temp.getItemId(), order.getUserId());
+          
+                   	 if(oldQuantity==null){
+                   		 oldQuantity=new Integer(0);
+                   	 }
+                   	
+                   	Integer newQuantity=oldQuantity+(temp.getQuantityInt());
+                   	System.out.println(newQuantity+" new q cr");
+                   	orderDas.updateOrInsertItemUsers(temp.getItemId(), order.getUserId(),newQuantity);
+                    }
+               	
+               }
             }
+            
 
             // link the lines to the new order
             for (OrderLineDTO line : order.getLines()) {
@@ -611,10 +628,12 @@ public class OrderBL extends ResultList
 
         order = orderDas.save(order);
         
-        //TRYING THE DATABASE QUERIES for purchase_order_master table
-        System.out.println(orderDas.updateOrInsertOrderMaster(order.getId(),order.getIsMaster())); 
+        //UPDATING purchase_order_master table
+        orderDas.updateOrInsertOrderMaster(order.getId(),order.getIsMaster()); 
         
-      
+        //UPDATING THE NUMBER OF USERS FOR ITEM AND USER when editing order (master, add to master and normal)
+        updateNumberUsersWhenEditing(order, orderDas);
+        
 
         if (oldLine != null && nonDeletedLines == 1) {
             OrderLineDTO newLine = null;
@@ -670,7 +689,45 @@ public class OrderBL extends ResultList
 
     }
 
-    private void updateEndOfOrderProcess(Date newDate) {
+    private void updateNumberUsersWhenEditing(OrderDTO order,
+			OrderDAS orderDas) {
+    		if(order.getIsMaster()==1){
+    			//Update each line of the master order with the new quantity
+    			for(Iterator i = order.getLines().iterator(); i.hasNext();){
+	 	       	 	OrderLineDTO temp = (OrderLineDTO) i.next();
+	 	       	 	orderDas.updateOrInsertItemUsers(temp.getItemId(), order.getUserId(), temp.getQuantityInt());
+    			}
+   	 			
+	 		}
+	 		else if(order.getAddToMaster()==1){
+	 			return;
+	 		}
+	 		else{
+	 			List<OrderDTO> results = orderDas.findNormalByUser(order.getUserId());
+	 	        //For each line in the editable order
+	 	        for(Iterator i = order.getLines().iterator(); i.hasNext();){
+	 	       	 	OrderLineDTO temp = (OrderLineDTO) i.next();
+	 	       	 	System.out.println(temp.getQuantityInt()+" q");
+	 	       	 	int cont=0;
+	 	       	 	Integer finalQuantity=new Integer(0);
+	 	       	 	//Iterating orders
+	 	       	 	for(Iterator oit = results.iterator();oit.hasNext();) {
+	 	       	 		System.out.println(cont+"th order");
+	 	       	 		Object row = oit.next();
+	 	       	 		OrderDTO ord=(OrderDTO)row;
+	 	       	 		for(Iterator it = ord.getLines().iterator(); it.hasNext();){
+	 	       	 			OrderLineDTO tempo = (OrderLineDTO) it.next();
+	 	       	 			finalQuantity+=tempo.getQuantityInt();
+	 	       	 		}
+	 	       	 		cont++;
+	 	       	 	}
+	 	       	 	orderDas.updateOrInsertItemUsers(temp.getItemId(), order.getUserId(), finalQuantity);
+	 	       }
+	 	       
+	 		}
+	}
+
+	private void updateEndOfOrderProcess(Date newDate) {
         OrderProcessDTO process = null;
         if (newDate == null) {
             LOG.debug("Attempting to update an order process end date to null. Skipping");

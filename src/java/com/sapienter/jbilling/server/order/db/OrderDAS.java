@@ -373,4 +373,31 @@ public class OrderDAS extends AbstractDAS<OrderDTO> {
    	 	System.out.println(result+" number of users for item "+itemId+" and user "+userId);
     	return (Integer)result;
     }
+    /**
+     * Returns a scrollable result set of normal orders belonging to a user.
+     *
+     * You MUST close the result set after iterating through the results to close the database
+     * connection and discard the cursor!
+     *
+     * <code>
+     *     ScrollableResults orders = new OrderDAS().findByUser_Status(123, 1);
+     *     // do something
+     *     orders.close();
+     * </code>
+     *
+     * @param userId user ID
+     * 
+     * @return scrollable results for found orders.
+     */
+    public List<OrderDTO> findNormalByUser(Integer userId) {
+        // I need to access an association, so I can't use the parent helper class
+        Criteria criteria = getSession().createCriteria(OrderDTO.class)
+                .add(Restrictions.eq("deleted", 0))
+                .add(Restrictions.ne("isMaster", 1))
+                .add(Restrictions.ne("addToMaster", 1))
+                .createAlias("baseUserByUserId", "u")
+                    .add(Restrictions.eq("u.id", userId));
+        
+        return criteria.list();
+    }
 }
