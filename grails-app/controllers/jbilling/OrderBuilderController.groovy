@@ -614,7 +614,7 @@ class OrderBuilderController {
 							mol.setPrice(avgPrice)
 							mol.setQuantityAsDecimal(totalQuantity)
 							mol.setAmount(amount)
-							mol.useItem = false
+							mol.useItem = true
 							
 							//webServicesSession.updateOrderLine(mol) //update Master Order Line
 							println mol.getPrice()+" "+mol.getAmount()
@@ -663,7 +663,7 @@ class OrderBuilderController {
 				nolclone.setPrice(nol.price)
 				nolclone.setAmount(nol.amount)
 				nolclone.itemId=nol.itemId
-				nolclone.useItem = nol.useItem
+				nolclone.useItem = true
 				nolclone.description=nol.description
 				//println line.toString()
 				

@@ -272,6 +272,7 @@ public class OrderBL extends ResultList
         		OrderLineDTO o=(OrderLineDTO) it.next();
         		Integer q=orderDas.findNumberUsers(o.getItemId(), master.getUserId());
         		o.setQuantity(q);
+        		o.setUseItem(true);
         	}
         	
         }

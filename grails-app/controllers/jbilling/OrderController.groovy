@@ -293,6 +293,14 @@ class OrderController {
     def deleteOrder = {
         try {
             webServicesSession.deleteOrder(params.int('id'))
+			println params
+			if(params.int('addToMaster')==1){
+				
+				def masterOrder = webServicesSession.getMasterOrder(params.int('userId'))
+				println masterOrder
+				webServicesSession.updateOrder(masterOrder)
+				
+			}
             flash.message = 'order.delete.success'
             flash.args = [params.id, params.id]
         } catch (SessionInternalError e){

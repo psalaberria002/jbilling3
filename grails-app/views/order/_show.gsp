@@ -269,7 +269,7 @@
             </sec:ifAllGranted>
 
             <sec:ifAllGranted roles="ORDER_21">
-            	<g:if test="${order?.addToMaster!=1}">
+            	<g:if test="${order?.addToMaster==1}">
                 	<a href="${createLink (controller: 'orderBuilder', action: 'edit', params: [id: order?.id])}" class="submit edit">
                     	<span><g:message code="order.button.edit"/></span>
                 	</a>
@@ -295,4 +295,5 @@
              controller: 'order',
              action: 'deleteOrder',
              id: order.id,
+             formParams: [addToMaster: order?.addToMaster,userId: user?.id],
             ]"/>
