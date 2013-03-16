@@ -1,9 +1,13 @@
 package com.sapienter.jbilling.server.exchange.tasks;
 
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
 import java.util.Iterator;
 import java.util.Map;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import com.sapienter.jbilling.server.item.CurrencyBL;
 import com.sapienter.jbilling.server.process.task.AbstractCronTask;
@@ -16,6 +20,7 @@ import com.sapienter.jbilling.tools.UpdateExchangeRates;
 import org.apache.log4j.Logger;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.xml.sax.SAXException;
 
 
 public class UpdateExchangeRatesTask extends AbstractCronTask {
@@ -29,17 +34,27 @@ public class UpdateExchangeRatesTask extends AbstractCronTask {
 
 	@Override
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
-		UpdateExchangeRates uer=new UpdateExchangeRates();
+		UpdateExchangeRates uer=null;
+		try {
+			uer = new UpdateExchangeRates();
+		} catch (ParserConfigurationException
+				| SAXException | IOException e1) {
+			
+			e1.printStackTrace();
+		}
 		Iterator it = uer.getMap().entrySet().iterator();
+		CurrencyDAS cDas=new CurrencyDAS();
+		CurrencyExchangeDAS cedas=new CurrencyExchangeDAS();
 		while (it.hasNext()) {
 			Map.Entry e = (Map.Entry)it.next();
 			System.out.println(e.getKey() + " " + e.getValue());
-			CurrencyDAS cDas=new CurrencyDAS();
 			Integer cid=cDas.findIdByCode((String)e.getKey());
-			CurrencyExchangeDAS cedas=new CurrencyExchangeDAS();
-			Integer ceid=cedas.findExchangeId(0,cid);
-			System.out.println(ceid+" ceid");
-			cedas.updateExchangeRateById(ceid, (BigDecimal)e.getValue());
+			if(cid!=null){
+				Integer ceid=cedas.findExchangeId(0,cid);
+				System.out.println(ceid+" ceid");
+				cedas.updateExchangeRateById(ceid, (BigDecimal)e.getValue());
+			}
+			
 		}
 		
 		
