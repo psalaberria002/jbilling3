@@ -163,7 +163,7 @@ public class DataloyPricingTask extends PluggableTask implements IPricing {
 				BigDecimal value=(BigDecimal) sheet.getCellAt("B"+quantity.intValue()).getValue();
 				BigDecimal amount=(BigDecimal) sheet.getCellAt("C"+quantity.intValue()).getValue();
 				avgPrice=amount.divide(quantity, 10, RoundingMode.HALF_EVEN);
-				if(negative=true){
+				if(negative==true){
 					amount=amount.negate();
 				}
 				System.out.println(value+" "+amount+" "+avgPrice);

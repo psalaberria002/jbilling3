@@ -35,6 +35,8 @@ import com.sapienter.jbilling.common.SessionInternalError
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 
 import com.sapienter.jbilling.server.order.db.OrderStatusDTO
+
+import java.math.BigDecimal;
 import java.math.RoundingMode
 import com.sapienter.jbilling.server.process.db.PeriodUnitDTO
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
@@ -593,56 +595,116 @@ class OrderBuilderController {
 						if((nol.getTypeId()!=(Constants.ORDER_LINE_TYPE_TAX))){
 							molQuantity=mol.getQuantityAsDecimal()
 							totalQuantity=molQuantity+nolQuantity
-							def payPlan=masterOrder.getPayPlan()
-							BigDecimal molOldAvgPrice = mol.getPriceAsDecimal()
-							println molOldAvgPrice+" masterOrderLineAvgPrice"
-							println molQuantity+" molQuantity"
-							back=molOldAvgPrice*molQuantity*monthsLeft/12
-							println back
-							println "resources/pay_plans/${payPlan}${mol.description}.ods"
-							def file = new File("resources/pay_plans/${payPlan}_${mol.description}.ods");
-							println file.toPath()
-							def sheet = SpreadSheet.createFromFile(file).getSheet(""+masterYear)
+							BigDecimal molOldAvgPrice
+							println "BERDINTZA "+BigDecimal.ZERO.compareTo(totalQuantity)
+							if((BigDecimal.ZERO.compareTo(totalQuantity) != 0)){
+								def payPlan=masterOrder.getPayPlan()
+								molOldAvgPrice = mol.getPriceAsDecimal()
+								println molOldAvgPrice+" masterOrderLineAvgPrice"
+								println molQuantity+" molQuantity"
+								back=molOldAvgPrice*molQuantity*monthsLeft/12
+								println back
+								println "resources/pay_plans/${payPlan}${mol.description}.ods"
+								def file = new File("resources/pay_plans/${payPlan}_${mol.description}.ods");
+								println file.toPath()
+								def sheet = SpreadSheet.createFromFile(file).getSheet(""+masterYear)
+								//Negative number change to positive
+								boolean negative=false;
+								if(totalQuantity.intValue()<0){
+									negative=true;
+									totalQuantity=totalQuantity.negate();
+								}
+								BigDecimal value=sheet.getCellAt("B${totalQuantity.intValue()}").getValue()
+								BigDecimal amount=sheet.getCellAt("C${totalQuantity.intValue()}").getValue()
+								
+								
+								if(negative==true){
+									amount=amount.negate();
+								}
+								println value+" "+totalQuantity+" "+amount
+								BigDecimal avgPrice=(BigDecimal)(amount/totalQuantity)
+								println avgPrice+" avgPrice"
+								
+								//Edit master order line
+								mol.setPrice(avgPrice)
+								mol.setQuantityAsDecimal(totalQuantity)
+								mol.setAmount(amount)
+								mol.useItem = true
+								
+								//webServicesSession.updateOrderLine(mol) //update Master Order Line
+								println mol.getPrice()+" "+mol.getAmount()
+								
+								//Edit new order line
+								println "Order before"+order
+								nol.quantity= totalQuantity
+								nol.setAmount(amount*monthsLeft/12)
+								nol.setPrice(amount*monthsLeft/12/totalQuantity)
+								nol.description=mol.getDescription()+" "+monthsLeft+" months"
+								nol.useItem = false
+								
+								// build line
+								def line = new OrderLineWS()
+								line.typeId = Constants.ORDER_LINE_TYPE_ITEM
+								line.quantity = (-1)*molQuantity
+								line.setPrice(molOldAvgPrice*monthsLeft/12)
+								line.setAmount(back*(-1))
+								line.itemId=mol.getItemId()
+								line.useItem = false
+								line.description=mol.getDescription()+" "+monthsLeft+" months"
+								//println line.toString()
+				
+								// add line to order
+								
+								def lines = order.orderLines as List
+								lines.add(line)
+								order.orderLines = lines.toArray()
+							}
+							//When quantity == 0 just add back order line and delete from master.
+							else{
+								
+								molOldAvgPrice = mol.getPriceAsDecimal()
+								println molOldAvgPrice+" masterOrderLineAvgPrice"
+								println molQuantity+" molQuantity"
+								back=molOldAvgPrice*molQuantity*monthsLeft/12
+								println back
+								
+								//Edit master order line
+								mol.setQuantityAsDecimal(totalQuantity)
+								mol.setAmount(new BigDecimal(0))
+								mol.useItem = false
+								mol.setDeleted(1)
+								
+								println nol
+								
+								//Edit new order line
+								nol.setDeleted(1)
+								
+								println nol
+								
+								// build line
+								def line = new OrderLineWS()
+								line.typeId = Constants.ORDER_LINE_TYPE_ITEM
+								line.quantity = (-1)*molQuantity
+								line.setPrice(molOldAvgPrice*monthsLeft/12)
+								line.setAmount(back*(-1))
+								line.itemId=mol.getItemId()
+								line.useItem = false
+								line.description=mol.getDescription()+" "+monthsLeft+" months"
+								//println line.toString()
+				
+								// add line to order
+								
+								def lines = order.orderLines as List
+								lines.remove(nol)
+								lines.add(line)
+								order.orderLines = lines.toArray()
+								
+							}
 							
-							BigDecimal value=sheet.getCellAt("B${totalQuantity.intValue()}").getValue()
-							BigDecimal amount=sheet.getCellAt("C${totalQuantity.intValue()}").getValue()
-							println value+" "+totalQuantity+" "+amount
 							
-							BigDecimal avgPrice=(BigDecimal)(amount/totalQuantity)
-							println avgPrice+" avgPrice"
-							//Edit master order line
-							mol.setPrice(avgPrice)
-							mol.setQuantityAsDecimal(totalQuantity)
-							mol.setAmount(amount)
-							mol.useItem = true
 							
-							//webServicesSession.updateOrderLine(mol) //update Master Order Line
-							println mol.getPrice()+" "+mol.getAmount()
 							
-							//Edit new order line
-							println "Order before"+order
-							nol.quantity= totalQuantity
-							nol.setAmount(amount*monthsLeft/12)
-							nol.setPrice(amount*monthsLeft/12/totalQuantity)
-							nol.description=mol.getDescription()+" "+monthsLeft+" months"
-							nol.useItem = false
 							
-							// build line
-							def line = new OrderLineWS()
-							line.typeId = Constants.ORDER_LINE_TYPE_ITEM
-							line.quantity = (-1)*molQuantity
-							line.setPrice(molOldAvgPrice*monthsLeft/12)
-							line.setAmount(back*(-1))
-							line.itemId=mol.getItemId()
-							line.useItem = false
-							line.description=mol.getDescription()+" "+monthsLeft+" months"
-							//println line.toString()
-			
-							// add line to order
-							
-							def lines = order.orderLines as List
-							lines.add(line)
-							order.orderLines = lines.toArray()
 						}
 						
 						
@@ -691,6 +753,7 @@ class OrderBuilderController {
 			
 			
 		}
+		println order
 		masterOrder.orderLines = masterOrder.orderLines.sort { it.itemId }
 		webServicesSession.updateOrder(masterOrder)
 		return masterOrder;

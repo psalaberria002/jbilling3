@@ -4,7 +4,7 @@
 
 -- Dumped from database version 9.2.2
 -- Dumped by pg_dump version 9.2.2
--- Started on 2013-03-18 14:30:20
+-- Started on 2013-03-18 18:09:00
 
 SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
@@ -1787,13 +1787,13 @@ COPY breadcrumb (id, user_id, controller, action, name, object_id, description, 
 31	20	invoice	list	\N	\N	\N	0
 32	20	payment	list	\N	\N	\N	0
 33	20	invoice	list	\N	\N	\N	0
-5160	10	order	list	\N	\N	\N	0
-5161	10	invoice	list	\N	\N	\N	0
-5162	10	invoice	list	\N	4100	100	0
-5163	10	invoice	list	\N	\N	\N	0
-5164	10	config	index	\N	\N	\N	0
-5165	10	billingconfiguration	index	\N	\N	\N	0
-5166	10	config	index	\N	\N	\N	0
+5416	10	order	list	\N	7616	\N	0
+5417	10	order	list	\N	7613	\N	0
+5411	10	orderBuilder	edit	\N	7613	\N	0
+5412	10	order	list	\N	7613	\N	0
+5413	10	customer	list	\N	\N	\N	0
+5414	10	customer	list	\N	30	Pola Maris NV	0
+5415	10	customer	list	\N	50	Test case	0
 \.
 
 
@@ -1824,6 +1824,7 @@ COPY contact (id, organization_name, street_addres1, street_addres2, city, state
 4100	Pola Maris NV	Noorderplaats 9		Antwerp		2000	BE			\N	\N	\N	\N		\N	\N	\N	psalaberria002@gmail.com	2013-03-15 14:42:07.74	0	0	\N	0
 4101	Pola Maris NV	Noorderplaats 9		Antwerp		2000	BE			\N	\N	\N	\N		\N	\N	\N	psalaberria002@gmail.com	2013-03-15 14:43:49.187	0	0	\N	0
 4200	OldPlan	Domkirkegaten 3		Bergen	Hordaland	5017	NO	Admin	Admin	\N	\N	\N	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-15 14:54:34.85	0	0	\N	0
+4601	Test	Fantoftvegen 14, Postboks 1257		Bergen	Hordaland	5017	NO	case	Test	\N	\N	47	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-18 17:48:49.289	0	0	\N	0
 \.
 
 
@@ -1874,6 +1875,7 @@ COPY contact_map (id, contact_id, type_id, table_id, foreign_id, optlock) FROM s
 680701	2801	1	39	2501	1
 680800	2900	1	39	2600	1
 680802	2902	1	39	2602	1
+682501	4601	1	39	4301	1
 \.
 
 
@@ -2188,18 +2190,18 @@ COPY currency_entity_map (currency_id, entity_id) FROM stdin;
 --
 
 COPY currency_exchange (id, entity_id, currency_id, rate, create_datetime, optlock) FROM stdin;
-2520	0	4	95.9530000000	2013-02-05 15:11:46.071	0
-2516	0	2	1.0204000000	2013-02-05 15:11:46.057	0
-2523	0	11	0.9636000000	2013-02-05 15:11:46.078	0
-2519	0	5	0.6603000000	2013-02-05 15:11:46.069	0
-2515	0	110	5.7563000000	2013-02-05 15:11:46.084	0
-2517	0	7	0.9406000000	2013-02-05 15:11:46.061	0
-2521	0	9	1.2482000000	2013-02-05 15:11:46.074	0
-2524	0	10	3.1238000000	2013-02-05 15:11:46.081	0
-2522	0	8	6.3822000000	2013-02-05 15:11:46.076	0
-2513	0	3	0.7642000000	2013-02-05 15:11:46.052	0
-2518	0	6	1110.2985000000	2013-02-05 15:11:46.064	0
+2520	0	4	95.0477000000	2013-02-05 15:11:46.071	0
 2514	0	1	1.0000000000	2013-02-05 15:11:46.059	0
+2516	0	2	1.0219000000	2013-02-05 15:11:46.057	0
+2523	0	11	0.9627000000	2013-02-05 15:11:46.078	0
+2519	0	5	0.6623000000	2013-02-05 15:11:46.069	0
+2515	0	110	5.8024000000	2013-02-05 15:11:46.084	0
+2517	0	7	0.9453000000	2013-02-05 15:11:46.061	0
+2521	0	9	1.2497000000	2013-02-05 15:11:46.074	0
+2524	0	10	3.1317000000	2013-02-05 15:11:46.081	0
+2522	0	8	6.4487000000	2013-02-05 15:11:46.076	0
+2513	0	3	0.7735000000	2013-02-05 15:11:46.052	0
+2518	0	6	1113.0974000000	2013-02-05 15:11:46.064	0
 \.
 
 
@@ -5870,6 +5872,74 @@ COPY event_log (id, entity_id, user_id, affected_user_id, table_id, foreign_id, 
 128008	10	\N	50	21	7300	2013-03-18 14:16:49.237	2	7	13	2	\N	\N	0
 128009	10	\N	\N	27	4400	2013-03-18 14:16:49.271	2	2	7	\N	\N	\N	0
 128010	10	10	50	39	4100	2013-03-18 14:16:49.287	2	9	7	\N	\N	\N	0
+129000	10	\N	50	21	7500	2013-03-18 15:23:47.194	2	7	25	\N	\N	\N	0
+129001	10	10	50	21	7500	2013-03-18 15:24:29.997	2	7	9	\N	\N	\N	0
+129002	10	\N	50	21	7500	2013-03-18 15:24:30.095	3	1	1	\N	\N	\N	0
+129003	10	\N	50	39	4200	2013-03-18 15:24:30.289	2	9	25	\N	\N	\N	0
+129004	10	10	50	21	7300	2013-03-18 15:29:12.757	2	7	7	\N	\N	\N	0
+129005	10	10	50	21	7301	2013-03-18 15:29:17.21	2	7	7	\N	\N	\N	0
+129006	10	10	50	21	7304	2013-03-18 15:29:21.46	2	7	7	\N	\N	\N	0
+129007	10	10	50	21	7400	2013-03-18 15:29:21.954	2	7	9	\N	\N	\N	0
+129008	10	10	40	21	7305	2013-03-18 15:29:25.805	2	7	7	\N	\N	\N	0
+129009	10	10	50	21	7306	2013-03-18 15:29:31.629	2	7	7	\N	\N	\N	0
+129010	10	10	50	21	7400	2013-03-18 15:29:40.176	2	7	7	\N	\N	\N	0
+129011	10	\N	50	42	1200	2013-03-18 15:30:23.949	2	10	25	\N	\N	\N	0
+130000	10	10	50	21	7500	2013-03-18 15:46:01.036	2	7	9	\N	\N	\N	0
+130001	10	\N	50	21	7600	2013-03-18 15:46:01.204	2	7	25	\N	\N	\N	0
+130002	10	10	50	21	7600	2013-03-18 15:46:01.337	2	7	9	\N	\N	\N	0
+130003	10	10	50	21	7500	2013-03-18 15:49:38.221	2	7	9	\N	\N	\N	0
+130004	10	\N	50	21	7601	2013-03-18 15:49:38.297	2	7	25	\N	\N	\N	0
+130005	10	10	50	21	7601	2013-03-18 15:49:38.34	2	7	9	\N	\N	\N	0
+130006	10	10	50	21	7500	2013-03-18 16:26:57.551	2	7	9	\N	\N	\N	0
+130007	10	\N	50	21	7602	2013-03-18 16:26:57.651	2	7	25	\N	\N	\N	0
+130008	10	10	50	21	7602	2013-03-18 16:26:57.783	2	7	9	\N	\N	\N	0
+130009	10	10	50	21	7500	2013-03-18 16:45:32.589	2	7	9	\N	\N	\N	0
+130010	10	\N	50	21	7603	2013-03-18 16:45:32.684	2	7	25	\N	\N	\N	0
+130011	10	10	50	21	7603	2013-03-18 16:45:32.737	2	7	9	\N	\N	\N	0
+130012	10	10	50	21	7500	2013-03-18 16:56:03.218	2	7	9	\N	\N	\N	0
+130013	10	\N	50	21	7604	2013-03-18 16:56:03.325	2	7	25	\N	\N	\N	0
+130014	10	10	50	21	7604	2013-03-18 16:56:03.368	2	7	9	\N	\N	\N	0
+130015	10	10	50	21	7500	2013-03-18 16:57:19.55	2	7	9	\N	\N	\N	0
+130016	10	\N	50	21	7605	2013-03-18 16:57:19.615	2	7	25	\N	\N	\N	0
+130017	10	10	50	21	7605	2013-03-18 16:57:19.677	2	7	9	\N	\N	\N	0
+130018	10	10	50	21	7500	2013-03-18 16:58:58.544	2	7	9	\N	\N	\N	0
+130019	10	\N	50	21	7606	2013-03-18 16:58:58.583	2	7	25	\N	\N	\N	0
+130020	10	10	50	21	7606	2013-03-18 16:58:58.625	2	7	9	\N	\N	\N	0
+130021	10	\N	50	21	7607	2013-03-18 17:00:37.269	2	7	25	\N	\N	\N	0
+130022	10	10	50	21	7607	2013-03-18 17:00:43.011	2	7	9	\N	\N	\N	0
+130023	10	\N	50	21	7607	2013-03-18 17:00:43.182	3	1	1	\N	\N	\N	0
+130024	10	\N	50	39	4300	2013-03-18 17:00:43.404	2	9	25	\N	\N	\N	0
+130025	10	10	50	21	7607	2013-03-18 17:03:40.959	2	7	9	\N	\N	\N	0
+130026	10	\N	50	21	7608	2013-03-18 17:03:41.026	2	7	25	\N	\N	\N	0
+130027	10	10	50	21	7608	2013-03-18 17:03:41.091	2	7	9	\N	\N	\N	0
+130028	10	10	50	21	7607	2013-03-18 17:31:15.268	2	7	9	\N	\N	\N	0
+130029	10	\N	50	21	7609	2013-03-18 17:31:15.336	2	7	25	\N	\N	\N	0
+130030	10	10	50	21	7607	2013-03-18 17:33:35.666	2	7	9	\N	\N	\N	0
+130031	10	\N	50	21	7610	2013-03-18 17:33:35.706	2	7	25	\N	\N	\N	0
+130032	10	10	50	21	7607	2013-03-18 17:34:25.04	2	7	9	\N	\N	\N	0
+130033	10	\N	50	21	7611	2013-03-18 17:34:25.085	2	7	25	\N	\N	\N	0
+130034	10	\N	\N	27	4600	2013-03-18 17:36:48.23	2	2	7	\N	\N	\N	0
+130035	10	10	50	39	4300	2013-03-18 17:36:48.239	2	9	7	\N	\N	\N	0
+130036	10	\N	\N	27	4500	2013-03-18 17:36:56.938	2	2	7	\N	\N	\N	0
+130037	10	\N	50	80	1300	2013-03-18 17:36:56.947	2	10	7	\N	\N	\N	0
+130038	10	10	50	39	4200	2013-03-18 17:36:57.003	2	9	7	\N	\N	\N	0
+130039	10	\N	50	21	7612	2013-03-18 17:38:18.412	2	7	25	\N	\N	\N	0
+130040	10	10	50	21	7612	2013-03-18 17:42:13.365	2	7	9	\N	\N	\N	0
+130041	10	10	50	21	7612	2013-03-18 17:48:04.375	2	7	7	\N	\N	\N	0
+130042	10	\N	50	21	7613	2013-03-18 17:48:30.262	2	7	25	\N	\N	\N	0
+130043	10	10	50	21	7613	2013-03-18 17:48:49.161	2	7	9	\N	\N	\N	0
+130044	10	\N	50	21	7613	2013-03-18 17:48:49.195	3	1	1	\N	\N	\N	0
+130045	10	\N	50	39	4301	2013-03-18 17:48:49.292	2	9	25	\N	\N	\N	0
+130046	10	10	50	21	7613	2013-03-18 17:58:55.396	2	7	9	\N	\N	\N	0
+130047	10	\N	50	21	7614	2013-03-18 17:58:55.475	2	7	25	\N	\N	\N	0
+130048	10	10	50	21	7614	2013-03-18 17:58:55.527	2	7	9	\N	\N	\N	0
+130049	10	10	50	21	7613	2013-03-18 18:05:38.009	2	7	9	\N	\N	\N	0
+130050	10	\N	50	21	7615	2013-03-18 18:05:38.072	2	7	25	\N	\N	\N	0
+130051	10	10	50	21	7615	2013-03-18 18:05:38.122	2	7	9	\N	\N	\N	0
+130052	10	10	50	21	7613	2013-03-18 18:06:25.564	2	7	9	\N	\N	\N	0
+130053	10	10	50	21	7613	2013-03-18 18:06:48.652	2	7	9	\N	\N	\N	0
+130054	10	\N	50	21	7616	2013-03-18 18:06:48.702	2	7	25	\N	\N	\N	0
+130055	10	10	50	21	7616	2013-03-18 18:06:48.752	2	7	9	\N	\N	\N	0
 \.
 
 
@@ -6990,6 +7060,12 @@ COPY international_description (table_id, foreign_id, psudo_column, language_id,
 14	1200	description	1	VMS Software license
 14	1201	description	1	VMS Maintenance and support
 14	1300	description	1	VAT
+14	1400	description	1	API Installation fee
+14	1401	description	1	API Maintenance and support
+14	1402	description	1	VES License
+14	1403	description	1	VES Maintenance & Support
+14	1404	description	1	VRC Installation fee
+14	1405	description	1	VRC Maintenance and support
 \.
 
 
@@ -7000,6 +7076,7 @@ COPY international_description (table_id, foreign_id, psudo_column, language_id,
 --
 
 COPY invoice (id, create_datetime, billing_process_id, user_id, status_id, delegated_invoice_id, due_date, total, payment_attempts, balance, carried_balance, in_process_payment, is_review, currency_id, deleted, paper_invoice_batch_id, customer_notes, public_number, last_reminder, overdue_step, create_timestamp, optlock) FROM stdin;
+4301	2013-04-01 00:00:00	\N	50	26	\N	2013-04-02	79312.5000000000	1	0.0000000000	0.0000000000	1	0	110	0	\N	\N	103	\N	\N	2013-03-18 17:48:49.259	2
 \.
 
 
@@ -7023,6 +7100,11 @@ COPY invoice_delivery_method (id) FROM stdin;
 --
 
 COPY invoice_line (id, invoice_id, type_id, amount, quantity, price, deleted, item_id, description, source_user_id, is_percentage, optlock) FROM stdin;
+4405	4301	1	8950.0000000000	1.0000000000	8950.0000000000	0	1201	VMS Maintenance and support Period from 03/01/2013 to 02/28/2014	50	0	1
+4406	4301	1	25000.0000000000	1.0000000000	25000.0000000000	0	1401	API Maintenance and support Period from 03/01/2013 to 02/28/2014	50	0	1
+4407	4301	1	4500.0000000000	1.0000000000	4500.0000000000	0	1403	VES Maintenance & Support Period from 03/01/2013 to 02/28/2014	50	0	1
+4408	4301	1	25000.0000000000	1.0000000000	25000.0000000000	0	1405	VRC Maintenance and support Period from 03/01/2013 to 02/28/2014	50	0	1
+4409	4301	2	15862.5000000000	1.0000000000	15862.5000000000	0	1300	Tax line for percentage tax item 1300	50	0	1
 \.
 
 
@@ -7052,6 +7134,12 @@ COPY item (id, internal_number, entity_id, percentage, price_manual, deleted, ha
 1200	vmssl	10	\N	1	0	1		2
 1201	vmsms	10	\N	1	0	1		2
 1300	t1	10	25.0000000000	0	0	1		1
+1400	api	10	\N	1	0	1		2
+1401	apims	10	\N	1	0	1		2
+1402	vesl	10	\N	1	0	1		2
+1403	vesms	10	\N	1	0	1		2
+1404	vrcif	10	\N	1	0	1		2
+1405	vrcms	10	\N	1	0	1		2
 \.
 
 
@@ -7074,6 +7162,12 @@ COPY item_dependency (item_id, child_item_id) FROM stdin;
 COPY item_price (id, item_id, currency_id, price, optlock) FROM stdin;
 1100	1200	110	8950	0
 1101	1201	110	8950	0
+1200	1400	110	15000	0
+1201	1401	110	25000	0
+1202	1402	110	4500	0
+1203	1403	110	4500	0
+1204	1404	110	15000	0
+1205	1405	110	25000	0
 \.
 
 
@@ -7086,6 +7180,9 @@ COPY item_price (id, item_id, currency_id, price, optlock) FROM stdin;
 COPY item_type (id, entity_id, description, order_line_type_id, optlock) FROM stdin;
 700	10	VMS	1	0
 800	10	Tax	2	0
+900	10	API	1	0
+901	10	VES	1	0
+902	10	VRC	1	0
 \.
 
 
@@ -7109,6 +7206,12 @@ COPY item_type_map (item_id, type_id) FROM stdin;
 1200	700
 1201	700
 1300	800
+1400	900
+1401	900
+1402	901
+1403	901
+1404	902
+1405	902
 \.
 
 
@@ -7119,11 +7222,15 @@ COPY item_type_map (item_id, type_id) FROM stdin;
 --
 
 COPY item_users (item_id, user_id, users) FROM stdin;
-1200	40	10
-1200	50	21
-1201	50	21
+1404	50	0
+1200	40	0
+1200	50	-10
+1201	50	0
 1201	30	1
 1201	40	10
+1401	50	1
+1403	50	1
+1405	50	1
 \.
 
 
@@ -7190,40 +7297,40 @@ contact_type	3
 ageing_entity_step	2
 billing_process_configuration	2
 notification_message_line	2
-payment_info_cheque	12
-payment_invoice	13
+payment_invoice	15
+notification_message_arch_line	13
+notification_message_arch	13
+invoice	44
+contact_map	6826
+contact	47
+invoice_line	45
+payment	13
+payment_info_cheque	13
 pluggable_task	19
 billing_process	10
 process_run	10
 process_run_user	9
-event_log	129
-invoice	42
+order_process	45
 currency_exchange	26
-contact_map	6824
-contact	45
-invoice_line	43
-item_type	9
-order_process	43
-notification_message_arch_line	12
 contact_field_type	11
-notification_message_arch	12
 notification_message	3
 notification_message_section	3
 process_run_total	9
 contact_field	3
-item	14
 currency	12
-recent_item	2245
+event_log	131
+purchase_order	77
+order_line	118
 order_period	4
-breadcrumb	5167
 pluggable_task_parameter	9
-item_price	12
+item_type	10
 preference	4
-purchase_order	75
-order_line	116
+item	15
+item_price	13
 base_user	6
-payment	12
 customer	5
+breadcrumb	5418
+recent_item	2349
 \.
 
 
@@ -7468,6 +7575,8 @@ COPY notification_message_arch (id, type_id, create_datetime, user_id, result_me
 1001	1	2013-03-18 13:13:54.1	50	\N	1
 1100	1	2013-03-18 14:15:02.714	50	\N	1
 1101	1	2013-03-18 14:15:02.754	50	\N	1
+1200	16	2013-03-18 17:48:50.042	50	\N	1
+1201	16	2013-03-18 17:48:50.214	50	\N	1
 \.
 
 
@@ -7522,6 +7631,8 @@ COPY notification_message_arch_line (id, message_archive_id, section, content, o
 1001	1001	1	Billing Statement from Fantoft	1
 1100	1100	1	Billing Statement from Fantoft	1
 1101	1101	1	Billing Statement from Fantoft	1
+1200	1200	1	Thank you for your payment	1
+1201	1201	1	Thank you for your payment	1
 \.
 
 
@@ -7629,17 +7740,6 @@ COPY order_billing_type (id) FROM stdin;
 --
 
 COPY order_line (id, order_id, item_id, type_id, amount, quantity, price, item_price, create_datetime, deleted, use_item, description, provisioning_status, provisioning_request_id, optlock) FROM stdin;
-11400	7300	1200	1	70000.0000000000	10.0000000000	7000.0000000000	\N	2013-03-15 15:00:31.94	0	t	VMS Software license	21	\N	1
-11404	7303	1200	1	8950.0000000000	1.0000000000	8950.0000000000	\N	2013-03-15 15:04:02.064	1	t	VMS Software license	21	\N	2
-11402	7302	1201	1	13750.0000000000	11.0000000000	1250.0000000000	\N	2013-03-15 15:03:34.67	1	f	VMS Maintenance and support 3 months	21	\N	2
-11403	7302	1201	1	-12500.0000000000	-10.0000000000	1250.0000000000	\N	2013-03-15 15:03:41.794	1	f	VMS Maintenance and support 3 months	21	\N	2
-11401	7301	1201	1	20.0000000000	20.0000000000	1.0000000000	\N	2013-03-15 15:01:09.959	0	t	VMS Maintenance and support	21	\N	5
-11405	7304	1201	1	8333.3333333333	20.0000000000	416.6666666667	\N	2013-03-15 15:07:35.13	0	f	VMS Maintenance and support 1 months	21	\N	1
-11406	7304	1201	1	-0.8333333330	-10.0000000000	0.0833333333	\N	2013-03-15 15:07:41.458	0	f	VMS Maintenance and support 1 months	21	\N	2
-11407	7305	1200	1	89500.0000000000	10.0000000000	8950.0000000000	\N	2013-03-15 15:07:57.375	0	t	VMS Software license	21	\N	1
-11408	7306	1200	1	89500.0000000000	10.0000000000	8950.0000000000	\N	2013-03-15 15:09:03.182	0	t	VMS Software license	21	\N	2
-11500	7400	1200	1	8950.0000000000	1.0000000000	8950.0000000000	\N	2013-03-18 13:09:00.908	0	t	VMS Software license	21	\N	1
-11501	7400	1201	1	8950.0000000000	1.0000000000	8950.0000000000	\N	2013-03-18 13:09:02.751	0	t	VMS Maintenance and support	21	\N	1
 \.
 
 
@@ -7726,6 +7826,7 @@ COPY partner_range (id, partner_id, percentage_rate, referral_fee, range_from, r
 --
 
 COPY payment (id, user_id, attempt, result_id, amount, create_datetime, update_datetime, payment_date, method_id, credit_card_id, deleted, is_refund, is_preauth, payment_id, currency_id, payout_id, ach_id, balance, payment_period, payment_notes, optlock) FROM stdin;
+1200	50	1	4	79312.5000000000	2013-03-18 15:30:23.926	\N	2013-03-18	1	\N	0	0	0	\N	110	\N	\N	0.0000000000	\N		3
 \.
 
 
@@ -7746,6 +7847,7 @@ COPY payment_authorization (id, payment_id, processor, code1, code2, code3, appr
 --
 
 COPY payment_info_cheque (id, payment_id, bank, cheque_number, cheque_date, optlock) FROM stdin;
+1200	1200	A	1111	2013-03-18	0
 \.
 
 
@@ -7756,6 +7858,7 @@ COPY payment_info_cheque (id, payment_id, bank, cheque_number, cheque_date, optl
 --
 
 COPY payment_invoice (id, payment_id, invoice_id, amount, create_datetime, optlock) FROM stdin;
+1400	1200	4301	79312.5000000000	2013-03-18 17:48:49.425	0
 \.
 
 
@@ -8302,7 +8405,7 @@ COPY preference (id, type_id, table_id, foreign_id, value) FROM stdin;
 21	18	5	10	
 30	44	5	10	1
 22	31	5	10	2013-4-1
-20	19	5	10	101
+20	19	5	10	104
 \.
 
 
@@ -8418,14 +8521,6 @@ COPY promotion (id, item_id, code, notes, once, since, until) FROM stdin;
 --
 
 COPY purchase_order (id, user_id, period_id, billing_type_id, active_since, active_until, cycle_start, create_datetime, next_billable_day, created_by, status_id, currency_id, deleted, notify, last_notified, notification_step, due_date_unit_id, due_date_value, df_fm, anticipate_periods, own_invoice, notes, notes_in_invoice, is_current, optlock, is_master, add_to_master, pay_plan) FROM stdin;
-7303	50	1	1	2013-01-01	\N	\N	2013-03-15 15:04:02.064	\N	10	16	110	1	0	\N	\N	3	\N	\N	\N	\N		0	0	3	0	0	New
-7302	50	1	1	2013-01-01	\N	\N	2013-03-15 15:03:34.67	\N	10	16	110	1	0	\N	\N	3	\N	\N	\N	\N		0	0	4	0	1	New
-7305	40	1	1	2013-03-01	\N	\N	2013-03-15 15:07:57.375	\N	10	16	110	0	0	\N	\N	3	\N	\N	\N	\N		0	0	0	0	0	New
-7301	50	300	1	2012-04-01	\N	\N	2013-03-15 15:01:09.959	2012-04-01	10	16	110	0	0	\N	\N	3	\N	\N	\N	\N		0	0	9	1	0	New
-7306	50	1	1	2013-03-01	\N	\N	2013-03-15 15:09:03.182	\N	10	16	110	0	0	\N	\N	3	\N	\N	\N	\N		0	0	6	0	0	New
-7400	50	300	1	2013-02-01	\N	\N	2013-03-18 13:09:00.908	2013-02-01	10	16	110	0	0	\N	\N	3	\N	\N	\N	\N		0	0	4	1	0	New
-7304	50	1	1	2013-03-01	\N	\N	2013-03-15 15:07:35.13	\N	10	16	110	0	0	\N	\N	3	\N	\N	\N	\N		0	0	5	0	1	New
-7300	50	1	1	2012-04-01	\N	\N	2013-03-15 15:00:31.94	\N	10	16	110	0	0	\N	\N	3	\N	\N	\N	\N		0	0	4	0	0	New
 \.
 
 
@@ -8436,10 +8531,6 @@ COPY purchase_order (id, user_id, period_id, billing_type_id, active_since, acti
 --
 
 COPY purchase_order_master (order_id, master) FROM stdin;
-7302	0
-7301	1
-7304	0
-7306	0
 \.
 
 
@@ -8450,11 +8541,11 @@ COPY purchase_order_master (order_id, master) FROM stdin;
 --
 
 COPY recent_item (id, type, object_id, user_id, version) FROM stdin;
-2240	PLUGIN	25	10	0
-2241	PLUGIN	25	10	0
-2242	PLUGIN	25	10	0
-2243	PLUGIN	25	10	0
-2244	INVOICE	4100	10	0
+2344	CUSTOMER	50	10	0
+2345	ORDER	7613	10	0
+2346	CUSTOMER	30	10	0
+2347	CUSTOMER	50	10	0
+2348	ORDER	7613	10	0
 \.
 
 
@@ -11045,7 +11136,7 @@ GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
--- Completed on 2013-03-18 14:30:21
+-- Completed on 2013-03-18 18:09:01
 
 --
 -- PostgreSQL database dump complete
