@@ -1,0 +1,4 @@
+delete from process_run_total;
+delete from process_run_user;
+delete from process_run;
+delete from billing_process;

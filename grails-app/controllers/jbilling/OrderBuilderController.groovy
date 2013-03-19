@@ -21,33 +21,25 @@
 package jbilling
 
 import grails.plugins.springsecurity.Secured
-import com.sapienter.jbilling.server.item.db.ItemDTO
-import com.sapienter.jbilling.server.user.db.CompanyDTO
-import com.sapienter.jbilling.server.order.OrderWS
-import com.sapienter.jbilling.server.user.db.UserDTO
 
-import com.sapienter.jbilling.server.order.db.OrderPeriodDTO
-import com.sapienter.jbilling.server.order.db.OrderBillingTypeDTO
-import com.sapienter.jbilling.server.util.Constants
-import com.sapienter.jbilling.server.user.contact.db.ContactDTO
-import com.sapienter.jbilling.server.order.OrderLineWS
-import com.sapienter.jbilling.common.SessionInternalError
-import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
-
-import com.sapienter.jbilling.server.order.db.OrderStatusDTO
-
-import java.math.BigDecimal;
 import java.math.RoundingMode
-import com.sapienter.jbilling.server.process.db.PeriodUnitDTO
-import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
-import org.jopendocument.dom.spreadsheet.Sheet
-import org.jopendocument.dom.spreadsheet.SpreadSheet;
-import org.springframework.webflow.conversation.Conversation;
-import org.apache.commons.lang.StringUtils
-import com.sapienter.jbilling.server.item.CurrencyBL
 
-import com.sapienter.jbilling.server.order.OrderBL;
-import com.sapienter.jbilling.server.order.db.OrderDTO;
+import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
+import org.jopendocument.dom.spreadsheet.SpreadSheet
+
+import com.sapienter.jbilling.common.SessionInternalError
+import com.sapienter.jbilling.server.item.CurrencyBL
+import com.sapienter.jbilling.server.order.OrderBL
+import com.sapienter.jbilling.server.order.OrderLineWS
+import com.sapienter.jbilling.server.order.OrderWS
+import com.sapienter.jbilling.server.order.db.OrderBillingTypeDTO
+import com.sapienter.jbilling.server.order.db.OrderPeriodDTO
+import com.sapienter.jbilling.server.order.db.OrderStatusDTO
+import com.sapienter.jbilling.server.process.db.PeriodUnitDTO
+import com.sapienter.jbilling.server.user.contact.db.ContactDTO
+import com.sapienter.jbilling.server.user.db.CompanyDTO
+import com.sapienter.jbilling.server.user.db.UserDTO
+import com.sapienter.jbilling.server.util.Constants
 
 
 
@@ -264,7 +256,7 @@ class OrderBuilderController {
 
                 // rate order
                 if (order.orderLines) {
-					println order
+					//println order+" order"
                     try {
                         order = webServicesSession.rateOrder(order)
                     } catch (SessionInternalError e) {
@@ -343,18 +335,13 @@ class OrderBuilderController {
 				order.isMaster = params.isMaster ? 1 : 0
 				order.addToMaster = params.addToMaster ? 1 : 0
 				order.payPlan= params.plan 
-				println params.period+" 1"
-				println order.period+" 2"
+				
 				try{
 					order.period = Integer.parseInt(params.period)
 				}
 				catch(NumberFormatException e){
 					order.period =Constants.ORDER_PERIOD_ONCE
 				}
-				
-				println order.period+" 3"
-				 
-				
 
                 // one time orders are ALWAYS post-paid
                 if (order.period == Constants.ORDER_PERIOD_ONCE)
@@ -448,7 +435,7 @@ class OrderBuilderController {
 							//Creating a new order. Not adding to the master order
 							if(order.addToMaster != 1 ){
 								
-								println "create new order, not to master"
+								//println "create new order, not to master"
 								log.debug("creating order ${order}")
 								order.id = webServicesSession.createOrder(order)
 								
@@ -461,16 +448,13 @@ class OrderBuilderController {
 							}
 							//Creating and adding a new order to the master order
 							else {
-								println "editOrders!!!"
+								//println "editOrders!!!"
 								log.debug("creating edited order ${order}")
 								def masterOrder = webServicesSession.getMasterOrder(order.userId)
 								
-								
-									//Edit master order and new order
+								//Edit master order and new order
 								masterOrder=editOrders(order,masterOrder);
-								
-								
-								
+
 								order.orderLines = order.orderLines.sort { it.itemId }
 							
 								order.id = webServicesSession.createUpdateOrder(order)
@@ -492,7 +476,7 @@ class OrderBuilderController {
 
                     } else {
                         if (SpringSecurityUtils.ifAllGranted("ORDER_21")) {
-							println "Editing"
+							//println "Editing"
                             // add deleted lines to our order so that updateOrder() can save them
                             def deletedLines = conversation.deletedLines
                             def lines = order.orderLines as List
@@ -596,17 +580,17 @@ class OrderBuilderController {
 							molQuantity=mol.getQuantityAsDecimal()
 							totalQuantity=molQuantity+nolQuantity
 							BigDecimal molOldAvgPrice
-							println "BERDINTZA "+BigDecimal.ZERO.compareTo(totalQuantity)
+							//println "BERDINTZA "+BigDecimal.ZERO.compareTo(totalQuantity)
 							if((BigDecimal.ZERO.compareTo(totalQuantity) != 0)){
 								def payPlan=masterOrder.getPayPlan()
 								molOldAvgPrice = mol.getPriceAsDecimal()
-								println molOldAvgPrice+" masterOrderLineAvgPrice"
-								println molQuantity+" molQuantity"
+								//println molOldAvgPrice+" masterOrderLineAvgPrice"
+								//println molQuantity+" molQuantity"
 								back=molOldAvgPrice*molQuantity*monthsLeft/12
-								println back
-								println "resources/pay_plans/${payPlan}${mol.description}.ods"
+								//println back
+								//println "resources/pay_plans/${payPlan}${mol.description}.ods"
 								def file = new File("resources/pay_plans/${payPlan}_${mol.description}.ods");
-								println file.toPath()
+								//println file.toPath()
 								def sheet = SpreadSheet.createFromFile(file).getSheet(""+masterYear)
 								//Negative number change to positive
 								boolean negative=false;
@@ -621,9 +605,9 @@ class OrderBuilderController {
 								if(negative==true){
 									amount=amount.negate();
 								}
-								println value+" "+totalQuantity+" "+amount
+								//println value+" "+totalQuantity+" "+amount
 								BigDecimal avgPrice=(BigDecimal)(amount/totalQuantity)
-								println avgPrice+" avgPrice"
+								//println avgPrice+" avgPrice"
 								
 								//Edit master order line
 								mol.setPrice(avgPrice)
@@ -632,10 +616,10 @@ class OrderBuilderController {
 								mol.useItem = true
 								
 								//webServicesSession.updateOrderLine(mol) //update Master Order Line
-								println mol.getPrice()+" "+mol.getAmount()
+								//println mol.getPrice()+" "+mol.getAmount()
 								
 								//Edit new order line
-								println "Order before"+order
+								//println "Order before"+order
 								nol.quantity= totalQuantity
 								nol.setAmount(amount*monthsLeft/12)
 								nol.setPrice(amount*monthsLeft/12/totalQuantity)
@@ -651,7 +635,7 @@ class OrderBuilderController {
 								line.itemId=mol.getItemId()
 								line.useItem = false
 								line.description=mol.getDescription()+" "+monthsLeft+" months"
-								//println line.toString()
+								
 				
 								// add line to order
 								
@@ -663,10 +647,10 @@ class OrderBuilderController {
 							else{
 								
 								molOldAvgPrice = mol.getPriceAsDecimal()
-								println molOldAvgPrice+" masterOrderLineAvgPrice"
-								println molQuantity+" molQuantity"
+								//println molOldAvgPrice+" masterOrderLineAvgPrice"
+								//println molQuantity+" molQuantity"
 								back=molOldAvgPrice*molQuantity*monthsLeft/12
-								println back
+								//println back+" back"
 								
 								//Edit master order line
 								mol.setQuantityAsDecimal(totalQuantity)
@@ -674,12 +658,12 @@ class OrderBuilderController {
 								mol.useItem = false
 								mol.setDeleted(1)
 								
-								println nol
+								//println nol+" nol"
 								
 								//Edit new order line
 								nol.setDeleted(1)
 								
-								println nol
+								//println nol+" nol"
 								
 								// build line
 								def line = new OrderLineWS()
@@ -737,10 +721,10 @@ class OrderBuilderController {
 				def file = new File("resources/pay_plans/${payPlan}_${nol.description}.ods");
 				def sheet = SpreadSheet.createFromFile(file).getSheet(""+masterYear)
 				def q=nol.getQuantityAsDecimal()
-				println q
+				//println q+" q"
 				BigDecimal value=sheet.getCellAt("B${q.intValue()}").getValue()
 				BigDecimal amount=sheet.getCellAt("C${q.intValue()}").getValue()
-				println value+" "+q+" "+amount
+				//println value+" value "+q+" q"+amount+" amount"
 				
 				
 				//Edit new order line
@@ -753,9 +737,34 @@ class OrderBuilderController {
 			
 			
 		}
-		println order
-		masterOrder.orderLines = masterOrder.orderLines.sort { it.itemId }
-		webServicesSession.updateOrder(masterOrder)
+		//println order+" order"
+		//println masterOrder+" masterOrder"
+		//Check if there is a non deleted master order line. In that case update the order
+		def molines=masterOrder.getOrderLines()
+		boolean hasNotDeleted=false;
+		molines.each { finalMol ->
+			//println finalMol.deleted+" deleted"
+			if(finalMol.deleted==0){
+				hasNotDeleted=true;
+				masterOrder.orderLines = masterOrder.orderLines.sort { it.itemId }
+				webServicesSession.updateOrder(masterOrder)
+				return
+			}
+			
+		}
+		
+		if(hasNotDeleted==false){
+			//println "MASTER with deleted lines"
+			//Set the lines to not deleted for updating the table item_users
+			molines.each { finalMol ->
+				finalMol.setDeleted(0)
+				//webServicesSession.updateOrder(masterOrder)
+			}
+			//If all the lines are deleted, delete the master order
+			webServicesSession.deleteOrder(masterOrder.getId())
+			//masterOrder=null;
+		}
+		
 		return masterOrder;
 		
 		// set success message in session, contents of the flash scope doesn't survive

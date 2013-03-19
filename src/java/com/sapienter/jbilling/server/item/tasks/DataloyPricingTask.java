@@ -15,48 +15,28 @@
  */
 package com.sapienter.jbilling.server.item.tasks;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.drools.KnowledgeBase;
-import org.drools.lang.DRLParser.neg_operator_key_return;
-import org.drools.runtime.StatelessKnowledgeSession;
 import org.jopendocument.dom.spreadsheet.Sheet;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
-import com.sapienter.jbilling.common.JNDILookup;
-import com.sapienter.jbilling.common.SessionInternalError;
 import com.sapienter.jbilling.server.item.CurrencyBL;
 import com.sapienter.jbilling.server.item.ItemBL;
 import com.sapienter.jbilling.server.item.PricingField;
 import com.sapienter.jbilling.server.item.db.ItemDTO;
 import com.sapienter.jbilling.server.item.db.ItemPriceDTO;
-import com.sapienter.jbilling.server.order.OrderBL;
 import com.sapienter.jbilling.server.order.db.OrderDAS;
 import com.sapienter.jbilling.server.order.db.OrderDTO;
-import com.sapienter.jbilling.server.order.db.OrderLineDTO;
 import com.sapienter.jbilling.server.pluggableTask.PluggableTask;
 import com.sapienter.jbilling.server.pluggableTask.TaskException;
-import com.sapienter.jbilling.server.user.ContactBL;
-import com.sapienter.jbilling.server.user.ContactDTOEx;
-import com.sapienter.jbilling.server.user.UserDTOEx;
-import com.sapienter.jbilling.server.user.contact.db.ContactFieldDTO;
-import com.sapienter.jbilling.server.util.DTOFactory;
-import com.sapienter.jbilling.server.util.WebServicesSessionSpringBean;
-import com.sapienter.jbilling.server.util.db.CurrencyExchangeDAS;
-
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
 
 public class DataloyPricingTask extends PluggableTask implements IPricing {
     
@@ -66,7 +46,7 @@ public class DataloyPricingTask extends PluggableTask implements IPricing {
     public BigDecimal getPrice(Integer itemId, BigDecimal quantity, Integer userId, Integer currencyId,
             List<PricingField> fields, BigDecimal defaultPrice, OrderDTO pricingOrder, boolean singlePurchase)
             throws TaskException {
-    	System.out.println(currencyId+" cId");
+    	//System.out.println(currencyId+" cId");
         // now we have the line with good defaults, the order and the item
         // These have to be visible to the rules
         /*KnowledgeBase knowledgeBase;
@@ -81,7 +61,7 @@ public class DataloyPricingTask extends PluggableTask implements IPricing {
         PricingManager manager = new PricingManager(itemId, userId, currencyId, defaultPrice);
         //mySession.setGlobal("manager", manager);
         
-        System.out.println(pricingOrder.toString());
+        //System.out.println(pricingOrder.toString());
         ItemBL ibl=new ItemBL(itemId);
         
         ItemDTO idto=ibl.getEntity();
@@ -107,7 +87,7 @@ public class DataloyPricingTask extends PluggableTask implements IPricing {
         else if(pricingOrder.getIsMaster()==1){
         	masterOrder=pricingOrder;
         	Date masterOrderNextBillableDay = masterOrder.getNextBillableDay();
-        	System.out.println(masterOrderNextBillableDay+" billableday");
+        	//System.out.println(masterOrderNextBillableDay+" billableday");
         	//When creating
         	if(masterOrderNextBillableDay==null){
         		cal.setTime(masterOrder.getActiveSince());
@@ -117,12 +97,12 @@ public class DataloyPricingTask extends PluggableTask implements IPricing {
         		cal.setTime(masterOrderNextBillableDay);
         		//New price if the next billableDay is in less than 25 days from the current date
         		Calendar calNow =Calendar.getInstance();
-        		System.out.println("Barruan!");
+        		//System.out.println("Barruan!");
         		long milliseconds1 = calNow.getTimeInMillis();
         	    long milliseconds2 = cal.getTimeInMillis();
         	    long diff = milliseconds2 - milliseconds1;
         	    long diffDays = diff / (24 * 60 * 60 * 1000);
-        	    System.out.println(diffDays+" diffDays"); 
+        	    //System.out.println(diffDays+" diffDays"); 
         	    //Change the price for the master order
         		if(diffDays<=25){
         			year=cal.get(Calendar.YEAR);
@@ -142,18 +122,18 @@ public class DataloyPricingTask extends PluggableTask implements IPricing {
         }
       
       		
-        System.out.println(year+" year");
+        //System.out.println(year+" year");
         
         BigDecimal avgPrice=defaultPrice;
 		if(payPlan!=null){
 			try {
 				
 				File file = new File("resources/pay_plans/"+payPlan+"_"+description+".ods");
-				System.out.println(file.toPath());
+				//System.out.println(file.toPath());
 				Sheet sheet=null;
-				System.out.println("Aure");
+				//System.out.println("Aure");
 				sheet = SpreadSheet.createFromFile(file).getSheet(""+year);
-				System.out.println("gero");
+				//System.out.println("gero");
 				//Negative number change to positive
 				boolean negative=false;
 				if(quantity.intValue()<0){
@@ -166,10 +146,10 @@ public class DataloyPricingTask extends PluggableTask implements IPricing {
 				if(negative==true){
 					amount=amount.negate();
 				}
-				System.out.println(value+" "+amount+" "+avgPrice);
+				//System.out.println(value+" "+amount+" "+avgPrice);
 				
 			} catch (IOException e) {
-				System.out.println("Error reading from file");
+				//System.out.println("Error reading from file");
 				e.printStackTrace();
 			}
 			
@@ -178,7 +158,7 @@ public class DataloyPricingTask extends PluggableTask implements IPricing {
 		//If the currency is NOT Norwegian Krone
 		if(!pricingOrder.getCurrency().getCode().equals("NOK")){
 			CurrencyBL cbl=new CurrencyBL();
-			System.out.println(idto.getCurrencyId()+currencyId.toString()+avgPrice+pricingOrder.getUser().getEntity().getId());
+			//System.out.println(idto.getCurrencyId()+currencyId.toString()+avgPrice+pricingOrder.getUser().getEntity().getId());
 			Iterator<ItemPriceDTO> it=idto.getItemPrices().iterator();
 			boolean go=false;
 			Integer fromCurrency=0;

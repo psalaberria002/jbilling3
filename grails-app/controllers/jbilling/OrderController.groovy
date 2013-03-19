@@ -298,7 +298,10 @@ class OrderController {
 				
 				def masterOrder = webServicesSession.getMasterOrder(params.int('userId'))
 				println masterOrder
-				webServicesSession.updateOrder(masterOrder)
+				if(masterOrder!=null){
+					webServicesSession.updateOrder(masterOrder)
+				}
+				
 				
 			}
             flash.message = 'order.delete.success'

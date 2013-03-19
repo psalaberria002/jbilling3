@@ -21,6 +21,7 @@ import com.sapienter.jbilling.server.util.Constants;
 import com.sapienter.jbilling.server.util.db.AbstractDAS;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
+import org.hibernate.ScrollableResults;
 import org.joda.time.DateMidnight;
 
 import java.util.Collections;
@@ -205,6 +206,21 @@ public class OrderLineDAS extends AbstractDAS<OrderLineDTO> {
         query.setParameter("startdate", startdate.toDate());
 
         return query.list();
+    }
+    @SuppressWarnings("unchecked")
+    public List<OrderLineDTO> findDeletedLines(Integer orderId){
+    	
+    	final String hql =
+                "select line "
+                        + "  from OrderLineDTO line "
+                        + "where line.deleted = 1 "
+                        + "  and line.purchaseOrder.id = :orderId ";
+
+        Query query = getSession().createQuery(hql);
+        query.setParameter("orderId", orderId);
+		
+   	 	
+   	 return query.list();
     }
 
 

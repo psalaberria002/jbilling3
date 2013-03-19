@@ -305,17 +305,17 @@ public class OrderDAS extends AbstractDAS<OrderDTO> {
                  .createSQLQuery("select master from purchase_order_master where order_id=:orderId")
                  .setParameter("orderId", orderId)
                  .uniqueResult();
-    	 System.out.println(result);
+    	 //System.out.println(result);
     	 Query query=null; 
     	 if(result!=null){
-    		 System.out.println("notnull");
+    		 //System.out.println("notnull");
     		 query = getSession().createSQLQuery(
   	    			"UPDATE purchase_order_master SET master=:b WHERE order_id=:orderId")
   	    			.setParameter("orderId", orderId)
   	    			.setParameter("b", b);
     	 }
     	 else{
-    		 System.out.println("yesnull");
+    		 //System.out.println("yesnull");
     		 query = getSession().createSQLQuery(
     	    			"INSERT INTO purchase_order_master VALUES ( :orderId, :b)")
     	    			.setParameter("orderId", orderId)
@@ -341,10 +341,10 @@ public class OrderDAS extends AbstractDAS<OrderDTO> {
                  .setParameter("itemId", itemId)
                  .setParameter("userId", userId)
                  .uniqueResult();
-    	 System.out.println(result);
+    	 //System.out.println(result);
     	 Query query=null; 
     	 if(result!=null){
-    		 System.out.println("notnull");
+    		 //System.out.println("notnull");
     		 query = getSession().createSQLQuery(
   	    			"UPDATE item_users SET users=:n WHERE item_id=:itemId AND user_id=:userId")
   	    			.setParameter("itemId", itemId)
@@ -352,7 +352,7 @@ public class OrderDAS extends AbstractDAS<OrderDTO> {
   	    			.setParameter("n", n);
     	 }
     	 else{
-    		 System.out.println("yesnull");
+    		 //System.out.println("yesnull");
     		 query = getSession().createSQLQuery(
     	    			"INSERT INTO item_users VALUES ( :itemId, :userId , :n)")
     	    			.setParameter("itemId", itemId)
@@ -370,7 +370,7 @@ public class OrderDAS extends AbstractDAS<OrderDTO> {
                 .setParameter("itemId", itemId)
                 .setParameter("userId", userId)
                 .uniqueResult();
-   	 	System.out.println(result+" number of users for item "+itemId+" and user "+userId);
+   	 	//System.out.println(result+" number of users for item "+itemId+" and user "+userId);
     	return (Integer)result;
     }
     /**
@@ -400,4 +400,7 @@ public class OrderDAS extends AbstractDAS<OrderDTO> {
         
         return criteria.list();
     }
+    
+    
+    
 }
