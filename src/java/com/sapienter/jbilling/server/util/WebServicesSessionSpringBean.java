@@ -1146,7 +1146,7 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
          
 
         } catch (Exception e) {
-            LOG.error("WS - updateOrder", e);
+            LOG.error("WS - updateOrder"+order, e);
             throw new SessionInternalError("Error updating order");
         }
 

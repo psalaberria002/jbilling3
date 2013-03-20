@@ -454,13 +454,17 @@ class OrderBuilderController {
 								
 								//Edit master order and new order
 								masterOrder=editOrders(order,masterOrder);
+								
+								println "pasa"
 
 								order.orderLines = order.orderLines.sort { it.itemId }
 							
 								order.id = webServicesSession.createUpdateOrder(order)
+								
+								
 								OrderBL obl = new OrderBL(order.id);
 								order=obl.getWS(session['language_id']);
-								webServicesSession.updateOrder(order) //updates the order, adding a row into purchase_order_master
+								//webServicesSession.updateOrder(order) //updates the order, adding a row into purchase_order_master
 
 								// set success message in session, contents of the flash scope doesn't survive
 								// the redirect to the order list when the web-flow finishes
@@ -758,10 +762,13 @@ class OrderBuilderController {
 			//Set the lines to not deleted for updating the table item_users
 			molines.each { finalMol ->
 				finalMol.setDeleted(0)
-				//webServicesSession.updateOrder(masterOrder)
+				
 			}
+			webServicesSession.updateOrder(masterOrder)
 			//If all the lines are deleted, delete the master order
+			
 			webServicesSession.deleteOrder(masterOrder.getId())
+			
 			//masterOrder=null;
 		}
 		
