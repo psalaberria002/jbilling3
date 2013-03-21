@@ -2954,7 +2954,6 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
     public List<Map<String,String>> getItemUsersWithDescription(Integer userId){
     	OrderDAS orderDas=new OrderDAS();
     	List<Object[]> list=orderDas.findItemUsersWithDescription(userId);
-    	System.out.println(list);
     	Iterator it=list.iterator();
     	
     	List<Map<String,String>> mapList=new ArrayList<Map<String,String>>();

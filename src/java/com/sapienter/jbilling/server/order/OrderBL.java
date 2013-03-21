@@ -688,7 +688,7 @@ public class OrderBL extends ResultList implements OrderSQL {
 		order = orderDas.save(order);
 
 		// UPDATING purchase_order_master table
-		//orderDas.updateOrInsertOrderMaster(order.getId(), order.getIsMaster());
+		orderDas.updateOrInsertOrderMaster(order.getId(), order.getIsMaster());
 
 		// UPDATING THE NUMBER OF USERS FOR ITEM AND USER when editing order
 		// (master, add to master and normal)
@@ -750,7 +750,7 @@ public class OrderBL extends ResultList implements OrderSQL {
 			for (Iterator i = order.getLines().iterator(); i.hasNext();) {
 				OrderLineDTO temp = (OrderLineDTO) i.next();
 				if(temp.getDeleted()==0){
-					//System.out.println(temp.getDescription());
+					System.out.println(temp.getDescription());
 					orderDas.updateOrInsertItemUsers(temp.getItemId(),
 							order.getUserId(), temp.getQuantityInt());
 				}
@@ -768,6 +768,8 @@ public class OrderBL extends ResultList implements OrderSQL {
 					.findDeletedLines(order.getId());
 			if (deletedLines != null || !recentlyDeletedLines.isEmpty()) {
 				//Checking deleted lines from database and currently deleted lines (not yet in the db).
+				
+				
 				deletedLines.addAll(recentlyDeletedLines);
 				for (Iterator it = deletedLines.iterator(); it.hasNext();) {
 					OrderLineDTO tempDel = (OrderLineDTO) it.next();
@@ -803,31 +805,24 @@ public class OrderBL extends ResultList implements OrderSQL {
 			// For each line in the editable order
 			for (Iterator i = order.getLines().iterator(); i.hasNext();) {
 				OrderLineDTO temp = (OrderLineDTO) i.next();
+				int cont = 0;
 				Integer finalQuantity = new Integer(0);
-				//System.out.println(temp+" temp");
-					
-					// Iterating orders
-					for (Iterator oit = results.iterator(); oit.hasNext();) {
-						
-						Object row = oit.next();
-						OrderDTO ord = (OrderDTO) row;
-						for (Iterator it = ord.getLines().iterator(); it.hasNext();) {
-							OrderLineDTO tempo = (OrderLineDTO) it.next();
-							if((tempo.getDeleted()==0) && (temp.getItemId().equals(tempo.getItemId()))){
-								finalQuantity += tempo.getQuantityInt();
-								//System.out.println(finalQuantity+" fQ");
-							}
-							
-						}
-						
+				// Iterating orders
+				for (Iterator oit = results.iterator(); oit.hasNext();) {
+
+					Object row = oit.next();
+					OrderDTO ord = (OrderDTO) row;
+					for (Iterator it = ord.getLines().iterator(); it.hasNext();) {
+						OrderLineDTO tempo = (OrderLineDTO) it.next();
+						finalQuantity += tempo.getQuantityInt();
 					}
-					orderDas.updateOrInsertItemUsers(temp.getItemId(),
-							order.getUserId(), finalQuantity);
+					cont++;
 				}
-				
+				orderDas.updateOrInsertItemUsers(temp.getItemId(),
+						order.getUserId(), finalQuantity);
 			}
 
-		
+		}
 	}
 
 	private void updateEndOfOrderProcess(Date newDate) {

@@ -395,7 +395,7 @@ public class OrderDAS extends AbstractDAS<OrderDTO> {
                    .createSQLQuery("select b.content,a.item_id,a.users from international_description b, item_users a " +
                    		"where b.table_id=14 AND b.foreign_id=a.item_id AND b.language_id=1 AND a.user_id=:userId")
                    .setParameter("userId", userId);
-      	 	System.out.println(query+" number of users for item  and user "+userId);
+      	 	
        	return query.list();
        }
     

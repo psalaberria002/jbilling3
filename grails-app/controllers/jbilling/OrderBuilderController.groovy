@@ -455,7 +455,7 @@ class OrderBuilderController {
 								//Edit master order and new order
 								masterOrder=editOrders(order,masterOrder);
 								
-								println "pasa"
+								//println "pasa"
 
 								order.orderLines = order.orderLines.sort { it.itemId }
 							
@@ -547,16 +547,33 @@ class OrderBuilderController {
 		//monthsLeft
 		//Getting the starting day of the new order
 		def orderActiveDay = order.getActiveSince()
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(orderActiveDay);
-		def newOrderActiveSinceYear= cal.get(Calendar.YEAR);
-		def monthStart = cal.get(Calendar.MONTH);
+		Calendar calActive = Calendar.getInstance();
+		calActive.setTime(orderActiveDay);
+		def newOrderActiveSinceYear= calActive.get(Calendar.YEAR);
+		def monthStart = calActive.get(Calendar.MONTH);
+		def dayStart = calActive.get(Calendar.DAY_OF_MONTH);
+		System.out.println(newOrderActiveSinceYear+" "+monthStart+" "+dayStart);
 		//Getting next billable day of the master order
 		def masterOrderNextBillableDay = masterOrder.getNextBillableDay()
+		Calendar cal=Calendar.getInstance();
 		cal.setTime(masterOrderNextBillableDay);
 		def masterOrderNextBillableYear= cal.get(Calendar.YEAR);
 		def masterYear= masterOrderNextBillableYear-1;
 		def monthNext = cal.get(Calendar.MONTH);
+		
+		//Getting previous day of the master order next billable day
+		cal.add(Calendar.DAY_OF_MONTH, -1);
+		cal.add(Calendar.MONTH, 1)
+		System.out.println(cal.getTime());
+		def prevDayNext = cal.get(Calendar.DAY_OF_MONTH);
+		def prevMonthNext = cal.get(Calendar.MONTH);
+		def prevYearNext = cal.get(Calendar.YEAR);
+		System.out.println(prevDayNext+" "+prevMonthNext+" "+prevYearNext);
+		//Getting the next month of the activeSince for the new order (Since January is 0, it will take the value 1 instead)
+		//It is just for creating the description (Period from mm/dd/yyyy to mm/dd/yyyy)
+		calActive.add(Calendar.MONTH, 1);
+		def monthStartPrint = calActive.get(Calendar.MONTH);
+		System.out.println(monthStartPrint);
 		//If the years are different
 		if(newOrderActiveSinceYear!=masterOrderNextBillableYear){
 			monthNext+=12;
@@ -627,7 +644,11 @@ class OrderBuilderController {
 								nol.quantity= totalQuantity
 								nol.setAmount(amount*monthsLeft/12)
 								nol.setPrice(amount*monthsLeft/12/totalQuantity)
-								nol.description=mol.getDescription()+" "+monthsLeft+" months"
+								monthStartPrint = (monthStartPrint < 10 ? "0" : "") + monthStartPrint;
+								dayStart = (dayStart < 10 ? "0" : "") + dayStart;
+								prevMonthNext= (prevMonthNext < 10 ? "0" : "") + prevMonthNext;
+								prevDayNext= (prevDayNext < 10 ? "0" : "") + prevDayNext;
+								nol.description=mol.getDescription()+" Period from "+monthStartPrint+"/"+dayStart+"/"+newOrderActiveSinceYear+" to "+prevMonthNext+"/"+prevDayNext+"/"+prevYearNext
 								nol.useItem = false
 								
 								// build line
@@ -638,7 +659,7 @@ class OrderBuilderController {
 								line.setAmount(back*(-1))
 								line.itemId=mol.getItemId()
 								line.useItem = false
-								line.description=mol.getDescription()+" "+monthsLeft+" months"
+								line.description=mol.getDescription()+" Period from "+monthStartPrint+"/"+dayStart+"/"+newOrderActiveSinceYear+" to "+prevMonthNext+"/"+prevDayNext+"/"+prevYearNext
 								
 				
 								// add line to order
@@ -677,8 +698,11 @@ class OrderBuilderController {
 								line.setAmount(back*(-1))
 								line.itemId=mol.getItemId()
 								line.useItem = false
-								line.description=mol.getDescription()+" "+monthsLeft+" months"
-								//println line.toString()
+								monthStartPrint = (monthStartPrint < 10 ? "0" : "") + monthStartPrint;
+								dayStart = (dayStart < 10 ? "0" : "") + dayStart;
+								prevMonthNext= (prevMonthNext < 10 ? "0" : "") + prevMonthNext;
+								prevDayNext= (prevDayNext < 10 ? "0" : "") + prevDayNext;
+								line.description=mol.getDescription()+" Period from "+monthStartPrint+"/"+dayStart+"/"+newOrderActiveSinceYear+" to "+prevMonthNext+"/"+prevDayNext+"/"+prevYearNext
 				
 								// add line to order
 								
@@ -734,7 +758,11 @@ class OrderBuilderController {
 				//Edit new order line
 				nol.setAmount(amount*monthsLeft/12)
 				nol.setPrice(amount*monthsLeft/12/q)
-				nol.description=nol.getDescription()+" "+monthsLeft+" months"
+				monthStartPrint = (monthStartPrint < 10 ? "0" : "") + monthStartPrint;
+				dayStart = (dayStart < 10 ? "0" : "") + dayStart;
+				prevMonthNext= (prevMonthNext < 10 ? "0" : "") + prevMonthNext;
+				prevDayNext= (prevDayNext < 10 ? "0" : "") + prevDayNext;
+				nol.description=nol.getDescription()+" Period from "+monthStartPrint+"/"+dayStart+"/"+newOrderActiveSinceYear+" to "+prevMonthNext+"/"+prevDayNext+"/"+prevYearNext
 				nol.useItem = false
 				
 			}
@@ -748,15 +776,13 @@ class OrderBuilderController {
 		boolean hasNotDeleted=false;
 		molines.each { finalMol ->
 			//println finalMol.deleted+" deleted"
-			if(finalMol.deleted==0){
+			if(finalMol.deleted==0 && hasNotDeleted==false){
 				hasNotDeleted=true;
 				masterOrder.orderLines = masterOrder.orderLines.sort { it.itemId }
 				webServicesSession.updateOrder(masterOrder)
-				return
 			}
 			
 		}
-		
 		if(hasNotDeleted==false){
 			//println "MASTER with deleted lines"
 			//Set the lines to not deleted for updating the table item_users
@@ -766,44 +792,14 @@ class OrderBuilderController {
 			}
 			webServicesSession.updateOrder(masterOrder)
 			//If all the lines are deleted, delete the master order
-			
 			webServicesSession.deleteOrder(masterOrder.getId())
 			
-			//masterOrder=null;
+			
 		}
 		
 		return masterOrder;
 		
-		// set success message in session, contents of the flash scope doesn't survive
-		// the redirect to the order list when the web-flow finishes
-		//session.message = 'order.created'
-		//session.args = [ order.id, order.userId ]
-		
 		
 	}
 	
-	/*//Checks if the new price is going to be different to the old one
-	def boolean hasPriceChanged(oldPrice, totalQuantity,payPlan){
-		def hasChanged=false
-		
-		BigDecimal newPrice = checkPrice(totalQuantity, payPlan);
-		int np=newPrice.intValue()
-		int op=oldPrice.intValue()
-		
-		println "NP"+np
-		println "OP"+op
-		if(op!=np){
-			hasChanged=true
-		}
-		return hasChanged;
-	}
-	
-	//Reads the payPlan .ods file containing the prices depending on users. Returns the price per user
-	def BigDecimal checkPrice(quantity,payPlan){
-		int q=quantity.intValue()
-		def file = new File("resources/pay_plans/${payPlan}.ods");
-		def sheet = SpreadSheet.createFromFile(file).getSheet(0);
-		
-		return sheet.getCellAt("B${q}").getValue();
-	}*/
 }
