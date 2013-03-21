@@ -33,6 +33,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -2949,4 +2950,23 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
     	bl.addOrderLine(bl.getDTO(), ol);
     	
     }
+    
+    public List<Map<String,String>> getItemUsersWithDescription(Integer userId){
+    	OrderDAS orderDas=new OrderDAS();
+    	List<Object[]> list=orderDas.findItemUsersWithDescription(userId);
+    	System.out.println(list);
+    	Iterator it=list.iterator();
+    	
+    	List<Map<String,String>> mapList=new ArrayList<Map<String,String>>();
+    	while(it.hasNext()){
+    		Map<String,String> map=new HashMap<String, String>();
+    		Object[] o=(Object[])it.next();
+    		map.put("content",(String)o[0]);
+    		map.put("users", String.valueOf((Integer)o[2]));
+    		mapList.add(map);
+    	}
+    	
+    	return mapList;
+    }
+    
 }

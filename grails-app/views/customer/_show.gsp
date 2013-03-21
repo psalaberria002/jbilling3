@@ -21,9 +21,13 @@
 
   @author Brian Cowdery
   @since  23-Nov-2010
+  <g:set var="item_users" value="${[['description':'A' , 'users':5],['description':'B' , 'users':2]]}"/>
 --%>
 
 <g:set var="customer" value="${selected.customer}"/>
+
+
+
 
 <div class="column-hold">
     <!-- user notes -->
@@ -50,7 +54,26 @@
             <p><em><g:message code="customer.detail.note.empty.message"/></em></p>
         </g:else>
     </div>
+    
+	<!-- Products -->
+    <div class="heading">
+        <strong><g:message code="customer.detail.items.title"/></strong>
+    </div>
+    <div class="box">
 
+        <table class="dataTable" cellspacing="0" cellpadding="0">
+            <tbody>
+            	<g:each in="${item_users}">
+            		<tr>
+                    	<td>${it.content}</td>
+                    	<td class="value">${it.users}</td>
+                	</tr>
+				</g:each>
+                
+            </tbody>
+        </table>
+    </div>
+	
     <!-- user details -->
     <div class="heading">
         <strong><g:message code="customer.detail.user.title"/></strong>
