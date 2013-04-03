@@ -336,12 +336,7 @@ class OrderBuilderController {
 				order.addToMaster = params.addToMaster ? 1 : 0
 				order.payPlan= params.plan 
 				
-				try{
-					order.period = Integer.parseInt(params.period)
-				}
-				catch(NumberFormatException e){
-					order.period =Constants.ORDER_PERIOD_ONCE
-				}
+				
 
                 // one time orders are ALWAYS post-paid
                 if (order.period == Constants.ORDER_PERIOD_ONCE)
@@ -590,10 +585,22 @@ class OrderBuilderController {
 		def molQuantity=0
 		def totalQuantity=0
 		newOrderLines.each { nol -> 
+			newOrderActiveSinceYear= calActive.get(Calendar.YEAR);
+			monthStartPrint = calActive.get(Calendar.MONTH);
+			dayStart = calActive.get(Calendar.DAY_OF_MONTH);
+			prevDayNext = cal.get(Calendar.DAY_OF_MONTH);
+			prevMonthNext = cal.get(Calendar.MONTH);
+			prevYearNext = cal.get(Calendar.YEAR);
 			totalQuantity=0
 			boolean found=false
 			nolQuantity=nol.getQuantityAsDecimal()
 			masterOrderLines.each { mol ->
+				newOrderActiveSinceYear= calActive.get(Calendar.YEAR);
+				monthStartPrint = calActive.get(Calendar.MONTH);
+				dayStart = calActive.get(Calendar.DAY_OF_MONTH);
+				prevDayNext = cal.get(Calendar.DAY_OF_MONTH);
+				prevMonthNext = cal.get(Calendar.MONTH);
+				prevYearNext = cal.get(Calendar.YEAR);
 				if(found==false){
 					if (nol.getItemId()==mol.getItemId()){
 						found=true;
@@ -644,7 +651,8 @@ class OrderBuilderController {
 								nol.quantity= totalQuantity
 								nol.setAmount(amount*monthsLeft/12)
 								nol.setPrice(amount*monthsLeft/12/totalQuantity)
-								monthStartPrint = (monthStartPrint < 10 ? "0" : "") + monthStartPrint;
+								println monthStartPrint
+								monthStartPrint = (monthStartPrint < 10 ? '0' : '') + monthStartPrint;
 								dayStart = (dayStart < 10 ? "0" : "") + dayStart;
 								prevMonthNext= (prevMonthNext < 10 ? "0" : "") + prevMonthNext;
 								prevDayNext= (prevDayNext < 10 ? "0" : "") + prevDayNext;
@@ -758,7 +766,7 @@ class OrderBuilderController {
 				//Edit new order line
 				nol.setAmount(amount*monthsLeft/12)
 				nol.setPrice(amount*monthsLeft/12/q)
-				monthStartPrint = (monthStartPrint < 10 ? "0" : "") + monthStartPrint;
+				monthStartPrint = (monthStartPrint < 10 ? "0" : "")+ monthStartPrint;
 				dayStart = (dayStart < 10 ? "0" : "") + dayStart;
 				prevMonthNext= (prevMonthNext < 10 ? "0" : "") + prevMonthNext;
 				prevDayNext= (prevDayNext < 10 ? "0" : "") + prevDayNext;

@@ -71,7 +71,7 @@
                 <g:select from="${orderBillingTypes}"
                           optionKey="id" optionValue="${{it.getDescription(session['language_id'])}}"
                           name="billingTypeId"
-                          value="${Constants.ORDER_BILLING_PRE_PAID}"
+                          value="${order?.billingTypeId}"
                           />
             </g:applyLayout>
 

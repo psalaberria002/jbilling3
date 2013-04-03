@@ -64,10 +64,12 @@
         <table class="dataTable" cellspacing="0" cellpadding="0">
             <tbody>
             	<g:each in="${item_users}">
+            	<g:if test="${!it.users.equals('0') }">
             		<tr>
                     	<td>${it.content}</td>
                     	<td class="value">${it.users}</td>
                 	</tr>
+                </g:if>
 				</g:each>
                 
             </tbody>
