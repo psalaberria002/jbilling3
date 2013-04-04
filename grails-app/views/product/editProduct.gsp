@@ -126,12 +126,12 @@
                     </div>
                 </div>
 
-                <!-- spacer -->
+             	<!-- spacer -->
                 <div>
                     <br/>&nbsp;
                 </div>
-
-                <!-- pricing controls -->
+				
+				<!-- pricing controls -->
                 <div id="pricing" class="box-cards box-cards-open">
                     <div class="box-cards-title">
                         <a class="btn-open" href="#"><span><g:message code="product.prices"/></span></a>
@@ -156,6 +156,39 @@
                                     <content tag="label.for">product.priceManual</content>
                                     <g:checkBox class="cb checkbox" name="product.priceManual" checked="${product?.priceManual > 0}"/>
                                 </g:applyLayout>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- spacer -->
+                <div>
+                    <br/>&nbsp;
+                </div>
+                
+                <!-- dependencies controls -->
+                <div id="pricing" class="box-cards box-cards-open">
+                    <div class="box-cards-title">
+                        <a class="btn-open" href="#"><span><g:message code="product.dependencies"/></span></a>
+                    </div>
+                    <div class="box-card-hold">
+                        <div class="form-columns">
+                            
+
+                            <div class="column">
+                            
+                            	<g:each var="item" in="${products.sort{ it.id }}">
+                                <g:applyLayout name="form/checkbox">
+                                    <content tag="label"><g:message code="${item.description }"/></content>
+                                    <g:set var="checked" value="${false}"/>
+                                    <g:each var="parent" in="${dependencies }">
+                                    <g:if test="${parent.equals(item.id) }">
+                                    	<g:set var="checked" value="${true}"/>
+                                   	</g:if>
+                                   	</g:each>
+                                    <g:checkBox class="cb checkbox" name="parent.${item.id}" checked="${checked}"/>
+                                </g:applyLayout>
+                                 </g:each>
                             </div>
                         </div>
                     </div>

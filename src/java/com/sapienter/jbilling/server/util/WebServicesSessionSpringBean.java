@@ -64,6 +64,7 @@ import com.sapienter.jbilling.server.item.ItemDTOEx;
 import com.sapienter.jbilling.server.item.ItemTypeBL;
 import com.sapienter.jbilling.server.item.ItemTypeWS;
 import com.sapienter.jbilling.server.item.PricingField;
+import com.sapienter.jbilling.server.item.db.ItemDAS;
 import com.sapienter.jbilling.server.item.db.ItemDTO;
 import com.sapienter.jbilling.server.item.db.ItemTypeDTO;
 import com.sapienter.jbilling.server.mediation.IMediationSessionBean;
@@ -2966,6 +2967,32 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
     	}
     	
     	return mapList;
+    }
+    
+    public List getAllDependencies(){
+    	ItemDAS itemDas=new ItemDAS();
+    	List<Object[]> list=itemDas.getAllDependencies();
+    	Iterator it=list.iterator();
+    	return list;
+    }
+    
+    public List getParentDependencies(Integer childId){
+    	ItemDAS itemDas=new ItemDAS();
+    	List<Integer> list=itemDas.getParents(childId);
+    	
+    	return list;
+    }
+    
+    public void setParentDependencies(Integer childId, List<Integer> parents){
+    	ItemDAS itemDas=new ItemDAS();
+    	itemDas.removeAllParents(childId);
+    	if(!parents.isEmpty()){
+    		for(Integer parentId: parents){
+        		itemDas.setParent(childId, parentId);
+        	}
+    	}
+    	
+    	
     }
     
 }

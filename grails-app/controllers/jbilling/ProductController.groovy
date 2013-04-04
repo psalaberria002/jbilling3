@@ -374,6 +374,9 @@ class ProductController {
     @Secured(["hasAnyRole('PRODUCT_40', 'PRODUCT_41')"])
     def editProduct = {
         def product
+		
+		def dependencies=webServicesSession.getParentDependencies(params.int('id'))
+		def products =  getProducts(null, null)
 
         try {
             product = params.id ? webServicesSession.getItem(params.int('id'), session['user_id'], null) : null
@@ -389,7 +392,7 @@ class ProductController {
 
         breadcrumbService.addBreadcrumb(controllerName, actionName, params.id ? 'update' : 'create', params.int('id'), product?.number)
 
-        [ product: product, currencies: currencies, categories: getProductCategories(), categoryId: params.category ]
+        [ product: product, currencies: currencies, categories: getProductCategories(), categoryId: params.category, products: products ,dependencies: dependencies]
     }
 
     /**
@@ -399,6 +402,8 @@ class ProductController {
     def saveProduct = {
         def product = new ItemDTOEx()
         bindProduct(product, params)
+		
+		this.setParentDependencies(params)
 
         try{
             // save or update
@@ -487,5 +492,32 @@ class ProductController {
         def currencies = new CurrencyBL().getCurrencies(session['language_id'].toInteger(), session['company_id'].toInteger())
         return currencies.findAll { it.inUse }
     }
+	
+	def setParentDependencies(GrailsParameterMap params){
+		List<Integer> parents=new ArrayList<Integer>();
+		println params
+		params.parent.collect { parentId, checked ->
+			
+			def i
+			try{
+				i = parentId as Integer
+				println i
+				parents.add(i)
+			}
+			catch(NumberFormatException e){
+				println e
+				i=null
+			}
+			
+		
+		//product.priceManual = params.product.priceManual ? 1 : 0
+		}
+		
+		def childId= Integer.parseInt(params.product.id)
+		webServicesSession.setParentDependencies(childId,parents)
+		
+		
+		
+	}
 
 }

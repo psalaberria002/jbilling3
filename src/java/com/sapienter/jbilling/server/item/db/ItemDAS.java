@@ -20,6 +20,7 @@ import com.sapienter.jbilling.server.util.db.AbstractDAS;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 
 public class ItemDAS extends AbstractDAS<ItemDTO> {
@@ -62,4 +63,43 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
 
         return criteria.list();
     }
+    
+    @SuppressWarnings("unchecked")
+	public List<Object[]> getAllDependencies(){
+		
+      	 Query query = getSession()
+                   .createSQLQuery("select a.item_id,a.child_item_id from item_dependency a " +
+                   		"ORDER BY a.item_id ASC");
+      	 	
+       	return query.list();
+       }
+	@SuppressWarnings("unchecked")
+	public List<Integer> getParents(Integer childId){
+		
+      	 Query query = getSession()
+                   .createSQLQuery("select a.item_id from item_dependency a " +
+                   		"WHERE a.child_item_id=:childId ORDER BY a.item_id ASC")
+                   		.setParameter("childId", childId);
+      	 	
+       	return query.list();
+       }
+	@SuppressWarnings("unchecked")
+	public void setParent(Integer childId, Integer parentId){
+		
+      	 Query query = getSession()
+                   .createSQLQuery("insert into item_dependency values (:parentId,:childId)")
+                   	.setParameter("parentId", parentId)
+                   		.setParameter("childId", childId);
+      	 	query.executeUpdate();
+       	
+       }
+	@SuppressWarnings("unchecked")
+	public void removeAllParents(Integer childId){
+		
+      	 Query query = getSession()
+                   .createSQLQuery("delete from item_dependency where child_item_id=:childId")
+                   		.setParameter("childId", childId);
+      	query.executeUpdate();
+       	
+       }
 }
