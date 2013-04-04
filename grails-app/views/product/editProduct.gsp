@@ -179,6 +179,7 @@
                             
                             	<g:each var="item" in="${products.sort{ it.id }}">
                                 <g:applyLayout name="form/checkbox">
+                                <g:if test="${!product.id.equals(item.id) }">
                                     <content tag="label"><g:message code="${item.description }"/></content>
                                     <g:set var="checked" value="${false}"/>
                                     <g:each var="parent" in="${dependencies }">
@@ -187,6 +188,7 @@
                                    	</g:if>
                                    	</g:each>
                                     <g:checkBox class="cb checkbox" name="parent.${item.id}" checked="${checked}"/>
+                                </g:if>
                                 </g:applyLayout>
                                  </g:each>
                             </div>
