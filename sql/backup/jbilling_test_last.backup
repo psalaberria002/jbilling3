@@ -2,31 +2,407 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.2.2
--- Dumped by pg_dump version 9.2.2
--- Started on 2013-03-18 18:09:00
-
 SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
 
+SET search_path = public, pg_catalog;
+
+ALTER TABLE ONLY public.user_role_map DROP CONSTRAINT user_role_map_fk_2;
+ALTER TABLE ONLY public.user_role_map DROP CONSTRAINT user_role_map_fk_1;
+ALTER TABLE ONLY public.role DROP CONSTRAINT role_entity_id_fk;
+ALTER TABLE ONLY public.report_parameter DROP CONSTRAINT report_parameter_fk_1;
+ALTER TABLE ONLY public.report DROP CONSTRAINT report_fk_1;
+ALTER TABLE ONLY public.purchase_order_master DROP CONSTRAINT purchase_order_master_order_id_fkey;
+ALTER TABLE ONLY public.purchase_order DROP CONSTRAINT purchase_order_fk_6;
+ALTER TABLE ONLY public.purchase_order DROP CONSTRAINT purchase_order_fk_5;
+ALTER TABLE ONLY public.purchase_order DROP CONSTRAINT purchase_order_fk_4;
+ALTER TABLE ONLY public.purchase_order DROP CONSTRAINT purchase_order_fk_3;
+ALTER TABLE ONLY public.purchase_order DROP CONSTRAINT purchase_order_fk_2;
+ALTER TABLE ONLY public.purchase_order DROP CONSTRAINT purchase_order_fk_1;
+ALTER TABLE ONLY public.promotion DROP CONSTRAINT promotion_fk_1;
+ALTER TABLE ONLY public.process_run_user DROP CONSTRAINT process_run_user_fk_2;
+ALTER TABLE ONLY public.process_run_user DROP CONSTRAINT process_run_user_fk_1;
+ALTER TABLE ONLY public.process_run_total_pm DROP CONSTRAINT process_run_total_pm_fk_1;
+ALTER TABLE ONLY public.process_run_total DROP CONSTRAINT process_run_total_fk_2;
+ALTER TABLE ONLY public.process_run_total DROP CONSTRAINT process_run_total_fk_1;
+ALTER TABLE ONLY public.process_run DROP CONSTRAINT process_run_fk_2;
+ALTER TABLE ONLY public.process_run DROP CONSTRAINT process_run_fk_1;
+ALTER TABLE ONLY public.preference DROP CONSTRAINT preference_fk_2;
+ALTER TABLE ONLY public.preference DROP CONSTRAINT preference_fk_1;
+ALTER TABLE ONLY public.pluggable_task_type DROP CONSTRAINT pluggable_task_type_fk_1;
+ALTER TABLE ONLY public.pluggable_task_parameter DROP CONSTRAINT pluggable_task_parameter_fk_1;
+ALTER TABLE ONLY public.pluggable_task DROP CONSTRAINT pluggable_task_fk_2;
+ALTER TABLE ONLY public.pluggable_task DROP CONSTRAINT pluggable_task_fk_1;
+ALTER TABLE ONLY public.permission_user DROP CONSTRAINT permission_user_fk_2;
+ALTER TABLE ONLY public.permission_user DROP CONSTRAINT permission_user_fk_1;
+ALTER TABLE ONLY public.permission_role_map DROP CONSTRAINT permission_role_map_fk_2;
+ALTER TABLE ONLY public.permission_role_map DROP CONSTRAINT permission_role_map_fk_1;
+ALTER TABLE ONLY public.permission DROP CONSTRAINT permission_fk_1;
+ALTER TABLE ONLY public.payment_invoice DROP CONSTRAINT payment_invoice_fk_2;
+ALTER TABLE ONLY public.payment_invoice DROP CONSTRAINT payment_invoice_fk_1;
+ALTER TABLE ONLY public.payment_info_cheque DROP CONSTRAINT payment_info_cheque_fk_1;
+ALTER TABLE ONLY public.payment DROP CONSTRAINT payment_fk_6;
+ALTER TABLE ONLY public.payment DROP CONSTRAINT payment_fk_5;
+ALTER TABLE ONLY public.payment DROP CONSTRAINT payment_fk_4;
+ALTER TABLE ONLY public.payment DROP CONSTRAINT payment_fk_3;
+ALTER TABLE ONLY public.payment DROP CONSTRAINT payment_fk_2;
+ALTER TABLE ONLY public.payment DROP CONSTRAINT payment_fk_1;
+ALTER TABLE ONLY public.payment_authorization DROP CONSTRAINT payment_authorization_fk_1;
+ALTER TABLE ONLY public.partner_payout DROP CONSTRAINT partner_payout_fk_1;
+ALTER TABLE ONLY public.partner DROP CONSTRAINT partner_fk_4;
+ALTER TABLE ONLY public.partner DROP CONSTRAINT partner_fk_3;
+ALTER TABLE ONLY public.partner DROP CONSTRAINT partner_fk_2;
+ALTER TABLE ONLY public.partner DROP CONSTRAINT partner_fk_1;
+ALTER TABLE ONLY public.order_process DROP CONSTRAINT order_process_fk_1;
+ALTER TABLE ONLY public.order_period DROP CONSTRAINT order_period_fk_2;
+ALTER TABLE ONLY public.order_period DROP CONSTRAINT order_period_fk_1;
+ALTER TABLE ONLY public.order_line DROP CONSTRAINT order_line_fk_3;
+ALTER TABLE ONLY public.order_line DROP CONSTRAINT order_line_fk_2;
+ALTER TABLE ONLY public.order_line DROP CONSTRAINT order_line_fk_1;
+ALTER TABLE ONLY public.notification_message_type DROP CONSTRAINT notification_message_type_fk_1;
+ALTER TABLE ONLY public.notification_message_section DROP CONSTRAINT notification_message_section_fk_1;
+ALTER TABLE ONLY public.notification_message_line DROP CONSTRAINT notification_message_line_fk_1;
+ALTER TABLE ONLY public.notification_message DROP CONSTRAINT notification_message_fk_3;
+ALTER TABLE ONLY public.notification_message DROP CONSTRAINT notification_message_fk_2;
+ALTER TABLE ONLY public.notification_message DROP CONSTRAINT notification_message_fk_1;
+ALTER TABLE ONLY public.notification_message_arch_line DROP CONSTRAINT notif_mess_arch_line_fk_1;
+ALTER TABLE ONLY public.mediation_record_line DROP CONSTRAINT mediation_record_line_fk_2;
+ALTER TABLE ONLY public.mediation_record_line DROP CONSTRAINT mediation_record_line_fk_1;
+ALTER TABLE ONLY public.mediation_record DROP CONSTRAINT mediation_record_fk_2;
+ALTER TABLE ONLY public.mediation_record DROP CONSTRAINT mediation_record_fk_1;
+ALTER TABLE ONLY public.mediation_process DROP CONSTRAINT mediation_process_fk_1;
+ALTER TABLE ONLY public.mediation_order_map DROP CONSTRAINT mediation_order_map_fk_2;
+ALTER TABLE ONLY public.mediation_order_map DROP CONSTRAINT mediation_order_map_fk_1;
+ALTER TABLE ONLY public.mediation_cfg DROP CONSTRAINT mediation_cfg_fk_1;
+ALTER TABLE ONLY public.item_users DROP CONSTRAINT item_users_user_id_fkey;
+ALTER TABLE ONLY public.item_users DROP CONSTRAINT item_users_item_id_fkey;
+ALTER TABLE ONLY public.item_type_map DROP CONSTRAINT item_type_map_fk_2;
+ALTER TABLE ONLY public.item_type_map DROP CONSTRAINT item_type_map_fk_1;
+ALTER TABLE ONLY public.item_type DROP CONSTRAINT item_type_fk_1;
+ALTER TABLE ONLY public.item_type_exclude_map DROP CONSTRAINT item_type_exclude_map_fk_2;
+ALTER TABLE ONLY public.item_type_exclude_map DROP CONSTRAINT item_type_exclude_map_fk_1;
+ALTER TABLE ONLY public.item_price DROP CONSTRAINT item_price_fk_2;
+ALTER TABLE ONLY public.item_price DROP CONSTRAINT item_price_fk_1;
+ALTER TABLE ONLY public.item DROP CONSTRAINT item_fk_1;
+ALTER TABLE ONLY public.item_dependency DROP CONSTRAINT item_dependency_item_id_fkey;
+ALTER TABLE ONLY public.item_dependency DROP CONSTRAINT item_dependency_child_item_id_fkey;
+ALTER TABLE ONLY public.invoice_line DROP CONSTRAINT invoice_line_fk_3;
+ALTER TABLE ONLY public.invoice_line DROP CONSTRAINT invoice_line_fk_2;
+ALTER TABLE ONLY public.invoice_line DROP CONSTRAINT invoice_line_fk_1;
+ALTER TABLE ONLY public.invoice DROP CONSTRAINT invoice_fk_5;
+ALTER TABLE ONLY public.invoice DROP CONSTRAINT invoice_fk_4;
+ALTER TABLE ONLY public.invoice DROP CONSTRAINT invoice_fk_3;
+ALTER TABLE ONLY public.invoice DROP CONSTRAINT invoice_fk_2;
+ALTER TABLE ONLY public.invoice DROP CONSTRAINT invoice_fk_1;
+ALTER TABLE ONLY public.international_description DROP CONSTRAINT international_description_fk_2;
+ALTER TABLE ONLY public.generic_status DROP CONSTRAINT generic_status_fk_1;
+ALTER TABLE ONLY public.filter DROP CONSTRAINT filter_fk_1;
+ALTER TABLE ONLY public.event_log DROP CONSTRAINT event_log_fk_6;
+ALTER TABLE ONLY public.event_log DROP CONSTRAINT event_log_fk_5;
+ALTER TABLE ONLY public.event_log DROP CONSTRAINT event_log_fk_4;
+ALTER TABLE ONLY public.event_log DROP CONSTRAINT event_log_fk_3;
+ALTER TABLE ONLY public.event_log DROP CONSTRAINT event_log_fk_2;
+ALTER TABLE ONLY public.event_log DROP CONSTRAINT event_log_fk_1;
+ALTER TABLE ONLY public.entity_report_map DROP CONSTRAINT entity_report_map_fk_2;
+ALTER TABLE ONLY public.entity_report_map DROP CONSTRAINT entity_report_map_fk_1;
+ALTER TABLE ONLY public.entity_payment_method_map DROP CONSTRAINT entity_payment_method_map_fk_2;
+ALTER TABLE ONLY public.entity_payment_method_map DROP CONSTRAINT entity_payment_method_map_fk_1;
+ALTER TABLE ONLY public.entity DROP CONSTRAINT entity_fk_2;
+ALTER TABLE ONLY public.entity DROP CONSTRAINT entity_fk_1;
+ALTER TABLE ONLY public.entity_delivery_method_map DROP CONSTRAINT entity_delivery_method_map_fk_2;
+ALTER TABLE ONLY public.entity_delivery_method_map DROP CONSTRAINT entity_delivery_method_map_fk_1;
+ALTER TABLE ONLY public.customer DROP CONSTRAINT customer_fk_3;
+ALTER TABLE ONLY public.customer DROP CONSTRAINT customer_fk_2;
+ALTER TABLE ONLY public.customer DROP CONSTRAINT customer_fk_1;
+ALTER TABLE ONLY public.currency_exchange DROP CONSTRAINT currency_exchange_fk_1;
+ALTER TABLE ONLY public.currency_entity_map DROP CONSTRAINT currency_entity_map_fk_2;
+ALTER TABLE ONLY public.currency_entity_map DROP CONSTRAINT currency_entity_map_fk_1;
+ALTER TABLE ONLY public.contact_type DROP CONSTRAINT contact_type_fk_1;
+ALTER TABLE ONLY public.contact_map DROP CONSTRAINT contact_map_fk_3;
+ALTER TABLE ONLY public.contact_map DROP CONSTRAINT contact_map_fk_2;
+ALTER TABLE ONLY public.contact_map DROP CONSTRAINT contact_map_fk_1;
+ALTER TABLE ONLY public.contact_field_type DROP CONSTRAINT contact_field_type_fk_1;
+ALTER TABLE ONLY public.contact_field DROP CONSTRAINT contact_field_fk_2;
+ALTER TABLE ONLY public.contact_field DROP CONSTRAINT contact_field_fk_1;
+ALTER TABLE ONLY public.blacklist DROP CONSTRAINT blacklist_fk_2;
+ALTER TABLE ONLY public.blacklist DROP CONSTRAINT blacklist_fk_1;
+ALTER TABLE ONLY public.billing_process DROP CONSTRAINT billing_process_fk_3;
+ALTER TABLE ONLY public.billing_process DROP CONSTRAINT billing_process_fk_2;
+ALTER TABLE ONLY public.billing_process DROP CONSTRAINT billing_process_fk_1;
+ALTER TABLE ONLY public.billing_process_configuration DROP CONSTRAINT billing_process_configuration_fk_2;
+ALTER TABLE ONLY public.billing_process_configuration DROP CONSTRAINT billing_process_configuration_fk_1;
+ALTER TABLE ONLY public.base_user DROP CONSTRAINT base_user_fk_5;
+ALTER TABLE ONLY public.base_user DROP CONSTRAINT base_user_fk_4;
+ALTER TABLE ONLY public.base_user DROP CONSTRAINT base_user_fk_3;
+ALTER TABLE ONLY public.base_user DROP CONSTRAINT base_user_fk_2;
+ALTER TABLE ONLY public.base_user DROP CONSTRAINT base_user_fk_1;
+ALTER TABLE ONLY public.ageing_entity_step DROP CONSTRAINT ageing_entity_step_fk_2;
+ALTER TABLE ONLY public.ageing_entity_step DROP CONSTRAINT ageing_entity_step_fk_1;
+ALTER TABLE ONLY public.ach DROP CONSTRAINT ach_fk_1;
+DROP INDEX public.user_role_map_i_role;
+DROP INDEX public.user_role_map_i_2;
+DROP INDEX public.user_credit_card_map_i_2;
+DROP INDEX public.transaction_id;
+DROP INDEX public.purchase_order_i_user;
+DROP INDEX public.purchase_order_i_notif;
+DROP INDEX public.permission_user_map_i_2;
+DROP INDEX public.permission_role_map_i_2;
+DROP INDEX public.payment_i_3;
+DROP INDEX public.payment_i_2;
+DROP INDEX public.partner_range_p;
+DROP INDEX public.partner_payout_i_2;
+DROP INDEX public.partner_i_3;
+DROP INDEX public.mediation_record_i;
+DROP INDEX public.ix_user;
+DROP INDEX public.ix_uq_payment_inv_map_pa_in;
+DROP INDEX public.ix_uq_order_process_or_in;
+DROP INDEX public.ix_uq_order_process_or_bp;
+DROP INDEX public.ix_purchase_order_date;
+DROP INDEX public.ix_promotion_code;
+DROP INDEX public.ix_pa_payment;
+DROP INDEX public.ix_order_process_in;
+DROP INDEX public.ix_order_line_order_id;
+DROP INDEX public.ix_order_line_item_id;
+DROP INDEX public.ix_mrl_order_line;
+DROP INDEX public.ix_item_ent;
+DROP INDEX public.ix_invoice_user_id;
+DROP INDEX public.ix_invoice_ts;
+DROP INDEX public.ix_invoice_process;
+DROP INDEX public.ix_invoice_number;
+DROP INDEX public.ix_invoice_line_invoice_id;
+DROP INDEX public.ix_invoice_due_date;
+DROP INDEX public.ix_invoice_date;
+DROP INDEX public.ix_el_main;
+DROP INDEX public.ix_contact_phone;
+DROP INDEX public.ix_contact_orgname;
+DROP INDEX public.ix_contact_lname;
+DROP INDEX public.ix_contact_fname_lname;
+DROP INDEX public.ix_contact_fname;
+DROP INDEX public.ix_contact_field_content;
+DROP INDEX public.ix_contact_field_cid;
+DROP INDEX public.ix_contact_address;
+DROP INDEX public.ix_cf_type_entity;
+DROP INDEX public.ix_cc_number_encrypted;
+DROP INDEX public.ix_cc_number;
+DROP INDEX public.ix_blacklist_user_type;
+DROP INDEX public.ix_blacklist_entity_type;
+DROP INDEX public.ix_base_user_un;
+DROP INDEX public.international_description_i_2;
+DROP INDEX public.int_description_i_lan;
+DROP INDEX public.customer_i_2;
+DROP INDEX public.currency_entity_map_i_2;
+DROP INDEX public.create_datetime;
+DROP INDEX public.contact_map_i_3;
+DROP INDEX public.contact_map_i_1;
+DROP INDEX public.contact_i_del;
+DROP INDEX public.bp_run_user_run_ix;
+DROP INDEX public.bp_run_total_run_ix;
+DROP INDEX public.bp_run_process_ix;
+DROP INDEX public.bp_pm_index_total;
+DROP INDEX public.ach_i_2;
+ALTER TABLE ONLY public.base_user DROP CONSTRAINT unique_username;
+ALTER TABLE ONLY public.shortcut DROP CONSTRAINT shortcut_pkey;
+ALTER TABLE ONLY public.role DROP CONSTRAINT role_pkey;
+ALTER TABLE ONLY public.report_type DROP CONSTRAINT report_type_pkey;
+ALTER TABLE ONLY public.report DROP CONSTRAINT report_pkey;
+ALTER TABLE ONLY public.report_parameter DROP CONSTRAINT report_parameter_pkey;
+ALTER TABLE ONLY public.recent_item DROP CONSTRAINT recent_item_pkey;
+ALTER TABLE ONLY public.purchase_order DROP CONSTRAINT purchase_order_pkey;
+ALTER TABLE ONLY public.purchase_order_master DROP CONSTRAINT purchase_order_master_pkey;
+ALTER TABLE ONLY public.promotion DROP CONSTRAINT promotion_pkey;
+ALTER TABLE ONLY public.process_run_user DROP CONSTRAINT process_run_user_pkey;
+ALTER TABLE ONLY public.process_run_total_pm DROP CONSTRAINT process_run_total_pm_pkey;
+ALTER TABLE ONLY public.process_run_total DROP CONSTRAINT process_run_total_pkey;
+ALTER TABLE ONLY public.process_run DROP CONSTRAINT process_run_pkey;
+ALTER TABLE ONLY public.preference_type DROP CONSTRAINT preference_type_pkey;
+ALTER TABLE ONLY public.preference DROP CONSTRAINT preference_pkey;
+ALTER TABLE ONLY public.pluggable_task_type DROP CONSTRAINT pluggable_task_type_pkey;
+ALTER TABLE ONLY public.pluggable_task_type_category DROP CONSTRAINT pluggable_task_type_category_pkey;
+ALTER TABLE ONLY public.pluggable_task DROP CONSTRAINT pluggable_task_pkey;
+ALTER TABLE ONLY public.pluggable_task_parameter DROP CONSTRAINT pluggable_task_parameter_pkey;
+ALTER TABLE ONLY public.permission_user DROP CONSTRAINT permission_user_pkey;
+ALTER TABLE ONLY public.permission_type DROP CONSTRAINT permission_type_pkey;
+ALTER TABLE ONLY public.permission DROP CONSTRAINT permission_pkey;
+ALTER TABLE ONLY public.period_unit DROP CONSTRAINT period_unit_pkey;
+ALTER TABLE ONLY public.payment_result DROP CONSTRAINT payment_result_pkey;
+ALTER TABLE ONLY public.payment DROP CONSTRAINT payment_pkey;
+ALTER TABLE ONLY public.payment_method DROP CONSTRAINT payment_method_pkey;
+ALTER TABLE ONLY public.payment_invoice DROP CONSTRAINT payment_invoice_pkey;
+ALTER TABLE ONLY public.payment_info_cheque DROP CONSTRAINT payment_info_cheque_pkey;
+ALTER TABLE ONLY public.payment_authorization DROP CONSTRAINT payment_authorization_pkey;
+ALTER TABLE ONLY public.partner_range DROP CONSTRAINT partner_range_pkey;
+ALTER TABLE ONLY public.partner DROP CONSTRAINT partner_pkey;
+ALTER TABLE ONLY public.partner_payout DROP CONSTRAINT partner_payout_pkey;
+ALTER TABLE ONLY public.paper_invoice_batch DROP CONSTRAINT paper_invoice_batch_pkey;
+ALTER TABLE ONLY public.order_process DROP CONSTRAINT order_process_pkey;
+ALTER TABLE ONLY public.order_period DROP CONSTRAINT order_period_pkey;
+ALTER TABLE ONLY public.order_line_type DROP CONSTRAINT order_line_type_pkey;
+ALTER TABLE ONLY public.order_line DROP CONSTRAINT order_line_pkey;
+ALTER TABLE ONLY public.order_billing_type DROP CONSTRAINT order_billing_type_pkey;
+ALTER TABLE ONLY public.notification_message_type DROP CONSTRAINT notification_message_type_pkey;
+ALTER TABLE ONLY public.notification_message_section DROP CONSTRAINT notification_message_section_pkey;
+ALTER TABLE ONLY public.notification_message DROP CONSTRAINT notification_message_pkey;
+ALTER TABLE ONLY public.notification_message_line DROP CONSTRAINT notification_message_line_pkey;
+ALTER TABLE ONLY public.notification_message_arch DROP CONSTRAINT notification_message_arch_pkey;
+ALTER TABLE ONLY public.notification_message_arch_line DROP CONSTRAINT notification_message_arch_line_pkey;
+ALTER TABLE ONLY public.notification_category DROP CONSTRAINT notification_category_pkey;
+ALTER TABLE ONLY public.mediation_record DROP CONSTRAINT mediation_record_pkey;
+ALTER TABLE ONLY public.mediation_record_line DROP CONSTRAINT mediation_record_line_pkey;
+ALTER TABLE ONLY public.mediation_process DROP CONSTRAINT mediation_process_pkey;
+ALTER TABLE ONLY public.mediation_cfg DROP CONSTRAINT mediation_cfg_pkey;
+ALTER TABLE ONLY public.language DROP CONSTRAINT language_pkey;
+ALTER TABLE ONLY public.jbilling_table DROP CONSTRAINT jbilling_table_pkey;
+ALTER TABLE ONLY public.item_dependency DROP CONSTRAINT item_user_dependency;
+ALTER TABLE ONLY public.item_users DROP CONSTRAINT item_user;
+ALTER TABLE ONLY public.item_type DROP CONSTRAINT item_type_pkey;
+ALTER TABLE ONLY public.item_price DROP CONSTRAINT item_price_pkey;
+ALTER TABLE ONLY public.item DROP CONSTRAINT item_pkey;
+ALTER TABLE ONLY public.invoice DROP CONSTRAINT invoice_pkey;
+ALTER TABLE ONLY public.invoice_line_type DROP CONSTRAINT invoice_line_type_pkey;
+ALTER TABLE ONLY public.invoice_line DROP CONSTRAINT invoice_line_pkey;
+ALTER TABLE ONLY public.invoice_delivery_method DROP CONSTRAINT invoice_delivery_method_pkey;
+ALTER TABLE ONLY public.international_description DROP CONSTRAINT international_description_pkey;
+ALTER TABLE ONLY public.generic_status_type DROP CONSTRAINT generic_status_type_pkey;
+ALTER TABLE ONLY public.generic_status DROP CONSTRAINT generic_status_pkey;
+ALTER TABLE ONLY public.filter_set DROP CONSTRAINT filter_set_pkey;
+ALTER TABLE ONLY public.filter DROP CONSTRAINT filter_pkey;
+ALTER TABLE ONLY public.event_log DROP CONSTRAINT event_log_pkey;
+ALTER TABLE ONLY public.event_log_module DROP CONSTRAINT event_log_module_pkey;
+ALTER TABLE ONLY public.event_log_message DROP CONSTRAINT event_log_message_pkey;
+ALTER TABLE ONLY public.entity_report_map DROP CONSTRAINT entity_report_map_pkey;
+ALTER TABLE ONLY public.entity DROP CONSTRAINT entity_pkey;
+ALTER TABLE ONLY public.customer DROP CONSTRAINT customer_pkey;
+ALTER TABLE ONLY public.currency DROP CONSTRAINT currency_pkey;
+ALTER TABLE ONLY public.currency_exchange DROP CONSTRAINT currency_exchange_pkey;
+ALTER TABLE ONLY public.credit_card DROP CONSTRAINT credit_card_pkey;
+ALTER TABLE ONLY public.country DROP CONSTRAINT country_pkey;
+ALTER TABLE ONLY public.contact_type DROP CONSTRAINT contact_type_pkey;
+ALTER TABLE ONLY public.contact DROP CONSTRAINT contact_pkey;
+ALTER TABLE ONLY public.contact_map DROP CONSTRAINT contact_map_pkey;
+ALTER TABLE ONLY public.contact_field_type DROP CONSTRAINT contact_field_type_pkey;
+ALTER TABLE ONLY public.contact_field DROP CONSTRAINT contact_field_pkey;
+ALTER TABLE ONLY public.breadcrumb DROP CONSTRAINT breadcrumb_pkey;
+ALTER TABLE ONLY public.blacklist DROP CONSTRAINT blacklist_pkey;
+ALTER TABLE ONLY public.billing_process DROP CONSTRAINT billing_process_pkey;
+ALTER TABLE ONLY public.billing_process_configuration DROP CONSTRAINT billing_process_configuration_pkey;
+ALTER TABLE ONLY public.base_user DROP CONSTRAINT base_user_pkey;
+ALTER TABLE ONLY public.ageing_entity_step DROP CONSTRAINT ageing_entity_step_pkey;
+ALTER TABLE ONLY public.ach DROP CONSTRAINT ach_pkey;
+DROP TABLE public.user_role_map;
+DROP TABLE public.user_credit_card_map;
+DROP TABLE public.shortcut;
+DROP TABLE public.role;
+DROP TABLE public.report_type;
+DROP TABLE public.report_parameter;
+DROP TABLE public.report;
+DROP TABLE public.recent_item;
+DROP TABLE public.purchase_order_master;
+DROP TABLE public.purchase_order;
+DROP TABLE public.promotion;
+DROP TABLE public.process_run_user;
+DROP TABLE public.process_run_total_pm;
+DROP TABLE public.process_run_total;
+DROP TABLE public.process_run;
+DROP TABLE public.preference_type;
+DROP TABLE public.preference;
+DROP TABLE public.pluggable_task_type_category;
+DROP TABLE public.pluggable_task_type;
+DROP TABLE public.pluggable_task_parameter;
+DROP TABLE public.pluggable_task;
+DROP TABLE public.permission_user;
+DROP TABLE public.permission_type;
+DROP TABLE public.permission_role_map;
+DROP TABLE public.permission;
+DROP TABLE public.period_unit;
+DROP TABLE public.payment_result;
+DROP TABLE public.payment_method;
+DROP TABLE public.payment_invoice;
+DROP TABLE public.payment_info_cheque;
+DROP TABLE public.payment_authorization;
+DROP TABLE public.payment;
+DROP TABLE public.partner_range;
+DROP TABLE public.partner_payout;
+DROP TABLE public.partner;
+DROP TABLE public.paper_invoice_batch;
+DROP TABLE public.order_process;
+DROP TABLE public.order_period;
+DROP TABLE public.order_line_type;
+DROP TABLE public.order_line;
+DROP TABLE public.order_billing_type;
+DROP TABLE public.notification_message_type;
+DROP TABLE public.notification_message_section;
+DROP TABLE public.notification_message_line;
+DROP TABLE public.notification_message_arch_line;
+DROP TABLE public.notification_message_arch;
+DROP TABLE public.notification_message;
+DROP TABLE public.notification_category;
+DROP TABLE public.mediation_record_line;
+DROP TABLE public.mediation_record;
+DROP TABLE public.mediation_process;
+DROP TABLE public.mediation_order_map;
+DROP TABLE public.mediation_cfg;
+DROP TABLE public.language;
+DROP TABLE public.jbilling_table;
+DROP TABLE public.jbilling_seqs;
+DROP TABLE public.item_users;
+DROP TABLE public.item_type_map;
+DROP TABLE public.item_type_exclude_map;
+DROP TABLE public.item_type;
+DROP TABLE public.item_price;
+DROP TABLE public.item_dependency;
+DROP TABLE public.item;
+DROP TABLE public.invoice_line_type;
+DROP TABLE public.invoice_line;
+DROP TABLE public.invoice_delivery_method;
+DROP TABLE public.invoice;
+DROP TABLE public.international_description;
+DROP TABLE public.generic_status_type;
+DROP TABLE public.generic_status;
+DROP TABLE public.filter_set;
+DROP TABLE public.filter;
+DROP TABLE public.event_log_module;
+DROP TABLE public.event_log_message;
+DROP TABLE public.event_log;
+DROP TABLE public.entity_report_map;
+DROP TABLE public.entity_payment_method_map;
+DROP TABLE public.entity_delivery_method_map;
+DROP TABLE public.entity;
+DROP TABLE public.customer;
+DROP TABLE public.currency_exchange;
+DROP TABLE public.currency_entity_map;
+DROP TABLE public.currency;
+DROP TABLE public.credit_card;
+DROP TABLE public.country;
+DROP TABLE public.contact_type;
+DROP TABLE public.contact_map;
+DROP TABLE public.contact_field_type;
+DROP TABLE public.contact_field;
+DROP TABLE public.contact;
+DROP TABLE public.breadcrumb;
+DROP TABLE public.blacklist;
+DROP TABLE public.billing_process_configuration;
+DROP TABLE public.billing_process;
+DROP TABLE public.base_user;
+DROP TABLE public.ageing_entity_step;
+DROP TABLE public.ach;
+DROP SCHEMA public;
 --
--- TOC entry 265 (class 3079 OID 11727)
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+-- Name: public; Type: SCHEMA; Schema: -; Owner: postgres
 --
 
-CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+CREATE SCHEMA public;
 
+
+ALTER SCHEMA public OWNER TO postgres;
 
 --
--- TOC entry 2815 (class 0 OID 0)
--- Dependencies: 265
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+-- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: postgres
 --
 
-COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+COMMENT ON SCHEMA public IS 'standard public schema';
 
 
 SET search_path = public, pg_catalog;
@@ -36,7 +412,6 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- TOC entry 168 (class 1259 OID 28674)
 -- Name: ach; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -56,7 +431,6 @@ CREATE TABLE ach (
 ALTER TABLE public.ach OWNER TO jbilling;
 
 --
--- TOC entry 169 (class 1259 OID 28677)
 -- Name: ageing_entity_step; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -72,7 +446,6 @@ CREATE TABLE ageing_entity_step (
 ALTER TABLE public.ageing_entity_step OWNER TO jbilling;
 
 --
--- TOC entry 170 (class 1259 OID 28680)
 -- Name: base_user; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -97,7 +470,6 @@ CREATE TABLE base_user (
 ALTER TABLE public.base_user OWNER TO jbilling;
 
 --
--- TOC entry 171 (class 1259 OID 28686)
 -- Name: billing_process; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -117,7 +489,6 @@ CREATE TABLE billing_process (
 ALTER TABLE public.billing_process OWNER TO jbilling;
 
 --
--- TOC entry 172 (class 1259 OID 28690)
 -- Name: billing_process_configuration; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -147,7 +518,6 @@ CREATE TABLE billing_process_configuration (
 ALTER TABLE public.billing_process_configuration OWNER TO jbilling;
 
 --
--- TOC entry 173 (class 1259 OID 28697)
 -- Name: blacklist; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -168,7 +538,6 @@ CREATE TABLE blacklist (
 ALTER TABLE public.blacklist OWNER TO jbilling;
 
 --
--- TOC entry 174 (class 1259 OID 28700)
 -- Name: breadcrumb; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -187,7 +556,6 @@ CREATE TABLE breadcrumb (
 ALTER TABLE public.breadcrumb OWNER TO jbilling;
 
 --
--- TOC entry 175 (class 1259 OID 28706)
 -- Name: contact; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -222,7 +590,6 @@ CREATE TABLE contact (
 ALTER TABLE public.contact OWNER TO jbilling;
 
 --
--- TOC entry 176 (class 1259 OID 28714)
 -- Name: contact_field; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -238,7 +605,6 @@ CREATE TABLE contact_field (
 ALTER TABLE public.contact_field OWNER TO jbilling;
 
 --
--- TOC entry 177 (class 1259 OID 28717)
 -- Name: contact_field_type; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -255,7 +621,6 @@ CREATE TABLE contact_field_type (
 ALTER TABLE public.contact_field_type OWNER TO jbilling;
 
 --
--- TOC entry 178 (class 1259 OID 28720)
 -- Name: contact_map; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -272,7 +637,6 @@ CREATE TABLE contact_map (
 ALTER TABLE public.contact_map OWNER TO jbilling;
 
 --
--- TOC entry 179 (class 1259 OID 28723)
 -- Name: contact_type; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -287,7 +651,6 @@ CREATE TABLE contact_type (
 ALTER TABLE public.contact_type OWNER TO jbilling;
 
 --
--- TOC entry 180 (class 1259 OID 28726)
 -- Name: country; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -300,7 +663,6 @@ CREATE TABLE country (
 ALTER TABLE public.country OWNER TO jbilling;
 
 --
--- TOC entry 181 (class 1259 OID 28729)
 -- Name: credit_card; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -320,7 +682,6 @@ CREATE TABLE credit_card (
 ALTER TABLE public.credit_card OWNER TO jbilling;
 
 --
--- TOC entry 182 (class 1259 OID 28733)
 -- Name: currency; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -336,7 +697,6 @@ CREATE TABLE currency (
 ALTER TABLE public.currency OWNER TO jbilling;
 
 --
--- TOC entry 183 (class 1259 OID 28736)
 -- Name: currency_entity_map; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -349,7 +709,6 @@ CREATE TABLE currency_entity_map (
 ALTER TABLE public.currency_entity_map OWNER TO jbilling;
 
 --
--- TOC entry 184 (class 1259 OID 28739)
 -- Name: currency_exchange; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -366,7 +725,6 @@ CREATE TABLE currency_exchange (
 ALTER TABLE public.currency_exchange OWNER TO jbilling;
 
 --
--- TOC entry 185 (class 1259 OID 28742)
 -- Name: customer; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -397,7 +755,6 @@ CREATE TABLE customer (
 ALTER TABLE public.customer OWNER TO jbilling;
 
 --
--- TOC entry 186 (class 1259 OID 28750)
 -- Name: entity; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -415,7 +772,6 @@ CREATE TABLE entity (
 ALTER TABLE public.entity OWNER TO jbilling;
 
 --
--- TOC entry 187 (class 1259 OID 28753)
 -- Name: entity_delivery_method_map; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -428,7 +784,6 @@ CREATE TABLE entity_delivery_method_map (
 ALTER TABLE public.entity_delivery_method_map OWNER TO jbilling;
 
 --
--- TOC entry 188 (class 1259 OID 28756)
 -- Name: entity_payment_method_map; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -441,7 +796,6 @@ CREATE TABLE entity_payment_method_map (
 ALTER TABLE public.entity_payment_method_map OWNER TO jbilling;
 
 --
--- TOC entry 189 (class 1259 OID 28759)
 -- Name: entity_report_map; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -454,7 +808,6 @@ CREATE TABLE entity_report_map (
 ALTER TABLE public.entity_report_map OWNER TO jbilling;
 
 --
--- TOC entry 190 (class 1259 OID 28762)
 -- Name: event_log; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -479,7 +832,6 @@ CREATE TABLE event_log (
 ALTER TABLE public.event_log OWNER TO jbilling;
 
 --
--- TOC entry 191 (class 1259 OID 28768)
 -- Name: event_log_message; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -491,7 +843,6 @@ CREATE TABLE event_log_message (
 ALTER TABLE public.event_log_message OWNER TO jbilling;
 
 --
--- TOC entry 192 (class 1259 OID 28771)
 -- Name: event_log_module; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -503,7 +854,6 @@ CREATE TABLE event_log_module (
 ALTER TABLE public.event_log_module OWNER TO jbilling;
 
 --
--- TOC entry 193 (class 1259 OID 28774)
 -- Name: filter; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -529,7 +879,6 @@ CREATE TABLE filter (
 ALTER TABLE public.filter OWNER TO jbilling;
 
 --
--- TOC entry 194 (class 1259 OID 28780)
 -- Name: filter_set; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -544,7 +893,6 @@ CREATE TABLE filter_set (
 ALTER TABLE public.filter_set OWNER TO jbilling;
 
 --
--- TOC entry 195 (class 1259 OID 28783)
 -- Name: generic_status; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -559,7 +907,6 @@ CREATE TABLE generic_status (
 ALTER TABLE public.generic_status OWNER TO jbilling;
 
 --
--- TOC entry 196 (class 1259 OID 28786)
 -- Name: generic_status_type; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -571,7 +918,6 @@ CREATE TABLE generic_status_type (
 ALTER TABLE public.generic_status_type OWNER TO jbilling;
 
 --
--- TOC entry 197 (class 1259 OID 28789)
 -- Name: international_description; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -587,7 +933,6 @@ CREATE TABLE international_description (
 ALTER TABLE public.international_description OWNER TO jbilling;
 
 --
--- TOC entry 198 (class 1259 OID 28795)
 -- Name: invoice; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -620,7 +965,6 @@ CREATE TABLE invoice (
 ALTER TABLE public.invoice OWNER TO jbilling;
 
 --
--- TOC entry 199 (class 1259 OID 28804)
 -- Name: invoice_delivery_method; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -632,7 +976,6 @@ CREATE TABLE invoice_delivery_method (
 ALTER TABLE public.invoice_delivery_method OWNER TO jbilling;
 
 --
--- TOC entry 200 (class 1259 OID 28807)
 -- Name: invoice_line; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -655,7 +998,6 @@ CREATE TABLE invoice_line (
 ALTER TABLE public.invoice_line OWNER TO jbilling;
 
 --
--- TOC entry 201 (class 1259 OID 28815)
 -- Name: invoice_line_type; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -669,7 +1011,6 @@ CREATE TABLE invoice_line_type (
 ALTER TABLE public.invoice_line_type OWNER TO jbilling;
 
 --
--- TOC entry 202 (class 1259 OID 28818)
 -- Name: item; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -689,7 +1030,6 @@ CREATE TABLE item (
 ALTER TABLE public.item OWNER TO jbilling;
 
 --
--- TOC entry 263 (class 1259 OID 29946)
 -- Name: item_dependency; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -702,7 +1042,6 @@ CREATE TABLE item_dependency (
 ALTER TABLE public.item_dependency OWNER TO jbilling;
 
 --
--- TOC entry 203 (class 1259 OID 28823)
 -- Name: item_price; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -718,7 +1057,6 @@ CREATE TABLE item_price (
 ALTER TABLE public.item_price OWNER TO jbilling;
 
 --
--- TOC entry 204 (class 1259 OID 28826)
 -- Name: item_type; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -734,7 +1072,6 @@ CREATE TABLE item_type (
 ALTER TABLE public.item_type OWNER TO jbilling;
 
 --
--- TOC entry 205 (class 1259 OID 28829)
 -- Name: item_type_exclude_map; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -747,7 +1084,6 @@ CREATE TABLE item_type_exclude_map (
 ALTER TABLE public.item_type_exclude_map OWNER TO jbilling;
 
 --
--- TOC entry 206 (class 1259 OID 28832)
 -- Name: item_type_map; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -760,7 +1096,6 @@ CREATE TABLE item_type_map (
 ALTER TABLE public.item_type_map OWNER TO jbilling;
 
 --
--- TOC entry 262 (class 1259 OID 29922)
 -- Name: item_users; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -774,7 +1109,6 @@ CREATE TABLE item_users (
 ALTER TABLE public.item_users OWNER TO jbilling;
 
 --
--- TOC entry 207 (class 1259 OID 28835)
 -- Name: jbilling_seqs; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -787,7 +1121,6 @@ CREATE TABLE jbilling_seqs (
 ALTER TABLE public.jbilling_seqs OWNER TO jbilling;
 
 --
--- TOC entry 208 (class 1259 OID 28839)
 -- Name: jbilling_table; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -800,7 +1133,6 @@ CREATE TABLE jbilling_table (
 ALTER TABLE public.jbilling_table OWNER TO jbilling;
 
 --
--- TOC entry 209 (class 1259 OID 28842)
 -- Name: language; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -814,7 +1146,6 @@ CREATE TABLE language (
 ALTER TABLE public.language OWNER TO jbilling;
 
 --
--- TOC entry 210 (class 1259 OID 28845)
 -- Name: mediation_cfg; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -832,7 +1163,6 @@ CREATE TABLE mediation_cfg (
 ALTER TABLE public.mediation_cfg OWNER TO jbilling;
 
 --
--- TOC entry 211 (class 1259 OID 28848)
 -- Name: mediation_order_map; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -845,7 +1175,6 @@ CREATE TABLE mediation_order_map (
 ALTER TABLE public.mediation_order_map OWNER TO jbilling;
 
 --
--- TOC entry 212 (class 1259 OID 28851)
 -- Name: mediation_process; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -862,7 +1191,6 @@ CREATE TABLE mediation_process (
 ALTER TABLE public.mediation_process OWNER TO jbilling;
 
 --
--- TOC entry 213 (class 1259 OID 28854)
 -- Name: mediation_record; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -879,7 +1207,6 @@ CREATE TABLE mediation_record (
 ALTER TABLE public.mediation_record OWNER TO jbilling;
 
 --
--- TOC entry 214 (class 1259 OID 28857)
 -- Name: mediation_record_line; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -898,7 +1225,6 @@ CREATE TABLE mediation_record_line (
 ALTER TABLE public.mediation_record_line OWNER TO jbilling;
 
 --
--- TOC entry 215 (class 1259 OID 28860)
 -- Name: notification_category; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -910,7 +1236,6 @@ CREATE TABLE notification_category (
 ALTER TABLE public.notification_category OWNER TO jbilling;
 
 --
--- TOC entry 216 (class 1259 OID 28863)
 -- Name: notification_message; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -927,7 +1252,6 @@ CREATE TABLE notification_message (
 ALTER TABLE public.notification_message OWNER TO jbilling;
 
 --
--- TOC entry 217 (class 1259 OID 28867)
 -- Name: notification_message_arch; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -944,7 +1268,6 @@ CREATE TABLE notification_message_arch (
 ALTER TABLE public.notification_message_arch OWNER TO jbilling;
 
 --
--- TOC entry 218 (class 1259 OID 28870)
 -- Name: notification_message_arch_line; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -960,7 +1283,6 @@ CREATE TABLE notification_message_arch_line (
 ALTER TABLE public.notification_message_arch_line OWNER TO jbilling;
 
 --
--- TOC entry 219 (class 1259 OID 28876)
 -- Name: notification_message_line; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -975,7 +1297,6 @@ CREATE TABLE notification_message_line (
 ALTER TABLE public.notification_message_line OWNER TO jbilling;
 
 --
--- TOC entry 220 (class 1259 OID 28882)
 -- Name: notification_message_section; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -990,7 +1311,6 @@ CREATE TABLE notification_message_section (
 ALTER TABLE public.notification_message_section OWNER TO jbilling;
 
 --
--- TOC entry 221 (class 1259 OID 28885)
 -- Name: notification_message_type; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1004,7 +1324,6 @@ CREATE TABLE notification_message_type (
 ALTER TABLE public.notification_message_type OWNER TO jbilling;
 
 --
--- TOC entry 222 (class 1259 OID 28888)
 -- Name: order_billing_type; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1016,7 +1335,6 @@ CREATE TABLE order_billing_type (
 ALTER TABLE public.order_billing_type OWNER TO jbilling;
 
 --
--- TOC entry 223 (class 1259 OID 28891)
 -- Name: order_line; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1042,7 +1360,6 @@ CREATE TABLE order_line (
 ALTER TABLE public.order_line OWNER TO jbilling;
 
 --
--- TOC entry 224 (class 1259 OID 28898)
 -- Name: order_line_type; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1055,7 +1372,6 @@ CREATE TABLE order_line_type (
 ALTER TABLE public.order_line_type OWNER TO jbilling;
 
 --
--- TOC entry 225 (class 1259 OID 28901)
 -- Name: order_period; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1071,7 +1387,6 @@ CREATE TABLE order_period (
 ALTER TABLE public.order_period OWNER TO jbilling;
 
 --
--- TOC entry 226 (class 1259 OID 28904)
 -- Name: order_process; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1092,7 +1407,6 @@ CREATE TABLE order_process (
 ALTER TABLE public.order_process OWNER TO jbilling;
 
 --
--- TOC entry 227 (class 1259 OID 28907)
 -- Name: paper_invoice_batch; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1108,7 +1422,6 @@ CREATE TABLE paper_invoice_batch (
 ALTER TABLE public.paper_invoice_batch OWNER TO jbilling;
 
 --
--- TOC entry 228 (class 1259 OID 28910)
 -- Name: partner; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1136,7 +1449,6 @@ CREATE TABLE partner (
 ALTER TABLE public.partner OWNER TO jbilling;
 
 --
--- TOC entry 229 (class 1259 OID 28913)
 -- Name: partner_payout; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1156,7 +1468,6 @@ CREATE TABLE partner_payout (
 ALTER TABLE public.partner_payout OWNER TO jbilling;
 
 --
--- TOC entry 230 (class 1259 OID 28916)
 -- Name: partner_range; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1174,7 +1485,6 @@ CREATE TABLE partner_range (
 ALTER TABLE public.partner_range OWNER TO jbilling;
 
 --
--- TOC entry 231 (class 1259 OID 28919)
 -- Name: payment; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1206,7 +1516,6 @@ CREATE TABLE payment (
 ALTER TABLE public.payment OWNER TO jbilling;
 
 --
--- TOC entry 232 (class 1259 OID 28928)
 -- Name: payment_authorization; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1231,7 +1540,6 @@ CREATE TABLE payment_authorization (
 ALTER TABLE public.payment_authorization OWNER TO jbilling;
 
 --
--- TOC entry 233 (class 1259 OID 28934)
 -- Name: payment_info_cheque; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1248,7 +1556,6 @@ CREATE TABLE payment_info_cheque (
 ALTER TABLE public.payment_info_cheque OWNER TO jbilling;
 
 --
--- TOC entry 234 (class 1259 OID 28937)
 -- Name: payment_invoice; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1265,7 +1572,6 @@ CREATE TABLE payment_invoice (
 ALTER TABLE public.payment_invoice OWNER TO jbilling;
 
 --
--- TOC entry 235 (class 1259 OID 28940)
 -- Name: payment_method; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1277,7 +1583,6 @@ CREATE TABLE payment_method (
 ALTER TABLE public.payment_method OWNER TO jbilling;
 
 --
--- TOC entry 236 (class 1259 OID 28943)
 -- Name: payment_result; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1289,7 +1594,6 @@ CREATE TABLE payment_result (
 ALTER TABLE public.payment_result OWNER TO jbilling;
 
 --
--- TOC entry 237 (class 1259 OID 28946)
 -- Name: period_unit; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1301,7 +1605,6 @@ CREATE TABLE period_unit (
 ALTER TABLE public.period_unit OWNER TO jbilling;
 
 --
--- TOC entry 238 (class 1259 OID 28949)
 -- Name: permission; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1315,7 +1618,6 @@ CREATE TABLE permission (
 ALTER TABLE public.permission OWNER TO jbilling;
 
 --
--- TOC entry 239 (class 1259 OID 28952)
 -- Name: permission_role_map; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1328,7 +1630,6 @@ CREATE TABLE permission_role_map (
 ALTER TABLE public.permission_role_map OWNER TO jbilling;
 
 --
--- TOC entry 240 (class 1259 OID 28955)
 -- Name: permission_type; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1341,7 +1642,6 @@ CREATE TABLE permission_type (
 ALTER TABLE public.permission_type OWNER TO jbilling;
 
 --
--- TOC entry 241 (class 1259 OID 28958)
 -- Name: permission_user; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1356,7 +1656,6 @@ CREATE TABLE permission_user (
 ALTER TABLE public.permission_user OWNER TO jbilling;
 
 --
--- TOC entry 242 (class 1259 OID 28961)
 -- Name: pluggable_task; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1373,7 +1672,6 @@ CREATE TABLE pluggable_task (
 ALTER TABLE public.pluggable_task OWNER TO jbilling;
 
 --
--- TOC entry 243 (class 1259 OID 28967)
 -- Name: pluggable_task_parameter; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1391,7 +1689,6 @@ CREATE TABLE pluggable_task_parameter (
 ALTER TABLE public.pluggable_task_parameter OWNER TO jbilling;
 
 --
--- TOC entry 244 (class 1259 OID 28973)
 -- Name: pluggable_task_type; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1406,7 +1703,6 @@ CREATE TABLE pluggable_task_type (
 ALTER TABLE public.pluggable_task_type OWNER TO jbilling;
 
 --
--- TOC entry 245 (class 1259 OID 28976)
 -- Name: pluggable_task_type_category; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1419,7 +1715,6 @@ CREATE TABLE pluggable_task_type_category (
 ALTER TABLE public.pluggable_task_type_category OWNER TO jbilling;
 
 --
--- TOC entry 246 (class 1259 OID 28979)
 -- Name: preference; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1435,7 +1730,6 @@ CREATE TABLE preference (
 ALTER TABLE public.preference OWNER TO jbilling;
 
 --
--- TOC entry 247 (class 1259 OID 28982)
 -- Name: preference_type; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1448,7 +1742,6 @@ CREATE TABLE preference_type (
 ALTER TABLE public.preference_type OWNER TO jbilling;
 
 --
--- TOC entry 248 (class 1259 OID 28985)
 -- Name: process_run; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1468,7 +1761,6 @@ CREATE TABLE process_run (
 ALTER TABLE public.process_run OWNER TO jbilling;
 
 --
--- TOC entry 249 (class 1259 OID 28988)
 -- Name: process_run_total; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1486,7 +1778,6 @@ CREATE TABLE process_run_total (
 ALTER TABLE public.process_run_total OWNER TO jbilling;
 
 --
--- TOC entry 250 (class 1259 OID 28991)
 -- Name: process_run_total_pm; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1502,7 +1793,6 @@ CREATE TABLE process_run_total_pm (
 ALTER TABLE public.process_run_total_pm OWNER TO jbilling;
 
 --
--- TOC entry 251 (class 1259 OID 28994)
 -- Name: process_run_user; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1519,7 +1809,6 @@ CREATE TABLE process_run_user (
 ALTER TABLE public.process_run_user OWNER TO jbilling;
 
 --
--- TOC entry 252 (class 1259 OID 28997)
 -- Name: promotion; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1537,7 +1826,6 @@ CREATE TABLE promotion (
 ALTER TABLE public.promotion OWNER TO jbilling;
 
 --
--- TOC entry 253 (class 1259 OID 29000)
 -- Name: purchase_order; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1576,7 +1864,6 @@ CREATE TABLE purchase_order (
 ALTER TABLE public.purchase_order OWNER TO jbilling;
 
 --
--- TOC entry 264 (class 1259 OID 29961)
 -- Name: purchase_order_master; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1589,7 +1876,6 @@ CREATE TABLE purchase_order_master (
 ALTER TABLE public.purchase_order_master OWNER TO jbilling;
 
 --
--- TOC entry 254 (class 1259 OID 29004)
 -- Name: recent_item; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1605,7 +1891,6 @@ CREATE TABLE recent_item (
 ALTER TABLE public.recent_item OWNER TO jbilling;
 
 --
--- TOC entry 255 (class 1259 OID 29007)
 -- Name: report; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1621,7 +1906,6 @@ CREATE TABLE report (
 ALTER TABLE public.report OWNER TO jbilling;
 
 --
--- TOC entry 256 (class 1259 OID 29013)
 -- Name: report_parameter; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1636,7 +1920,6 @@ CREATE TABLE report_parameter (
 ALTER TABLE public.report_parameter OWNER TO jbilling;
 
 --
--- TOC entry 257 (class 1259 OID 29016)
 -- Name: report_type; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1650,7 +1933,6 @@ CREATE TABLE report_type (
 ALTER TABLE public.report_type OWNER TO jbilling;
 
 --
--- TOC entry 258 (class 1259 OID 29019)
 -- Name: role; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1664,7 +1946,6 @@ CREATE TABLE role (
 ALTER TABLE public.role OWNER TO jbilling;
 
 --
--- TOC entry 259 (class 1259 OID 29022)
 -- Name: shortcut; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1682,7 +1963,6 @@ CREATE TABLE shortcut (
 ALTER TABLE public.shortcut OWNER TO jbilling;
 
 --
--- TOC entry 260 (class 1259 OID 29028)
 -- Name: user_credit_card_map; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1695,7 +1975,6 @@ CREATE TABLE user_credit_card_map (
 ALTER TABLE public.user_credit_card_map OWNER TO jbilling;
 
 --
--- TOC entry 261 (class 1259 OID 29031)
 -- Name: user_role_map; Type: TABLE; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -1708,8 +1987,6 @@ CREATE TABLE user_role_map (
 ALTER TABLE public.user_role_map OWNER TO jbilling;
 
 --
--- TOC entry 2711 (class 0 OID 28674)
--- Dependencies: 168
 -- Data for Name: ach; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -1718,8 +1995,6 @@ COPY ach (id, user_id, aba_routing, bank_account, account_type, bank_name, accou
 
 
 --
--- TOC entry 2712 (class 0 OID 28677)
--- Dependencies: 169
 -- Data for Name: ageing_entity_step; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -1729,8 +2004,6 @@ COPY ageing_entity_step (id, entity_id, status_id, days, optlock) FROM stdin;
 
 
 --
--- TOC entry 2713 (class 0 OID 28680)
--- Dependencies: 170
 -- Data for Name: base_user; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -1739,12 +2012,11 @@ COPY base_user (id, entity_id, password, deleted, language_id, status_id, subscr
 50	10	25d55ad283aa400af464c76d713c07ad	0	1	1	9	110	2013-03-07 09:21:11.216	\N	\N	test1	0	1
 30	10	de20cbe519cdd19c4cbb5e2386730a52	0	1	1	9	1	2013-02-05 15:22:14.559	\N	\N	polamaris	0	6
 40	10	21232f297a57a5a743894a0e4a801fc3	0	1	1	9	110	2013-02-14 12:10:12.952	\N	\N	admin1	0	4
+60	10	48bf7c556cde81937e66044fcede328f	0	1	1	9	110	2013-04-04 12:50:18.514	\N	\N	Seagull	0	1
 \.
 
 
 --
--- TOC entry 2714 (class 0 OID 28686)
--- Dependencies: 171
 -- Data for Name: billing_process; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -1753,19 +2025,15 @@ COPY billing_process (id, entity_id, billing_date, period_unit_id, period_value,
 
 
 --
--- TOC entry 2715 (class 0 OID 28690)
--- Dependencies: 172
 -- Data for Name: billing_process_configuration; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
 COPY billing_process_configuration (id, entity_id, next_run_date, generate_report, retries, days_for_retry, days_for_report, review_status, period_unit_id, period_value, due_date_unit_id, due_date_value, df_fm, only_recurring, invoice_date_process, optlock, auto_payment, maximum_periods, auto_payment_application) FROM stdin;
-100	10	2013-03-18	0	0	1	0	3	1	1	3	15	\N	1	0	32	0	1	1
+100	10	2013-04-18	0	0	1	0	3	1	1	3	15	\N	1	0	33	0	1	1
 \.
 
 
 --
--- TOC entry 2716 (class 0 OID 28697)
--- Dependencies: 173
 -- Data for Name: blacklist; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -1774,8 +2042,6 @@ COPY blacklist (id, entity_id, create_datetime, type, source, credit_card, credi
 
 
 --
--- TOC entry 2717 (class 0 OID 28700)
--- Dependencies: 174
 -- Data for Name: breadcrumb; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -1787,50 +2053,67 @@ COPY breadcrumb (id, user_id, controller, action, name, object_id, description, 
 31	20	invoice	list	\N	\N	\N	0
 32	20	payment	list	\N	\N	\N	0
 33	20	invoice	list	\N	\N	\N	0
-5416	10	order	list	\N	7616	\N	0
-5417	10	order	list	\N	7613	\N	0
-5411	10	orderBuilder	edit	\N	7613	\N	0
-5412	10	order	list	\N	7613	\N	0
-5413	10	customer	list	\N	\N	\N	0
-5414	10	customer	list	\N	30	Pola Maris NV	0
-5415	10	customer	list	\N	50	Test case	0
+6574	10	invoice	list	\N	5701	136	0
+6575	10	customer	list	\N	\N	\N	0
+6576	10	product	list	\N	\N	\N	0
+6577	10	product	list	\N	700	VMS	0
+6578	10	product	show	\N	1200	vmssl	0
+6579	10	customer	list	\N	\N	\N	0
+6580	10	customer	list	\N	60	danny tran	0
 \.
 
 
 --
--- TOC entry 2718 (class 0 OID 28706)
--- Dependencies: 175
 -- Data for Name: contact; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
 COPY contact (id, organization_name, street_addres1, street_addres2, city, state_province, postal_code, country_code, last_name, first_name, person_initial, person_title, phone_country_code, phone_area_code, phone_phone_number, fax_country_code, fax_area_code, fax_phone_number, email, create_datetime, deleted, notification_include, user_id, optlock) FROM stdin;
-100	Fantoft	Fantoftvegen 14, Postboks 1257		Bergen	Norge	5075	NO	Salaberria	Paul	\N	\N	\N	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-02-03 15:11:40.36	0	\N	\N	0
-101	Fantoft	Fantoftvegen 14, Postboks 1257		Bergen	Norge	5075	NO	Salaberria	Paul	\N	\N	\N	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-02-03 15:11:40.805	0	\N	10	0
-200	AS Klaveness	Fantoftvegen 14, Postboks 1257		Bergen	Norge	5075	NO	Monika	Monika	\N	\N	47	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-02-04 15:19:00.667	0	0	20	1
-201						20280	ES			\N	\N	\N	\N		\N	\N	\N	paulsmsm@hotmail.com	2013-02-04 16:03:19.385	0	0	21	1
-2401	OldPlan	Domkirkegaten 3		Bergen	Hordaland	5017	NO	Admin	Admin	\N	\N	\N	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-13 13:27:45.213	0	0	\N	0
-2402	OldPlan	Domkirkegaten 3		Bergen	Hordaland	5017	NO	Admin	Admin	\N	\N	\N	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-13 13:29:20.87	0	0	\N	0
-2700	Test	Fantoftvegen 14, Postboks 1257		Bergen	Hordaland	5017	NO	case	Test	\N	\N	47	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-13 14:13:10.766	0	0	\N	0
-2701	Pola Maris NV	Noorderplaats 9		Antwerp		2000	BE			\N	\N	\N	\N		\N	\N	\N	psalaberria002@gmail.com	2013-03-13 14:34:12.556	0	0	\N	0
-300	Pola Maris NV	Noorderplaats 9		Antwerp		2000	BE			\N	\N	\N	\N		\N	\N	\N	psalaberria002@gmail.com	2013-02-05 15:22:14.575	0	0	30	2
-700	OldPlan	Domkirkegaten 3		Bergen	Hordaland	5017	NO	Admin	Admin	\N	\N	\N	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-02-14 12:10:13.006	0	0	40	2
-2800	OldPlan	Domkirkegaten 3		Bergen	Hordaland	5017	NO	Admin	Admin	\N	\N	\N	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-13 14:53:42.47	0	0	\N	1
-2801	Pola Maris NV	Noorderplaats 9		Antwerp		2000	BE			\N	\N	\N	\N		\N	\N	\N	psalaberria002@gmail.com	2013-03-13 14:55:58.183	0	0	\N	1
-2900	Pola Maris NV	Noorderplaats 9		Antwerp		2000	BE			\N	\N	\N	\N		\N	\N	\N	psalaberria002@gmail.com	2013-03-13 15:43:56.936	0	0	\N	1
-2902	OldPlan	Domkirkegaten 3		Bergen	Hordaland	5017	NO	Admin	Admin	\N	\N	\N	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-13 15:46:11.982	0	0	\N	1
-1210	OldPlan	Domkirkegaten 3		Bergen	Hordaland	5017	NO	Admin	Admin	\N	\N	\N	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-02-25 14:49:18.285	0	0	\N	0
-1211	OldPlan	Domkirkegaten 3		Bergen	Hordaland	5017	NO	Admin	Admin	\N	\N	\N	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-02-25 14:53:22.866	0	0	\N	0
-1300	Test	Fantoftvegen 14, Postboks 1257		Bergen	Hordaland	5017	NO	case	Test	\N	\N	47	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-07 09:21:11.312	0	0	50	1
-4100	Pola Maris NV	Noorderplaats 9		Antwerp		2000	BE			\N	\N	\N	\N		\N	\N	\N	psalaberria002@gmail.com	2013-03-15 14:42:07.74	0	0	\N	0
-4101	Pola Maris NV	Noorderplaats 9		Antwerp		2000	BE			\N	\N	\N	\N		\N	\N	\N	psalaberria002@gmail.com	2013-03-15 14:43:49.187	0	0	\N	0
-4200	OldPlan	Domkirkegaten 3		Bergen	Hordaland	5017	NO	Admin	Admin	\N	\N	\N	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-15 14:54:34.85	0	0	\N	0
-4601	Test	Fantoftvegen 14, Postboks 1257		Bergen	Hordaland	5017	NO	case	Test	\N	\N	47	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-18 17:48:49.289	0	0	\N	0
+100	Fantoft	Fantoftvegen 14, Postboks 1257		Bergen	Norge	5075	NO	Salaberria	Paul	\N	\N	\N	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-02-03 15:11:40.36	0	1	\N	0
+101	Fantoft	Fantoftvegen 14, Postboks 1257		Bergen	Norge	5075	NO	Salaberria	Paul	\N	\N	\N	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-02-03 15:11:40.805	0	1	10	0
+200	AS Klaveness	Fantoftvegen 14, Postboks 1257		Bergen	Norge	5075	NO	Monika	Monika	\N	\N	47	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-02-04 15:19:00.667	0	1	20	1
+201						20280	ES			\N	\N	\N	\N		\N	\N	\N	paulsmsm@hotmail.com	2013-02-04 16:03:19.385	0	1	21	1
+2401	OldPlan	Domkirkegaten 3		Bergen	Hordaland	5017	NO	Admin	Admin	\N	\N	\N	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-13 13:27:45.213	0	1	\N	0
+2402	OldPlan	Domkirkegaten 3		Bergen	Hordaland	5017	NO	Admin	Admin	\N	\N	\N	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-13 13:29:20.87	0	1	\N	0
+2700	Test	Fantoftvegen 14, Postboks 1257		Bergen	Hordaland	5017	NO	case	Test	\N	\N	47	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-13 14:13:10.766	0	1	\N	0
+2701	Pola Maris NV	Noorderplaats 9		Antwerp		2000	BE			\N	\N	\N	\N		\N	\N	\N	psalaberria002@gmail.com	2013-03-13 14:34:12.556	0	1	\N	0
+300	Pola Maris NV	Noorderplaats 9		Antwerp		2000	BE			\N	\N	\N	\N		\N	\N	\N	psalaberria002@gmail.com	2013-02-05 15:22:14.575	0	1	30	2
+700	OldPlan	Domkirkegaten 3		Bergen	Hordaland	5017	NO	Admin	Admin	\N	\N	\N	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-02-14 12:10:13.006	0	1	40	2
+2800	OldPlan	Domkirkegaten 3		Bergen	Hordaland	5017	NO	Admin	Admin	\N	\N	\N	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-13 14:53:42.47	0	1	\N	1
+2801	Pola Maris NV	Noorderplaats 9		Antwerp		2000	BE			\N	\N	\N	\N		\N	\N	\N	psalaberria002@gmail.com	2013-03-13 14:55:58.183	0	1	\N	1
+2900	Pola Maris NV	Noorderplaats 9		Antwerp		2000	BE			\N	\N	\N	\N		\N	\N	\N	psalaberria002@gmail.com	2013-03-13 15:43:56.936	0	1	\N	1
+2902	OldPlan	Domkirkegaten 3		Bergen	Hordaland	5017	NO	Admin	Admin	\N	\N	\N	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-13 15:46:11.982	0	1	\N	1
+1210	OldPlan	Domkirkegaten 3		Bergen	Hordaland	5017	NO	Admin	Admin	\N	\N	\N	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-02-25 14:49:18.285	0	1	\N	0
+1211	OldPlan	Domkirkegaten 3		Bergen	Hordaland	5017	NO	Admin	Admin	\N	\N	\N	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-02-25 14:53:22.866	0	1	\N	0
+1300	Test	Fantoftvegen 14, Postboks 1257		Bergen	Hordaland	5017	NO	case	Test	\N	\N	47	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-07 09:21:11.312	0	1	50	1
+4100	Pola Maris NV	Noorderplaats 9		Antwerp		2000	BE			\N	\N	\N	\N		\N	\N	\N	psalaberria002@gmail.com	2013-03-15 14:42:07.74	0	1	\N	0
+4101	Pola Maris NV	Noorderplaats 9		Antwerp		2000	BE			\N	\N	\N	\N		\N	\N	\N	psalaberria002@gmail.com	2013-03-15 14:43:49.187	0	1	\N	0
+4200	OldPlan	Domkirkegaten 3		Bergen	Hordaland	5017	NO	Admin	Admin	\N	\N	\N	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-15 14:54:34.85	0	1	\N	0
+4800	Test	Fantoftvegen 14, Postboks 1257		Bergen	Hordaland	5017	NO	case	Test	\N	\N	47	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-19 11:12:39.867	0	1	\N	0
+4801	Test	Fantoftvegen 14, Postboks 1257		Bergen	Hordaland	5017	NO	case	Test	\N	\N	47	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-19 11:24:12.575	0	1	\N	0
+4802	Test	Fantoftvegen 14, Postboks 1257		Bergen	Hordaland	5017	NO	case	Test	\N	\N	47	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-19 11:27:52.345	0	1	\N	0
+4803	Test	Fantoftvegen 14, Postboks 1257		Bergen	Hordaland	5017	NO	case	Test	\N	\N	47	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-19 11:38:47.131	0	1	\N	0
+4900	Test	Fantoftvegen 14, Postboks 1257		Bergen	Hordaland	5017	NO	case	Test	\N	\N	47	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-19 11:54:49.404	0	1	\N	0
+4901	Test	Fantoftvegen 14, Postboks 1257		Bergen	Hordaland	5017	NO	case	Test	\N	\N	47	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-19 11:58:51.221	0	1	\N	0
+4902	Test	Fantoftvegen 14, Postboks 1257		Bergen	Hordaland	5017	NO	case	Test	\N	\N	47	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-19 12:01:17.822	0	1	\N	0
+4903	Test	Fantoftvegen 14, Postboks 1257		Bergen	Hordaland	5017	NO	case	Test	\N	\N	47	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-19 12:11:28.015	0	1	\N	0
+4904	Test	Fantoftvegen 14, Postboks 1257		Bergen	Hordaland	5017	NO	case	Test	\N	\N	47	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-19 12:30:30.815	0	1	\N	0
+5000	Test	Fantoftvegen 14, Postboks 1257		Bergen	Hordaland	5017	NO	case	Test	\N	\N	47	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-19 13:15:46.616	0	1	\N	0
+5100	Test	Fantoftvegen 14, Postboks 1257		Bergen	Hordaland	5017	NO	case	Test	\N	\N	47	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-03-19 17:27:12.309	0	1	\N	0
+5700	Test	Fantoftvegen 14, Postboks 1257		Bergen	Hordaland	5017	NO	case	Test	\N	\N	47	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-04-03 06:05:53.116	0	1	\N	0
+5701	Test	Fantoftvegen 14, Postboks 1257		Bergen	Hordaland	5017	NO	case	Test	\N	\N	47	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-04-03 06:25:18.589	0	1	\N	0
+5702	Pola Maris NV	Noorderplaats 9		Antwerp		2000	BE			\N	\N	\N	\N		\N	\N	\N	psalaberria002@gmail.com	2013-04-03 06:37:56.14	0	1	\N	0
+5703	Pola Maris NV	Noorderplaats 9		Antwerp		2000	BE			\N	\N	\N	\N		\N	\N	\N	psalaberria002@gmail.com	2013-04-03 06:39:49.582	0	1	\N	0
+5704	Pola Maris NV	Noorderplaats 9		Antwerp		2000	BE			\N	\N	\N	\N		\N	\N	\N	psalaberria002@gmail.com	2013-04-03 06:42:30.171	0	1	\N	0
+5800	Test	Fantoftvegen 14, Postboks 1257		Bergen	Hordaland	5017	NO	case	Test	\N	\N	47	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-04-03 20:42:57.903	0	1	\N	0
+5902	OldPlan	Domkirkegaten 3		Bergen	Hordaland	5017	NO	Admin	Admin	\N	\N	\N	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-04-03 22:22:10.615	0	1	\N	0
+5904	Test	Fantoftvegen 14, Postboks 1257		Bergen	Hordaland	5017	NO	case	Test	\N	\N	47	451	73413	\N	\N	\N	psalaberria002@gmail.com	2013-04-03 23:10:08.714	0	1	\N	0
+6000	Seagull Corporation	Domkirkegaten 3		Bergen	Hordaland	5017	VN	tran	danny	\N	\N	47	9702	8777	\N	\N	\N	hj@dataloy.com	2013-04-04 12:50:18.537	0	0	60	1
+6001	Seagull Corporation	Domkirkegaten 3		Bergen	Hordaland	5017	VN	tran	danny	\N	\N	47	9702	8777	\N	\N	\N	hj@dataloy.com	2013-04-04 12:53:37.004	0	0	\N	0
+6002	Seagull Corporation	Domkirkegaten 3		Bergen	Hordaland	5017	VN	tran	danny	\N	\N	47	9702	8777	\N	\N	\N	hj@dataloy.com	2013-04-04 13:02:29.304	0	0	\N	0
 \.
 
 
 --
--- TOC entry 2719 (class 0 OID 28714)
--- Dependencies: 176
 -- Data for Name: contact_field; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -1839,8 +2122,6 @@ COPY contact_field (id, type_id, contact_id, content, optlock) FROM stdin;
 
 
 --
--- TOC entry 2720 (class 0 OID 28717)
--- Dependencies: 177
 -- Data for Name: contact_field_type; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -1849,8 +2130,6 @@ COPY contact_field_type (id, entity_id, prompt_key, data_type, customer_readonly
 
 
 --
--- TOC entry 2721 (class 0 OID 28720)
--- Dependencies: 178
 -- Data for Name: contact_map; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -1875,13 +2154,32 @@ COPY contact_map (id, contact_id, type_id, table_id, foreign_id, optlock) FROM s
 680701	2801	1	39	2501	1
 680800	2900	1	39	2600	1
 680802	2902	1	39	2602	1
-682501	4601	1	39	4301	1
+682700	4800	1	39	4500	1
+682701	4801	1	39	4501	1
+682702	4802	1	39	4502	1
+682703	4803	1	39	4503	1
+682800	4900	1	39	4600	1
+682801	4901	1	39	4601	1
+682802	4902	1	39	4602	1
+682803	4903	1	39	4603	1
+682804	4904	1	39	4604	1
+682900	5000	1	39	4700	1
+683000	5100	1	39	4800	1
+683600	5700	1	39	5400	1
+683601	5701	1	39	5401	1
+683602	5702	1	39	5402	1
+683603	5703	1	39	5403	1
+683604	5704	1	39	5404	1
+683700	5800	1	39	5500	1
+683802	5902	1	39	5602	1
+683804	5904	1	39	5604	1
+683900	6000	20	10	60	1
+683901	6001	1	39	5700	1
+683902	6002	1	39	5701	1
 \.
 
 
 --
--- TOC entry 2722 (class 0 OID 28723)
--- Dependencies: 179
 -- Data for Name: contact_type; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -1892,8 +2190,6 @@ COPY contact_type (id, entity_id, is_primary, optlock) FROM stdin;
 
 
 --
--- TOC entry 2723 (class 0 OID 28726)
--- Dependencies: 180
 -- Data for Name: country; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -2139,8 +2435,6 @@ COPY country (id, code) FROM stdin;
 
 
 --
--- TOC entry 2724 (class 0 OID 28729)
--- Dependencies: 181
 -- Data for Name: credit_card; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -2149,8 +2443,6 @@ COPY credit_card (id, cc_number, cc_number_plain, cc_expiry, name, cc_type, dele
 
 
 --
--- TOC entry 2725 (class 0 OID 28733)
--- Dependencies: 182
 -- Data for Name: currency; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -2171,8 +2463,6 @@ COPY currency (id, symbol, code, country_code, optlock) FROM stdin;
 
 
 --
--- TOC entry 2726 (class 0 OID 28736)
--- Dependencies: 183
 -- Data for Name: currency_entity_map; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -2184,30 +2474,26 @@ COPY currency_entity_map (currency_id, entity_id) FROM stdin;
 
 
 --
--- TOC entry 2727 (class 0 OID 28739)
--- Dependencies: 184
 -- Data for Name: currency_exchange; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
 COPY currency_exchange (id, entity_id, currency_id, rate, create_datetime, optlock) FROM stdin;
-2520	0	4	95.0477000000	2013-02-05 15:11:46.071	0
 2514	0	1	1.0000000000	2013-02-05 15:11:46.059	0
-2516	0	2	1.0219000000	2013-02-05 15:11:46.057	0
-2523	0	11	0.9627000000	2013-02-05 15:11:46.078	0
-2519	0	5	0.6623000000	2013-02-05 15:11:46.069	0
-2515	0	110	5.8024000000	2013-02-05 15:11:46.084	0
-2517	0	7	0.9453000000	2013-02-05 15:11:46.061	0
-2521	0	9	1.2497000000	2013-02-05 15:11:46.074	0
-2524	0	10	3.1317000000	2013-02-05 15:11:46.081	0
-2522	0	8	6.4487000000	2013-02-05 15:11:46.076	0
-2513	0	3	0.7735000000	2013-02-05 15:11:46.052	0
-2518	0	6	1113.0974000000	2013-02-05 15:11:46.064	0
+2520	0	4	95.4263000000	2013-02-05 15:11:46.071	0
+2516	0	2	1.0152000000	2013-02-05 15:11:46.057	0
+2523	0	11	0.9589000000	2013-02-05 15:11:46.078	0
+2519	0	5	0.6612000000	2013-02-05 15:11:46.069	0
+2515	0	110	5.8117000000	2013-02-05 15:11:46.084	0
+2517	0	7	0.9483000000	2013-02-05 15:11:46.061	0
+2521	0	9	1.2418000000	2013-02-05 15:11:46.074	0
+2524	0	10	3.0801000000	2013-02-05 15:11:46.081	0
+2522	0	8	6.5587000000	2013-02-05 15:11:46.076	0
+2513	0	3	0.7802000000	2013-02-05 15:11:46.052	0
+2518	0	6	1127.9820000000	2013-02-05 15:11:46.064	0
 \.
 
 
 --
--- TOC entry 2728 (class 0 OID 28742)
--- Dependencies: 185
 -- Data for Name: customer; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -2215,12 +2501,11 @@ COPY customer (id, user_id, partner_id, referral_fee_paid, invoice_delivery_meth
 200	30	\N	\N	1		1	3	\N	\N	\N	0	0	0	\N	1	-8950.0000000000	0.0000000000	0.0000000000	5
 300	40	\N	\N	1		1	3	\N	\N	\N	0	0	0	\N	1	0.0000000000	0.0000000000	0.0000000000	3
 400	50	\N	\N	1		1	\N	\N	\N	\N	0	0	\N	\N	1	0.0000000000	0.0000000000	0.0000000000	1
+500	60	\N	\N	1		1	3	\N	\N	\N	0	0	\N	\N	1	0.0000000000	0.0000000000	0.0000000000	1
 \.
 
 
 --
--- TOC entry 2729 (class 0 OID 28750)
--- Dependencies: 186
 -- Data for Name: entity; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -2230,8 +2515,6 @@ COPY entity (id, external_id, description, create_datetime, language_id, currenc
 
 
 --
--- TOC entry 2730 (class 0 OID 28753)
--- Dependencies: 187
 -- Data for Name: entity_delivery_method_map; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -2243,8 +2526,6 @@ COPY entity_delivery_method_map (method_id, entity_id) FROM stdin;
 
 
 --
--- TOC entry 2731 (class 0 OID 28756)
--- Dependencies: 188
 -- Data for Name: entity_payment_method_map; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -2256,8 +2537,6 @@ COPY entity_payment_method_map (entity_id, payment_method_id) FROM stdin;
 
 
 --
--- TOC entry 2732 (class 0 OID 28759)
--- Dependencies: 189
 -- Data for Name: entity_report_map; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -2275,8 +2554,6 @@ COPY entity_report_map (report_id, entity_id) FROM stdin;
 
 
 --
--- TOC entry 2733 (class 0 OID 28762)
--- Dependencies: 190
 -- Data for Name: event_log; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -5940,12 +6217,340 @@ COPY event_log (id, entity_id, user_id, affected_user_id, table_id, foreign_id, 
 130053	10	10	50	21	7613	2013-03-18 18:06:48.652	2	7	9	\N	\N	\N	0
 130054	10	\N	50	21	7616	2013-03-18 18:06:48.702	2	7	25	\N	\N	\N	0
 130055	10	10	50	21	7616	2013-03-18 18:06:48.752	2	7	9	\N	\N	\N	0
+131000	10	\N	50	21	7700	2013-03-19 10:39:48.101	2	7	25	\N	\N	\N	0
+131001	10	10	50	21	7700	2013-03-19 10:40:01.869	2	7	9	\N	\N	\N	0
+131002	10	\N	50	21	7700	2013-03-19 10:40:02.198	3	1	1	\N	\N	\N	0
+131003	10	\N	50	39	4400	2013-03-19 10:40:02.521	2	9	25	\N	\N	\N	0
+131004	10	10	50	21	7700	2013-03-19 10:40:42.28	2	7	9	\N	\N	\N	0
+131005	10	\N	50	21	7701	2013-03-19 10:40:42.382	2	7	25	\N	\N	\N	0
+131006	10	10	50	21	7701	2013-03-19 10:40:42.447	2	7	9	\N	\N	\N	0
+131007	10	10	50	21	7700	2013-03-19 10:56:25.969	2	7	7	\N	\N	\N	0
+131008	10	\N	50	21	7702	2013-03-19 10:56:26.073	2	7	25	\N	\N	\N	0
+131009	10	10	50	21	7702	2013-03-19 10:56:26.132	2	7	9	\N	\N	\N	0
+131010	10	\N	\N	27	4700	2013-03-19 11:00:02.403	2	2	7	\N	\N	\N	0
+131011	10	10	50	39	4400	2013-03-19 11:00:02.412	2	9	7	\N	\N	\N	0
+131012	10	\N	\N	27	4601	2013-03-19 11:00:09.455	2	2	7	\N	\N	\N	0
+131013	10	\N	50	80	1400	2013-03-19 11:00:09.464	2	10	7	\N	\N	\N	0
+131014	10	10	50	39	4301	2013-03-19 11:00:09.474	2	9	7	\N	\N	\N	0
+132000	10	10	50	21	7702	2013-03-19 11:05:19.811	2	7	7	\N	\N	\N	0
+132001	10	10	50	21	7701	2013-03-19 11:05:32.819	2	7	7	\N	\N	\N	0
+132002	10	\N	50	21	7800	2013-03-19 11:12:36.466	2	7	25	\N	\N	\N	0
+132003	10	10	50	21	7800	2013-03-19 11:12:39.556	2	7	9	\N	\N	\N	0
+132004	10	\N	50	21	7800	2013-03-19 11:12:39.71	3	1	1	\N	\N	\N	0
+132005	10	\N	50	39	4500	2013-03-19 11:12:39.87	2	9	25	\N	\N	\N	0
+132006	10	10	50	21	7800	2013-03-19 11:13:26.522	2	7	7	\N	\N	\N	0
+132007	10	\N	50	21	7801	2013-03-19 11:13:26.597	2	7	25	\N	\N	\N	0
+132008	10	10	50	21	7801	2013-03-19 11:13:26.664	2	7	9	\N	\N	\N	0
+132009	10	10	50	21	7801	2013-03-19 11:14:53.559	2	7	7	\N	\N	\N	0
+132010	10	\N	50	21	7802	2013-03-19 11:24:08.266	2	7	25	\N	\N	\N	0
+132011	10	10	50	21	7802	2013-03-19 11:24:12.43	2	7	9	\N	\N	\N	0
+132012	10	\N	50	21	7802	2013-03-19 11:24:12.476	3	1	1	\N	\N	\N	0
+132013	10	\N	50	39	4501	2013-03-19 11:24:12.577	2	9	25	\N	\N	\N	0
+132014	10	10	50	21	7802	2013-03-19 11:25:11.52	2	7	7	\N	\N	\N	0
+132015	10	\N	50	21	7803	2013-03-19 11:25:11.577	2	7	25	\N	\N	\N	0
+132016	10	10	50	21	7803	2013-03-19 11:25:11.636	2	7	9	\N	\N	\N	0
+132017	10	10	50	21	7803	2013-03-19 11:25:57.929	2	7	7	\N	\N	\N	0
+132018	10	\N	50	21	7804	2013-03-19 11:27:48.88	2	7	25	\N	\N	\N	0
+132019	10	10	50	21	7804	2013-03-19 11:27:52.234	2	7	9	\N	\N	\N	0
+132020	10	\N	50	21	7804	2013-03-19 11:27:52.274	3	1	1	\N	\N	\N	0
+132021	10	\N	50	39	4502	2013-03-19 11:27:52.347	2	9	25	\N	\N	\N	0
+132022	10	10	50	21	7804	2013-03-19 11:28:15.479	2	7	9	\N	\N	\N	0
+132023	10	10	50	21	7804	2013-03-19 11:35:00.886	2	7	9	\N	\N	\N	0
+132024	10	10	50	21	7804	2013-03-19 11:35:00.976	2	7	7	\N	\N	\N	0
+132025	10	\N	50	21	7805	2013-03-19 11:35:01.01	2	7	25	\N	\N	\N	0
+132026	10	10	50	21	7805	2013-03-19 11:35:01.058	2	7	9	\N	\N	\N	0
+132027	10	10	50	21	7805	2013-03-19 11:35:33.031	2	7	7	\N	\N	\N	0
+132028	10	\N	50	21	7806	2013-03-19 11:38:43.622	2	7	25	\N	\N	\N	0
+132029	10	10	50	21	7806	2013-03-19 11:38:47.001	2	7	9	\N	\N	\N	0
+132030	10	\N	50	39	4503	2013-03-19 11:38:47.133	2	9	25	\N	\N	\N	0
+132031	10	10	50	21	7806	2013-03-19 11:39:07.096	2	7	9	\N	\N	\N	0
+132032	10	10	50	21	7806	2013-03-19 11:41:00.922	2	7	9	\N	\N	\N	0
+132033	10	10	50	21	7806	2013-03-19 11:41:38.034	2	7	9	\N	\N	\N	0
+132034	10	10	50	21	7806	2013-03-19 11:41:38.097	2	7	7	\N	\N	\N	0
+132035	10	\N	50	21	7807	2013-03-19 11:41:38.126	2	7	25	\N	\N	\N	0
+132036	10	10	50	21	7807	2013-03-19 11:41:38.169	2	7	9	\N	\N	\N	0
+132037	10	10	50	21	7807	2013-03-19 11:43:30.038	2	7	7	\N	\N	\N	0
+133000	10	\N	50	21	7900	2013-03-19 11:54:42.829	2	7	25	\N	\N	\N	0
+133001	10	10	50	21	7900	2013-03-19 11:54:49.195	2	7	9	\N	\N	\N	0
+133002	10	\N	50	39	4600	2013-03-19 11:54:49.411	2	9	25	\N	\N	\N	0
+133003	10	10	50	21	7900	2013-03-19 11:55:11.149	2	7	9	\N	\N	\N	0
+133004	10	10	50	21	7900	2013-03-19 11:55:11.214	2	7	7	\N	\N	\N	0
+133005	10	\N	50	21	7901	2013-03-19 11:55:11.242	2	7	25	\N	\N	\N	0
+133006	10	10	50	21	7901	2013-03-19 11:55:11.291	2	7	9	\N	\N	\N	0
+133007	10	10	50	21	7901	2013-03-19 11:58:19.314	2	7	7	\N	\N	\N	0
+133008	10	\N	50	21	7902	2013-03-19 11:58:48.348	2	7	25	\N	\N	\N	0
+133009	10	10	50	21	7902	2013-03-19 11:58:51.109	2	7	9	\N	\N	\N	0
+133010	10	\N	50	39	4601	2013-03-19 11:58:51.223	2	9	25	\N	\N	\N	0
+133011	10	10	50	21	7902	2013-03-19 11:59:05.834	2	7	9	\N	\N	\N	0
+133012	10	10	50	21	7902	2013-03-19 11:59:05.916	2	7	7	\N	\N	\N	0
+133013	10	\N	50	21	7903	2013-03-19 11:59:05.944	2	7	25	\N	\N	\N	0
+133014	10	10	50	21	7903	2013-03-19 11:59:05.979	2	7	9	\N	\N	\N	0
+133015	10	10	50	21	7903	2013-03-19 12:01:01.324	2	7	7	\N	\N	\N	0
+133016	10	\N	50	21	7904	2013-03-19 12:01:15.566	2	7	25	\N	\N	\N	0
+133017	10	10	50	21	7904	2013-03-19 12:01:17.723	2	7	9	\N	\N	\N	0
+133018	10	\N	50	39	4602	2013-03-19 12:01:17.824	2	9	25	\N	\N	\N	0
+133019	10	10	50	21	7904	2013-03-19 12:01:39.995	2	7	9	\N	\N	\N	0
+133020	10	10	50	21	7904	2013-03-19 12:01:40.06	2	7	7	\N	\N	\N	0
+133021	10	\N	50	21	7905	2013-03-19 12:01:40.09	2	7	25	\N	\N	\N	0
+133022	10	10	50	21	7905	2013-03-19 12:01:40.125	2	7	9	\N	\N	\N	0
+133023	10	10	50	21	7905	2013-03-19 12:10:59.523	2	7	7	\N	\N	\N	0
+133024	10	\N	50	21	7906	2013-03-19 12:11:19.656	2	7	25	\N	\N	\N	0
+133025	10	10	50	21	7906	2013-03-19 12:11:27.886	2	7	9	\N	\N	\N	0
+133026	10	\N	50	39	4603	2013-03-19 12:11:28.017	2	9	25	\N	\N	\N	0
+133027	10	10	50	21	7906	2013-03-19 12:11:48.65	2	7	9	\N	\N	\N	0
+133028	10	\N	50	21	7907	2013-03-19 12:11:48.695	2	7	25	\N	\N	\N	0
+133029	10	10	50	21	7907	2013-03-19 12:11:48.73	2	7	9	\N	\N	\N	0
+133030	10	10	50	21	7907	2013-03-19 12:12:42.012	2	7	7	\N	\N	\N	0
+133031	10	10	50	21	7906	2013-03-19 12:12:42.227	2	7	9	\N	\N	\N	0
+133032	10	10	50	21	7906	2013-03-19 12:16:41.478	2	7	9	\N	\N	\N	0
+133033	10	10	50	21	7906	2013-03-19 12:29:54.522	2	7	7	\N	\N	\N	0
+133034	10	\N	50	21	7908	2013-03-19 12:30:23.847	2	7	25	\N	\N	\N	0
+133035	10	10	50	21	7908	2013-03-19 12:30:30.678	2	7	9	\N	\N	\N	0
+133036	10	\N	50	39	4604	2013-03-19 12:30:30.817	2	9	25	\N	\N	\N	0
+133037	10	10	50	21	7908	2013-03-19 12:30:52.093	2	7	9	\N	\N	\N	0
+133038	10	\N	50	21	7909	2013-03-19 12:30:52.132	2	7	25	\N	\N	\N	0
+133039	10	10	50	21	7909	2013-03-19 12:30:52.175	2	7	9	\N	\N	\N	0
+133040	10	10	50	21	7909	2013-03-19 12:31:54.655	2	7	7	\N	\N	\N	0
+133041	10	10	50	21	7908	2013-03-19 12:31:54.846	2	7	9	\N	\N	\N	0
+134000	10	10	50	21	7908	2013-03-19 13:15:05.384	2	7	7	\N	\N	\N	0
+134001	10	\N	50	21	8000	2013-03-19 13:15:43.459	2	7	25	\N	\N	\N	0
+134002	10	10	50	21	8000	2013-03-19 13:15:46.417	2	7	9	\N	\N	\N	0
+134003	10	\N	50	39	4700	2013-03-19 13:15:46.62	2	9	25	\N	\N	\N	0
+134004	10	10	50	21	8000	2013-03-19 13:16:09.869	2	7	9	\N	\N	\N	0
+134005	10	\N	50	21	8001	2013-03-19 13:16:09.918	2	7	25	\N	\N	\N	0
+134006	10	10	50	21	8001	2013-03-19 13:16:09.961	2	7	9	\N	\N	\N	0
+135000	10	10	50	21	8001	2013-03-19 13:21:07.907	2	7	7	\N	\N	\N	0
+136000	10	10	50	21	8000	2013-03-19 15:33:41.632	2	7	9	\N	\N	\N	0
+137000	10	10	50	21	8000	2013-03-19 15:43:34.521	2	7	9	\N	\N	\N	0
+138000	10	10	50	21	8000	2013-03-19 15:54:47.106	2	7	9	\N	\N	\N	0
+139000	10	10	50	21	8000	2013-03-19 16:13:43.908	2	7	9	\N	\N	\N	0
+140000	10	10	50	21	8000	2013-03-19 16:16:50.708	2	7	9	\N	\N	\N	0
+141000	10	10	50	21	8000	2013-03-19 16:21:53.689	2	7	9	\N	\N	\N	0
+142000	10	10	50	21	8000	2013-03-19 16:37:21.692	2	7	9	\N	\N	\N	0
+142001	10	10	50	21	8000	2013-03-19 16:38:47.472	2	7	9	\N	\N	\N	0
+142002	10	10	50	21	8000	2013-03-19 16:40:50.652	2	7	9	\N	\N	\N	0
+143000	10	10	50	21	8000	2013-03-19 16:43:20.739	2	7	9	\N	\N	\N	0
+144000	10	10	50	21	8000	2013-03-19 16:47:35.052	2	7	9	\N	\N	\N	0
+145000	10	10	50	21	8000	2013-03-19 16:49:47.962	2	7	9	\N	\N	\N	0
+145001	10	10	50	21	8000	2013-03-19 16:51:47.735	2	7	9	\N	\N	\N	0
+146000	10	10	50	21	8000	2013-03-19 16:54:19.464	2	7	9	\N	\N	\N	0
+147000	10	10	50	21	8000	2013-03-19 16:56:57.216	2	7	9	\N	\N	\N	0
+148000	10	10	50	21	8000	2013-03-19 16:59:49.769	2	7	9	\N	\N	\N	0
+149000	10	10	50	21	8000	2013-03-19 17:03:24.111	2	7	9	\N	\N	\N	0
+150000	10	10	50	21	8000	2013-03-19 17:07:07.902	2	7	9	\N	\N	\N	0
+151000	10	10	50	21	8000	2013-03-19 17:20:24.53	2	7	9	\N	\N	\N	0
+151001	10	10	50	21	8000	2013-03-19 17:21:52.392	2	7	9	\N	\N	\N	0
+152000	10	10	50	21	8000	2013-03-19 17:24:09.499	2	7	7	\N	\N	\N	0
+152001	10	10	50	21	8000	2013-03-19 17:26:23.834	2	7	7	\N	\N	\N	0
+152002	10	\N	50	21	8100	2013-03-19 17:27:08.793	2	7	25	\N	\N	\N	0
+152003	10	10	50	21	8100	2013-03-19 17:27:11.858	2	7	9	\N	\N	\N	0
+152004	10	\N	50	39	4800	2013-03-19 17:27:12.313	2	9	25	\N	\N	\N	0
+152005	10	10	50	21	8100	2013-03-19 17:27:56.825	2	7	9	\N	\N	\N	0
+152006	10	\N	50	21	8101	2013-03-19 17:27:56.964	2	7	25	\N	\N	\N	0
+152007	10	10	50	21	8101	2013-03-19 17:27:57.037	2	7	9	\N	\N	\N	0
+152008	10	10	50	21	8101	2013-03-19 17:28:32.505	2	7	7	\N	\N	\N	0
+152009	10	10	50	21	8100	2013-03-19 17:28:32.867	2	7	9	\N	\N	\N	0
+152010	10	10	50	21	8100	2013-03-19 17:28:43.731	2	7	7	\N	\N	\N	0
+152011	10	\N	30	21	8102	2013-03-19 17:30:03.803	2	7	25	\N	\N	\N	0
+152012	10	10	30	21	8102	2013-03-19 17:30:23.81	2	7	7	\N	\N	\N	0
+152013	10	\N	50	80	1500	2013-03-19 17:36:59.397	2	10	7	\N	\N	\N	0
+152014	10	\N	50	42	1200	2013-03-19 17:37:02.538	2	10	7	\N	\N	\N	0
+153000	10	\N	50	21	8200	2013-03-21 12:38:38.544	2	7	25	\N	\N	\N	0
+153001	10	10	50	21	8200	2013-03-21 12:38:47.956	2	7	9	\N	\N	\N	0
+153002	10	\N	50	39	4900	2013-03-21 12:38:48.581	2	9	25	\N	\N	\N	0
+154000	10	10	50	21	8200	2013-03-21 12:50:45.293	2	7	9	\N	\N	\N	0
+154001	10	10	50	21	8200	2013-03-21 12:54:44.91	2	7	9	\N	\N	\N	0
+154002	10	10	50	21	8200	2013-03-21 12:54:58.619	2	7	9	\N	\N	\N	0
+154003	10	10	50	21	8200	2013-03-21 12:57:44.029	2	7	9	\N	\N	\N	0
+154004	10	10	50	21	8200	2013-03-21 12:58:02.476	2	7	9	\N	\N	\N	0
+154005	10	10	50	21	8200	2013-03-21 12:58:57.073	2	7	9	\N	\N	\N	0
+154006	10	10	50	21	8200	2013-03-21 13:00:35.903	2	7	9	\N	\N	\N	0
+154007	10	10	50	21	8200	2013-03-21 13:02:29.36	2	7	9	\N	\N	\N	0
+154008	10	\N	50	21	8300	2013-03-21 13:02:29.426	2	7	25	\N	\N	\N	0
+154009	10	10	50	21	8200	2013-03-21 13:04:23.816	2	7	9	\N	\N	\N	0
+154010	10	\N	50	21	8301	2013-03-21 13:04:23.902	2	7	25	\N	\N	\N	0
+154011	10	10	50	21	8200	2013-03-21 13:06:05.401	2	7	9	\N	\N	\N	0
+154012	10	10	50	21	8200	2013-03-21 13:06:05.561	2	7	7	\N	\N	\N	0
+154013	10	\N	50	21	8302	2013-03-21 13:06:05.619	2	7	25	\N	\N	\N	0
+154014	10	\N	50	39	5000	2013-03-21 13:06:53.402	2	9	25	\N	\N	\N	0
+154015	10	\N	50	21	8301	2013-03-21 13:06:53.518	2	7	13	1	\N	\N	0
+154016	10	\N	50	21	8302	2013-03-21 13:07:10.995	2	7	13	1	\N	\N	0
+154017	10	\N	50	39	4900	2013-03-21 13:07:10.997	2	9	16	\N	\N	\N	0
+155000	10	\N	50	21	8302	2013-03-21 13:32:02.504	2	7	13	2	\N	\N	0
+155001	10	\N	\N	27	5200	2013-03-21 13:32:02.666	2	2	7	\N	\N	\N	0
+155002	10	10	50	39	4900	2013-03-21 13:32:02.725	2	9	7	\N	\N	\N	0
+155003	10	\N	50	21	8301	2013-03-21 13:32:49.453	2	7	13	2	\N	\N	0
+155004	10	\N	\N	27	5300	2013-03-21 13:32:49.516	2	2	7	\N	\N	\N	0
+155005	10	10	50	39	5000	2013-03-21 13:32:49.528	2	9	7	\N	\N	\N	0
+155006	10	10	50	21	8302	2013-03-21 13:33:18.873	2	7	7	\N	\N	\N	0
+155007	10	\N	50	39	5100	2013-03-21 13:33:29.067	2	9	25	\N	\N	\N	0
+155008	10	\N	50	21	8301	2013-03-21 13:33:29.121	2	7	13	1	\N	\N	0
+155009	10	\N	50	21	8301	2013-03-21 13:33:33.724	2	7	13	2	\N	\N	0
+155010	10	\N	\N	27	5400	2013-03-21 13:33:33.749	2	2	7	\N	\N	\N	0
+155011	10	10	50	39	5100	2013-03-21 13:33:33.761	2	9	7	\N	\N	\N	0
+155012	10	10	50	21	8301	2013-03-21 13:33:41.434	2	7	7	\N	\N	\N	0
+155013	10	10	50	21	8300	2013-03-21 13:33:45.716	2	7	7	\N	\N	\N	0
+155014	10	\N	50	21	8400	2013-03-21 13:34:21.066	2	7	25	\N	\N	\N	0
+155015	10	10	50	21	8400	2013-03-21 13:34:24.254	2	7	9	\N	\N	\N	0
+155016	10	\N	50	21	8400	2013-03-21 13:34:24.302	3	1	1	\N	\N	\N	0
+155017	10	\N	50	39	5101	2013-03-21 13:34:24.423	2	9	25	\N	\N	\N	0
+155018	10	\N	40	21	8401	2013-03-21 13:39:19.149	2	7	25	\N	\N	\N	0
+155019	10	10	40	21	8401	2013-03-21 13:39:46.407	2	7	9	\N	\N	\N	0
+155020	10	\N	40	21	8401	2013-03-21 13:39:46.512	3	1	1	\N	\N	\N	0
+155021	10	\N	40	39	5102	2013-03-21 13:39:46.63	2	9	25	\N	\N	\N	0
+155022	10	10	40	21	8401	2013-03-21 13:42:38.031	2	7	9	\N	\N	\N	0
+155023	10	\N	40	21	8402	2013-03-21 13:42:38.125	2	7	25	\N	\N	\N	0
+155024	10	10	40	21	8401	2013-03-21 13:48:39.195	2	7	9	\N	\N	\N	0
+155025	10	\N	40	21	8403	2013-03-21 13:48:39.272	2	7	25	\N	\N	\N	0
+155026	10	10	40	21	8401	2013-03-21 13:55:16.504	2	7	9	\N	\N	\N	0
+155027	10	\N	40	21	8404	2013-03-21 13:55:16.577	2	7	25	\N	\N	\N	0
+155028	10	\N	40	21	8405	2013-03-21 14:01:46.375	2	7	25	\N	\N	\N	0
+155029	10	10	40	21	8401	2013-03-21 14:02:17.237	2	7	9	\N	\N	\N	0
+155030	10	\N	40	21	8406	2013-03-21 14:02:17.295	2	7	25	\N	\N	\N	0
+155031	10	10	40	21	8401	2013-03-21 14:09:26.889	2	7	9	\N	\N	\N	0
+155032	10	\N	40	21	8407	2013-03-21 14:09:26.972	2	7	25	\N	\N	\N	0
+155033	10	\N	40	21	8402	2013-03-21 14:10:00.438	2	1	2	\N	\N	\N	0
+155034	10	\N	40	21	8403	2013-03-21 14:10:00.44	2	1	2	\N	\N	\N	0
+155035	10	\N	40	21	8405	2013-03-21 14:10:00.461	2	1	2	\N	\N	\N	0
+155036	10	\N	40	21	8406	2013-03-21 14:10:00.463	2	1	2	\N	\N	\N	0
+155037	10	\N	40	21	8401	2013-03-21 14:10:00.465	2	1	4	\N	\N	\N	0
+155038	10	\N	50	21	8400	2013-03-21 14:10:00.621	2	1	4	\N	\N	\N	0
+155039	10	10	40	21	8401	2013-03-21 14:11:38.992	2	7	9	\N	\N	\N	0
+155040	10	\N	40	21	8408	2013-03-21 14:11:39.057	2	7	25	\N	\N	\N	0
+155041	10	10	40	21	8401	2013-03-21 14:14:08.737	2	7	9	\N	\N	\N	0
+155042	10	\N	40	21	8409	2013-03-21 14:14:08.782	2	7	25	\N	\N	\N	0
+155043	10	10	40	21	8401	2013-03-21 14:20:59.613	2	7	9	\N	\N	\N	0
+155044	10	\N	40	21	8410	2013-03-21 14:20:59.688	2	7	25	\N	\N	\N	0
+155045	10	10	40	21	8401	2013-03-21 14:25:40.649	2	7	9	\N	\N	\N	0
+155046	10	\N	40	21	8411	2013-03-21 14:25:40.716	2	7	25	\N	\N	\N	0
+155047	10	10	40	21	8401	2013-03-21 14:33:34.721	2	7	9	\N	\N	\N	0
+155048	10	\N	40	21	8412	2013-03-21 14:33:34.831	2	7	25	\N	\N	\N	0
+156000	10	\N	\N	27	5401	2013-03-21 14:56:09.264	2	2	7	\N	\N	\N	0
+156001	10	10	50	39	5101	2013-03-21 14:56:09.279	2	9	7	\N	\N	\N	0
+156002	10	\N	\N	27	5402	2013-03-21 14:56:12.959	2	2	7	\N	\N	\N	0
+156003	10	10	40	39	5102	2013-03-21 14:56:12.985	2	9	7	\N	\N	\N	0
+156004	10	\N	50	21	8500	2013-03-21 14:57:01.89	2	7	25	\N	\N	\N	0
+156005	10	10	50	21	8500	2013-03-21 14:57:04.062	2	7	9	\N	\N	\N	0
+156006	10	\N	50	21	8500	2013-03-21 14:57:04.128	3	1	1	\N	\N	\N	0
+156007	10	\N	50	39	5200	2013-03-21 14:57:04.26	2	9	25	\N	\N	\N	0
+156008	10	\N	50	21	8501	2013-03-21 14:57:48.051	2	7	25	\N	\N	\N	0
+156009	10	\N	50	21	8501	2013-03-21 14:57:56.681	2	7	13	1	\N	\N	0
+156010	10	\N	50	39	5200	2013-03-21 14:57:56.691	2	9	16	\N	\N	\N	0
+157000	10	\N	50	21	8600	2013-03-21 15:31:46.621	2	7	25	\N	\N	\N	0
+157001	10	10	50	21	8600	2013-03-21 15:31:53.5	2	7	9	\N	\N	\N	0
+157002	10	\N	50	21	8600	2013-03-21 15:31:53.591	3	1	1	\N	\N	\N	0
+157003	10	\N	50	39	5300	2013-03-21 15:31:53.712	2	9	25	\N	\N	\N	0
+158000	10	10	\N	25	11	2013-03-21 16:25:23.034	2	11	9	\N	\N	\N	0
+159000	10	10	\N	25	11	2013-03-21 16:33:52.848	2	11	9	\N	\N	\N	0
+159001	10	10	\N	25	11	2013-03-21 16:41:01.663	2	11	9	\N	\N	\N	0
+159002	10	10	\N	25	11	2013-03-21 16:48:19.444	2	11	9	\N	\N	\N	0
+159003	10	10	\N	25	11	2013-03-21 16:50:32.752	2	11	9	\N	\N	\N	0
+159004	10	10	\N	25	11	2013-03-21 16:54:23.092	2	11	9	\N	\N	\N	0
+159005	10	\N	\N	27	5600	2013-03-21 17:13:39.791	2	2	7	\N	\N	\N	0
+159006	10	10	50	39	5300	2013-03-21 17:13:39.814	2	9	7	\N	\N	\N	0
+159007	10	\N	\N	27	5500	2013-03-21 17:13:43.905	2	2	7	\N	\N	\N	0
+159008	10	10	50	39	5200	2013-03-21 17:13:43.914	2	9	7	\N	\N	\N	0
+160000	10	\N	50	21	8700	2013-04-03 06:05:44.085	2	7	25	\N	\N	\N	0
+160001	10	10	50	21	8700	2013-04-03 06:05:52.923	2	7	9	\N	\N	\N	0
+160002	10	\N	50	39	5400	2013-04-03 06:05:53.119	2	9	25	\N	\N	\N	0
+160004	10	\N	50	42	1300	2013-04-03 06:12:55.527	2	10	25	\N	\N	\N	0
+160006	10	\N	50	21	8701	2013-04-03 06:20:49.061	2	7	25	\N	\N	\N	0
+160007	10	\N	50	39	5401	2013-04-03 06:25:18.591	2	9	25	\N	\N	\N	0
+160008	10	\N	50	21	8701	2013-04-03 06:25:18.605	2	7	13	1	\N	\N	0
+160012	10	\N	30	21	8702	2013-04-03 06:37:53.24	2	7	25	\N	\N	\N	0
+160013	10	10	30	21	8702	2013-04-03 06:37:56.046	2	7	9	\N	\N	\N	0
+160014	10	\N	30	39	5402	2013-04-03 06:37:56.142	2	9	25	\N	\N	\N	0
+160016	10	10	30	21	8702	2013-04-03 06:39:49.521	2	7	9	\N	\N	\N	0
+160017	10	\N	30	39	5403	2013-04-03 06:39:49.584	2	9	25	\N	\N	\N	0
+160018	10	10	30	21	8702	2013-04-03 06:42:12.242	2	7	9	\N	\N	\N	0
+160019	10	\N	30	21	8703	2013-04-03 06:42:12.267	2	7	25	\N	\N	\N	0
+160020	10	\N	30	39	5404	2013-04-03 06:42:30.172	2	9	25	\N	\N	\N	0
+160021	10	\N	30	21	8703	2013-04-03 06:42:30.185	2	7	13	1	\N	\N	0
+161000	10	\N	40	21	8800	2013-04-03 20:30:26.887	2	7	25	\N	\N	\N	0
+162000	10	10	50	21	8700	2013-04-03 20:42:36.586	2	7	9	\N	\N	\N	0
+162001	10	\N	50	21	8900	2013-04-03 20:42:36.651	2	7	25	\N	\N	\N	0
+162002	10	\N	50	39	5500	2013-04-03 20:42:57.912	2	9	25	\N	\N	\N	0
+162003	10	\N	50	21	8900	2013-04-03 20:42:57.94	2	7	13	1	\N	\N	0
+163000	10	\N	40	21	9000	2013-04-03 22:13:13.867	2	7	25	\N	\N	\N	0
+163001	10	10	40	21	9000	2013-04-03 22:13:20.165	2	7	9	\N	\N	\N	0
+163002	10	\N	40	39	5600	2013-04-03 22:13:20.363	2	9	25	\N	\N	\N	0
+163003	10	\N	\N	27	5900	2013-04-03 22:13:50.568	2	2	7	\N	\N	\N	0
+163004	10	10	40	39	5600	2013-04-03 22:13:50.574	2	9	7	\N	\N	\N	0
+163005	10	10	40	21	9000	2013-04-03 22:14:04.92	2	7	9	\N	\N	\N	0
+163006	10	10	40	21	9000	2013-04-03 22:14:18.591	2	7	9	\N	\N	\N	0
+163007	10	10	40	21	9000	2013-04-03 22:14:26.694	2	7	9	\N	\N	\N	0
+163008	10	10	40	21	9000	2013-04-03 22:18:08.477	2	7	7	\N	\N	\N	0
+163009	10	10	40	21	8800	2013-04-03 22:18:13.069	2	7	7	\N	\N	\N	0
+163010	10	\N	40	21	9001	2013-04-03 22:19:34.914	2	7	25	\N	\N	\N	0
+163011	10	\N	40	21	9002	2013-04-03 22:20:22.111	2	7	25	\N	\N	\N	0
+163012	10	10	40	21	9001	2013-04-03 22:20:35.647	2	7	9	\N	\N	\N	0
+163013	10	\N	40	21	9001	2013-04-03 22:20:35.672	3	1	1	\N	\N	\N	0
+163014	10	\N	40	39	5601	2013-04-03 22:20:35.743	2	9	25	\N	\N	\N	0
+163015	10	\N	\N	27	5901	2013-04-03 22:20:42.733	2	2	7	\N	\N	\N	0
+163016	10	10	40	39	5601	2013-04-03 22:20:42.74	2	9	7	\N	\N	\N	0
+163017	10	10	40	21	9001	2013-04-03 22:20:55.445	2	7	7	\N	\N	\N	0
+163018	10	10	40	21	9002	2013-04-03 22:21:13.947	2	7	9	\N	\N	\N	0
+163019	10	10	40	21	9002	2013-04-03 22:21:33.313	2	7	7	\N	\N	\N	0
+163020	10	\N	40	21	9003	2013-04-03 22:22:06.869	2	7	25	\N	\N	\N	0
+163021	10	10	40	21	9003	2013-04-03 22:22:10.562	2	7	9	\N	\N	\N	0
+163022	10	\N	40	21	9003	2013-04-03 22:22:10.577	3	1	1	\N	\N	\N	0
+163023	10	\N	40	39	5602	2013-04-03 22:22:10.616	2	9	25	\N	\N	\N	0
+163024	10	10	40	21	9003	2013-04-03 22:44:15.494	2	7	9	\N	\N	\N	0
+163025	10	\N	40	21	9004	2013-04-03 22:44:15.53	2	7	25	\N	\N	\N	0
+163026	10	\N	50	80	1600	2013-04-03 23:03:01.644	2	10	7	\N	\N	\N	0
+163027	10	\N	50	42	1300	2013-04-03 23:03:04.346	2	10	7	\N	\N	\N	0
+163028	10	\N	50	21	9005	2013-04-03 23:06:23.066	2	7	25	\N	\N	\N	0
+163029	10	10	50	21	9005	2013-04-03 23:06:30.037	2	7	9	\N	\N	\N	0
+163030	10	\N	50	39	5603	2013-04-03 23:06:30.129	2	9	25	\N	\N	\N	0
+163031	10	\N	\N	27	5903	2013-04-03 23:09:26.225	2	2	7	\N	\N	\N	0
+163032	10	10	50	39	5603	2013-04-03 23:09:26.23	2	9	7	\N	\N	\N	0
+163033	10	\N	50	21	9006	2013-04-03 23:09:54.995	2	7	25	\N	\N	\N	0
+163034	10	\N	50	39	5604	2013-04-03 23:10:08.716	2	9	25	\N	\N	\N	0
+163035	10	\N	50	21	9006	2013-04-03 23:10:08.727	2	7	13	1	\N	\N	0
+163036	10	10	50	21	9005	2013-04-03 23:10:23.659	2	7	9	\N	\N	\N	0
+163037	10	\N	50	39	5604	2013-04-03 23:10:23.731	2	9	16	\N	\N	\N	0
+163038	10	\N	50	42	1400	2013-04-03 23:14:05.355	2	10	25	\N	\N	\N	0
+163039	10	\N	50	21	9007	2013-04-03 23:15:44.968	2	7	25	\N	\N	\N	0
+163040	10	\N	50	39	5605	2013-04-03 23:15:57.275	2	9	25	\N	\N	\N	0
+163041	10	\N	50	21	9007	2013-04-03 23:15:57.288	2	7	13	1	\N	\N	0
+163042	10	10	50	21	9005	2013-04-03 23:16:48.232	2	7	9	\N	\N	\N	0
+163043	10	\N	50	21	9008	2013-04-03 23:16:48.269	2	7	25	\N	\N	\N	0
+163044	10	\N	50	21	9008	2013-04-03 23:17:02.74	2	7	13	1	\N	\N	0
+163045	10	\N	50	39	5605	2013-04-03 23:17:02.741	2	9	16	\N	\N	\N	0
+163046	10	\N	50	21	9007	2013-04-03 23:21:48.748	2	7	13	2	\N	\N	0
+163047	10	\N	50	21	9008	2013-04-03 23:21:48.751	2	7	13	2	\N	\N	0
+163048	10	\N	\N	27	5905	2013-04-03 23:21:48.759	2	2	7	\N	\N	\N	0
+163049	10	10	50	39	5605	2013-04-03 23:21:48.763	2	9	7	\N	\N	\N	0
+163050	10	10	50	21	9008	2013-04-03 23:22:16.478	2	7	7	\N	\N	\N	0
+163051	10	10	50	21	9005	2013-04-03 23:22:16.821	2	7	9	\N	\N	\N	0
+163052	10	10	50	21	9007	2013-04-03 23:22:39.527	2	7	7	\N	\N	\N	0
+163053	10	10	50	21	9005	2013-04-03 23:23:17.22	2	7	9	\N	\N	\N	0
+163054	10	10	50	21	9005	2013-04-03 23:24:19.531	2	7	9	\N	\N	\N	0
+163055	10	\N	50	21	9009	2013-04-03 23:24:19.566	2	7	25	\N	\N	\N	0
+164000	10	\N	50	21	9100	2013-04-04 10:56:14.353	2	7	25	\N	\N	\N	0
+164001	10	10	50	21	9100	2013-04-04 10:56:37.577	2	7	9	\N	\N	\N	0
+164002	10	\N	60	10	60	2013-04-04 12:50:18.526	2	2	25	\N	\N	\N	0
+164003	\N	\N	\N	27	6000	2013-04-04 12:50:18.549	2	2	25	\N	\N	\N	0
+164004	10	\N	60	27	6000	2013-04-04 12:50:18.625	2	2	9	\N	\N	\N	0
+164005	10	\N	60	21	9101	2013-04-04 12:53:19.922	2	7	25	\N	\N	\N	0
+164006	10	\N	60	39	5700	2013-04-04 12:53:37.006	2	9	25	\N	\N	\N	0
+164007	10	\N	60	21	9101	2013-04-04 12:53:37.029	2	7	13	1	\N	\N	0
+164008	10	\N	60	21	9102	2013-04-04 12:56:12.133	2	7	25	\N	\N	\N	0
+164009	10	10	60	21	9102	2013-04-04 12:56:33.508	2	7	9	\N	\N	\N	0
+164010	10	\N	60	21	9102	2013-04-04 12:56:33.55	3	1	1	\N	\N	\N	0
+164011	10	\N	60	39	5700	2013-04-04 12:56:33.602	2	9	16	\N	\N	\N	0
+164012	10	\N	60	21	9103	2013-04-04 13:01:00.271	2	7	25	\N	\N	\N	0
+164013	10	\N	60	42	1500	2013-04-04 13:02:07.186	2	10	25	\N	\N	\N	0
+164014	10	\N	60	39	5701	2013-04-04 13:02:29.305	2	9	25	\N	\N	\N	0
+164015	10	\N	60	21	9103	2013-04-04 13:02:29.319	2	7	13	1	\N	\N	0
+164016	10	10	60	21	9102	2013-04-04 13:03:45.334	2	7	9	\N	\N	\N	0
+164017	10	\N	60	21	9104	2013-04-04 13:03:45.359	2	7	25	\N	\N	\N	0
+164018	10	\N	60	21	9104	2013-04-04 13:05:39.847	2	7	13	1	\N	\N	0
+164019	10	\N	60	39	5701	2013-04-04 13:05:39.849	2	9	16	\N	\N	\N	0
 \.
 
 
 --
--- TOC entry 2734 (class 0 OID 28768)
--- Dependencies: 191
 -- Data for Name: event_log_message; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -5988,8 +6593,6 @@ COPY event_log_message (id) FROM stdin;
 
 
 --
--- TOC entry 2735 (class 0 OID 28771)
--- Dependencies: 192
 -- Data for Name: event_log_module; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -6013,8 +6616,6 @@ COPY event_log_module (id) FROM stdin;
 
 
 --
--- TOC entry 2736 (class 0 OID 28774)
--- Dependencies: 193
 -- Data for Name: filter; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -6023,8 +6624,6 @@ COPY filter (id, filter_set_id, type, constraint_type, field, template, visible,
 
 
 --
--- TOC entry 2737 (class 0 OID 28780)
--- Dependencies: 194
 -- Data for Name: filter_set; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -6033,8 +6632,6 @@ COPY filter_set (id, name, user_id, version) FROM stdin;
 
 
 --
--- TOC entry 2738 (class 0 OID 28783)
--- Dependencies: 195
 -- Data for Name: generic_status; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -6078,8 +6675,6 @@ COPY generic_status (id, dtype, status_value, can_login) FROM stdin;
 
 
 --
--- TOC entry 2739 (class 0 OID 28786)
--- Dependencies: 196
 -- Data for Name: generic_status_type; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -6095,8 +6690,6 @@ process_run_status
 
 
 --
--- TOC entry 2740 (class 0 OID 28789)
--- Dependencies: 197
 -- Data for Name: international_description; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7070,19 +7663,14 @@ COPY international_description (table_id, foreign_id, psudo_column, language_id,
 
 
 --
--- TOC entry 2741 (class 0 OID 28795)
--- Dependencies: 198
 -- Data for Name: invoice; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
 COPY invoice (id, create_datetime, billing_process_id, user_id, status_id, delegated_invoice_id, due_date, total, payment_attempts, balance, carried_balance, in_process_payment, is_review, currency_id, deleted, paper_invoice_batch_id, customer_notes, public_number, last_reminder, overdue_step, create_timestamp, optlock) FROM stdin;
-4301	2013-04-01 00:00:00	\N	50	26	\N	2013-04-02	79312.5000000000	1	0.0000000000	0.0000000000	1	0	110	0	\N	\N	103	\N	\N	2013-03-18 17:48:49.259	2
 \.
 
 
 --
--- TOC entry 2742 (class 0 OID 28804)
--- Dependencies: 199
 -- Data for Name: invoice_delivery_method; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7094,23 +7682,14 @@ COPY invoice_delivery_method (id) FROM stdin;
 
 
 --
--- TOC entry 2743 (class 0 OID 28807)
--- Dependencies: 200
 -- Data for Name: invoice_line; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
 COPY invoice_line (id, invoice_id, type_id, amount, quantity, price, deleted, item_id, description, source_user_id, is_percentage, optlock) FROM stdin;
-4405	4301	1	8950.0000000000	1.0000000000	8950.0000000000	0	1201	VMS Maintenance and support Period from 03/01/2013 to 02/28/2014	50	0	1
-4406	4301	1	25000.0000000000	1.0000000000	25000.0000000000	0	1401	API Maintenance and support Period from 03/01/2013 to 02/28/2014	50	0	1
-4407	4301	1	4500.0000000000	1.0000000000	4500.0000000000	0	1403	VES Maintenance & Support Period from 03/01/2013 to 02/28/2014	50	0	1
-4408	4301	1	25000.0000000000	1.0000000000	25000.0000000000	0	1405	VRC Maintenance and support Period from 03/01/2013 to 02/28/2014	50	0	1
-4409	4301	2	15862.5000000000	1.0000000000	15862.5000000000	0	1300	Tax line for percentage tax item 1300	50	0	1
 \.
 
 
 --
--- TOC entry 2744 (class 0 OID 28815)
--- Dependencies: 201
 -- Data for Name: invoice_line_type; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7125,8 +7704,6 @@ COPY invoice_line_type (id, description, order_position) FROM stdin;
 
 
 --
--- TOC entry 2745 (class 0 OID 28818)
--- Dependencies: 202
 -- Data for Name: item; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7144,8 +7721,6 @@ COPY item (id, internal_number, entity_id, percentage, price_manual, deleted, ha
 
 
 --
--- TOC entry 2806 (class 0 OID 29946)
--- Dependencies: 263
 -- Data for Name: item_dependency; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7154,8 +7729,6 @@ COPY item_dependency (item_id, child_item_id) FROM stdin;
 
 
 --
--- TOC entry 2746 (class 0 OID 28823)
--- Dependencies: 203
 -- Data for Name: item_price; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7172,8 +7745,6 @@ COPY item_price (id, item_id, currency_id, price, optlock) FROM stdin;
 
 
 --
--- TOC entry 2747 (class 0 OID 28826)
--- Dependencies: 204
 -- Data for Name: item_type; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7187,8 +7758,6 @@ COPY item_type (id, entity_id, description, order_line_type_id, optlock) FROM st
 
 
 --
--- TOC entry 2748 (class 0 OID 28829)
--- Dependencies: 205
 -- Data for Name: item_type_exclude_map; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7197,8 +7766,6 @@ COPY item_type_exclude_map (item_id, type_id) FROM stdin;
 
 
 --
--- TOC entry 2749 (class 0 OID 28832)
--- Dependencies: 206
 -- Data for Name: item_type_map; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7216,27 +7783,40 @@ COPY item_type_map (item_id, type_id) FROM stdin;
 
 
 --
--- TOC entry 2805 (class 0 OID 29922)
--- Dependencies: 262
 -- Data for Name: item_users; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
 COPY item_users (item_id, user_id, users) FROM stdin;
+1200	50	0
+1403	50	0
+1405	50	0
+1400	50	0
+1402	50	0
 1404	50	0
-1200	40	0
-1200	50	-10
 1201	50	0
-1201	30	1
-1201	40	10
-1401	50	1
-1403	50	1
-1405	50	1
+1401	50	0
+1405	30	0
+1404	30	0
+1403	30	0
+1402	30	0
+1401	30	0
+1400	30	0
+1200	30	0
+1201	30	0
+1201	40	0
+1401	40	0
+1200	40	0
+1400	40	0
+1402	40	0
+1404	40	0
+1403	40	0
+1405	40	0
+1200	60	0
+1201	60	0
 \.
 
 
 --
--- TOC entry 2750 (class 0 OID 28835)
--- Dependencies: 207
 -- Data for Name: jbilling_seqs; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7297,46 +7877,44 @@ contact_type	3
 ageing_entity_step	2
 billing_process_configuration	2
 notification_message_line	2
-payment_invoice	15
-notification_message_arch_line	13
-notification_message_arch	13
-invoice	44
-contact_map	6826
-contact	47
-invoice_line	45
-payment	13
-payment_info_cheque	13
+pluggable_task_parameter	10
 pluggable_task	19
-billing_process	10
-process_run	10
-process_run_user	9
-order_process	45
 currency_exchange	26
+billing_process	11
+process_run	11
+process_run_user	10
 contact_field_type	11
 notification_message	3
 notification_message_section	3
 process_run_total	9
 contact_field	3
 currency	12
-event_log	131
-purchase_order	77
-order_line	118
 order_period	4
-pluggable_task_parameter	9
 item_type	10
-preference	4
 item	15
 item_price	13
-base_user	6
-customer	5
-breadcrumb	5418
-recent_item	2349
+preference	5
+notification_message_arch_line	24
+notification_message_arch	24
+payment	16
+payment_info_cheque	16
+payment_invoice	19
+recent_item	2904
+breadcrumb	6581
+purchase_order	92
+order_line	160
+event_log	165
+base_user	7
+customer	6
+contact_map	6840
+contact	61
+invoice	58
+invoice_line	59
+order_process	59
 \.
 
 
 --
--- TOC entry 2751 (class 0 OID 28839)
--- Dependencies: 208
 -- Data for Name: jbilling_table; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7431,8 +8009,6 @@ COPY jbilling_table (id, name) FROM stdin;
 
 
 --
--- TOC entry 2752 (class 0 OID 28842)
--- Dependencies: 209
 -- Data for Name: language; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7442,8 +8018,6 @@ COPY language (id, code, description) FROM stdin;
 
 
 --
--- TOC entry 2753 (class 0 OID 28845)
--- Dependencies: 210
 -- Data for Name: mediation_cfg; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7452,8 +8026,6 @@ COPY mediation_cfg (id, entity_id, create_datetime, name, order_value, pluggable
 
 
 --
--- TOC entry 2754 (class 0 OID 28848)
--- Dependencies: 211
 -- Data for Name: mediation_order_map; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7462,8 +8034,6 @@ COPY mediation_order_map (mediation_process_id, order_id) FROM stdin;
 
 
 --
--- TOC entry 2755 (class 0 OID 28851)
--- Dependencies: 212
 -- Data for Name: mediation_process; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7472,8 +8042,6 @@ COPY mediation_process (id, configuration_id, start_datetime, end_datetime, orde
 
 
 --
--- TOC entry 2756 (class 0 OID 28854)
--- Dependencies: 213
 -- Data for Name: mediation_record; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7482,8 +8050,6 @@ COPY mediation_record (id, id_key, start_datetime, mediation_process_id, status_
 
 
 --
--- TOC entry 2757 (class 0 OID 28857)
--- Dependencies: 214
 -- Data for Name: mediation_record_line; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7492,8 +8058,6 @@ COPY mediation_record_line (id, mediation_record_id, order_line_id, event_date, 
 
 
 --
--- TOC entry 2758 (class 0 OID 28860)
--- Dependencies: 215
 -- Data for Name: notification_category; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7506,8 +8070,6 @@ COPY notification_category (id) FROM stdin;
 
 
 --
--- TOC entry 2759 (class 0 OID 28863)
--- Dependencies: 216
 -- Data for Name: notification_message; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7525,8 +8087,6 @@ COPY notification_message (id, type_id, entity_id, language_id, use_flag, optloc
 
 
 --
--- TOC entry 2760 (class 0 OID 28867)
--- Dependencies: 217
 -- Data for Name: notification_message_arch; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7577,12 +8137,56 @@ COPY notification_message_arch (id, type_id, create_datetime, user_id, result_me
 1101	1	2013-03-18 14:15:02.754	50	\N	1
 1200	16	2013-03-18 17:48:50.042	50	\N	1
 1201	16	2013-03-18 17:48:50.214	50	\N	1
+1300	16	2013-03-19 11:12:40.55	50	\N	1
+1301	16	2013-03-19 11:12:40.61	50	\N	1
+1400	1	2013-03-21 15:32:00.738	50	\N	1
+1401	1	2013-03-21 15:32:00.769	50	\N	1
+1500	1	2013-03-21 15:40:26.834	50	\N	1
+1501	1	2013-03-21 15:40:26.891	50	\N	1
+1600	1	2013-03-21 15:45:17.218	50	\N	1
+1601	1	2013-03-21 15:45:17.385	50	\N	1
+1700	1	2013-03-21 15:47:29.653	50	Setting addresses	1
+1701	1	2013-03-21 15:47:29.672	50	\N	1
+1800	1	2013-03-21 15:55:12.025	50	\N	1
+1801	1	2013-03-21 15:55:12.042	50	\N	1
+1802	1	2013-03-21 16:00:48.292	50	\N	1
+1803	1	2013-03-21 16:00:48.306	50	\N	1
+1900	1	2013-03-21 16:03:30.4	50	\N	1
+1901	1	2013-03-21 16:03:30.416	50	\N	1
+1902	1	2013-03-21 16:07:45.991	50	Exception sending the message.Mail server connection failed; nested exception is javax.mail.MessagingException: Connection error (java.net.ConnectException: Connection refused: connect). Failed messag	1
+1903	1	2013-03-21 16:07:47.529	50	\N	1
+2000	1	2013-03-21 16:15:48.251	50	Exception sending the message.Mail server connection failed; nested exception is javax.mail.MessagingException: Connection error (java.net.ConnectException: Connection refused: connect). Failed messag	1
+2001	1	2013-03-21 16:15:49.639	50	\N	1
+2100	1	2013-03-21 16:21:18.591	50	Exception sending the message.Mail server connection failed; nested exception is javax.mail.MessagingException: Connection error (java.net.ConnectException: Connection refused: connect). Failed messag	1
+2101	1	2013-03-21 16:21:19.868	50	\N	1
+2102	1	2013-03-21 16:25:31.288	50	Exception sending the message.Mail server connection failed; nested exception is javax.mail.MessagingException: Unable to obtain SASL authenticator. Failed messages: javax.mail.MessagingException: Una	1
+2103	1	2013-03-21 16:25:31.576	50	\N	1
+2200	1	2013-03-21 16:29:02.042	50	Exception sending the message.Mail server connection failed; nested exception is javax.mail.MessagingException: Unable to obtain SASL authenticator. Failed messages: javax.mail.MessagingException: Una	1
+2201	1	2013-03-21 16:29:02.524	50	\N	1
+2301	1	2013-03-21 16:31:09.865	50	Exception sending the message.Mail server connection failed; nested exception is javax.mail.MessagingException: javax.net.ssl.SSLException: Unrecognized SSL message, plaintext connection?. Failed mess	1
+2302	1	2013-03-21 16:31:12.184	50	\N	1
+2300	1	2013-03-21 16:31:09.524	50	Exception sending the message.Mail server connection failed; nested exception is javax.mail.MessagingException: javax.net.ssl.SSLException: Unrecognized SSL message, plaintext connection?. Failed mess	1
+2303	1	2013-03-21 16:31:12.209	50	\N	1
+2304	1	2013-03-21 16:31:28.686	50	Exception sending the message.Mail server connection failed; nested exception is javax.mail.MessagingException: javax.net.ssl.SSLException: Unrecognized SSL message, plaintext connection?. Failed mess	1
+2305	1	2013-03-21 16:31:28.892	50	\N	1
+2306	1	2013-03-21 16:33:59.997	50	Exception sending the message.Mail server connection failed; nested exception is javax.mail.MessagingException: javax.net.ssl.SSLException: Unrecognized SSL message, plaintext connection?. Failed mess	1
+2307	1	2013-03-21 16:34:00.195	50	\N	1
+2308	1	2013-03-21 16:38:47.227	50	Exception sending the message.Mail server connection failed; nested exception is javax.mail.MessagingException: javax.net.ssl.SSLException: Unrecognized SSL message, plaintext connection?. Failed mess	1
+2309	1	2013-03-21 16:38:47.5	50	\N	1
+2310	1	2013-03-21 16:41:09.163	50	Exception sending the message.Mail server connection failed; nested exception is javax.mail.MessagingException: javax.net.ssl.SSLException: Unrecognized SSL message, plaintext connection?. Failed mess	1
+2311	1	2013-03-21 16:41:09.364	50	\N	1
+2312	1	2013-03-21 16:41:13.182	50	Exception sending the message.Mail server connection failed; nested exception is javax.mail.MessagingException: javax.net.ssl.SSLException: Unrecognized SSL message, plaintext connection?. Failed mess	1
+2313	1	2013-03-21 16:41:13.381	50	\N	1
+2314	1	2013-03-21 16:48:24.385	50	Exception sending the message.Mail server connection failed; nested exception is javax.mail.MessagingException: Server doesn't support required transport level security. Failed messages: javax.mail.Me	1
+2315	1	2013-03-21 16:48:25.019	50	\N	1
+2316	1	2013-03-21 16:50:41.542	50	Exception sending the message.Mail server connection failed; nested exception is javax.mail.MessagingException: Connection error (java.io.IOException: Error connecting to ssl://smtp.gmail.com, 465). F	1
+2317	1	2013-03-21 16:50:41.7	50	\N	1
+2318	1	2013-03-21 16:54:30.276	50	\N	1
+2319	1	2013-03-21 16:54:33.607	50	\N	1
 \.
 
 
 --
--- TOC entry 2761 (class 0 OID 28870)
--- Dependencies: 218
 -- Data for Name: notification_message_arch_line; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7633,12 +8237,56 @@ COPY notification_message_arch_line (id, message_archive_id, section, content, o
 1101	1101	1	Billing Statement from Fantoft	1
 1200	1200	1	Thank you for your payment	1
 1201	1201	1	Thank you for your payment	1
+1300	1300	1	Thank you for your payment	1
+1301	1301	1	Thank you for your payment	1
+1400	1400	1	Billing Statement from Fantoft	1
+1401	1401	1	Billing Statement from Fantoft	1
+1500	1500	1	Billing Statement from Fantoft	1
+1501	1501	1	Billing Statement from Fantoft	1
+1600	1600	1	Billing Statement from Fantoft	1
+1601	1601	1	Billing Statement from Fantoft	1
+1700	1700	1	Billing Statement from Fantoft	1
+1701	1701	1	Billing Statement from Fantoft	1
+1800	1800	1	Billing Statement from Fantoft	1
+1801	1801	1	Billing Statement from Fantoft	1
+1802	1802	1	Billing Statement from Fantoft	1
+1803	1803	1	Billing Statement from Fantoft	1
+1900	1900	1	Billing Statement from Fantoft	1
+1901	1901	1	Billing Statement from Fantoft	1
+1902	1902	1	Billing Statement from Fantoft	1
+1903	1903	1	Billing Statement from Fantoft	1
+2000	2000	1	Billing Statement from Fantoft	1
+2001	2001	1	Billing Statement from Fantoft	1
+2100	2100	1	Billing Statement from Fantoft	1
+2101	2101	1	Billing Statement from Fantoft	1
+2102	2102	1	Billing Statement from Fantoft	1
+2103	2103	1	Billing Statement from Fantoft	1
+2200	2200	1	Billing Statement from Fantoft	1
+2201	2201	1	Billing Statement from Fantoft	1
+2301	2301	1	Billing Statement from Fantoft	1
+2302	2302	1	Billing Statement from Fantoft	1
+2300	2300	1	Billing Statement from Fantoft	1
+2303	2303	1	Billing Statement from Fantoft	1
+2304	2304	1	Billing Statement from Fantoft	1
+2305	2305	1	Billing Statement from Fantoft	1
+2306	2306	1	Billing Statement from Fantoft	1
+2307	2307	1	Billing Statement from Fantoft	1
+2308	2308	1	Billing Statement from Fantoft	1
+2309	2309	1	Billing Statement from Fantoft	1
+2310	2310	1	Billing Statement from Fantoft	1
+2311	2311	1	Billing Statement from Fantoft	1
+2312	2312	1	Billing Statement from Fantoft	1
+2313	2313	1	Billing Statement from Fantoft	1
+2314	2314	1	Billing Statement from Fantoft	1
+2315	2315	1	Billing Statement from Fantoft	1
+2316	2316	1	Billing Statement from Fantoft	1
+2317	2317	1	Billing Statement from Fantoft	1
+2318	2318	1	Billing Statement from Fantoft	1
+2319	2319	1	Billing Statement from Fantoft	1
 \.
 
 
 --
--- TOC entry 2762 (class 0 OID 28876)
--- Dependencies: 219
 -- Data for Name: notification_message_line; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7663,8 +8311,6 @@ COPY notification_message_line (id, message_section_id, content, optlock) FROM s
 
 
 --
--- TOC entry 2763 (class 0 OID 28882)
--- Dependencies: 220
 -- Data for Name: notification_message_section; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7692,8 +8338,6 @@ COPY notification_message_section (id, message_id, section, optlock) FROM stdin;
 
 
 --
--- TOC entry 2764 (class 0 OID 28885)
--- Dependencies: 221
 -- Data for Name: notification_message_type; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7722,8 +8366,6 @@ COPY notification_message_type (id, category_id, optlock) FROM stdin;
 
 
 --
--- TOC entry 2765 (class 0 OID 28888)
--- Dependencies: 222
 -- Data for Name: order_billing_type; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7734,8 +8376,6 @@ COPY order_billing_type (id) FROM stdin;
 
 
 --
--- TOC entry 2766 (class 0 OID 28891)
--- Dependencies: 223
 -- Data for Name: order_line; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7744,8 +8384,6 @@ COPY order_line (id, order_id, item_id, type_id, amount, quantity, price, item_p
 
 
 --
--- TOC entry 2767 (class 0 OID 28898)
--- Dependencies: 224
 -- Data for Name: order_line_type; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7757,8 +8395,6 @@ COPY order_line_type (id, editable) FROM stdin;
 
 
 --
--- TOC entry 2768 (class 0 OID 28901)
--- Dependencies: 225
 -- Data for Name: order_period; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7770,8 +8406,6 @@ COPY order_period (id, entity_id, value, unit_id, optlock) FROM stdin;
 
 
 --
--- TOC entry 2769 (class 0 OID 28904)
--- Dependencies: 226
 -- Data for Name: order_process; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7780,8 +8414,6 @@ COPY order_process (id, order_id, invoice_id, billing_process_id, periods_includ
 
 
 --
--- TOC entry 2770 (class 0 OID 28907)
--- Dependencies: 227
 -- Data for Name: paper_invoice_batch; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7790,8 +8422,6 @@ COPY paper_invoice_batch (id, total_invoices, delivery_date, is_self_managed, op
 
 
 --
--- TOC entry 2771 (class 0 OID 28910)
--- Dependencies: 228
 -- Data for Name: partner; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7800,8 +8430,6 @@ COPY partner (id, user_id, balance, total_payments, total_refunds, total_payouts
 
 
 --
--- TOC entry 2772 (class 0 OID 28913)
--- Dependencies: 229
 -- Data for Name: partner_payout; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7810,8 +8438,6 @@ COPY partner_payout (id, starting_date, ending_date, payments_amount, refunds_am
 
 
 --
--- TOC entry 2773 (class 0 OID 28916)
--- Dependencies: 230
 -- Data for Name: partner_range; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7820,19 +8446,18 @@ COPY partner_range (id, partner_id, percentage_rate, referral_fee, range_from, r
 
 
 --
--- TOC entry 2774 (class 0 OID 28919)
--- Dependencies: 231
 -- Data for Name: payment; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
 COPY payment (id, user_id, attempt, result_id, amount, create_datetime, update_datetime, payment_date, method_id, credit_card_id, deleted, is_refund, is_preauth, payment_id, currency_id, payout_id, ach_id, balance, payment_period, payment_notes, optlock) FROM stdin;
-1200	50	1	4	79312.5000000000	2013-03-18 15:30:23.926	\N	2013-03-18	1	\N	0	0	0	\N	110	\N	\N	0.0000000000	\N		3
+1200	50	1	4	79312.5000000000	2013-03-18 15:30:23.926	2013-03-19 17:37:02.534	2013-03-18	1	\N	1	0	0	\N	110	\N	\N	79312.5000000000	\N		7
+1300	50	1	4	6250.0000000000	2013-04-03 06:12:55.514	2013-04-03 23:03:04.343	2013-04-03	1	\N	1	0	0	\N	110	\N	\N	6250.0000000000	\N		3
+1400	50	1	4	133625.0000000000	2013-04-03 23:14:05.341	\N	2013-04-03	1	\N	0	0	0	\N	110	\N	\N	0.0000000000	\N		1
+1500	60	1	4	89500.0000000000	2013-04-04 13:02:07.172	\N	2013-04-04	1	\N	0	0	0	\N	110	\N	\N	0.0000000000	\N		1
 \.
 
 
 --
--- TOC entry 2775 (class 0 OID 28928)
--- Dependencies: 232
 -- Data for Name: payment_authorization; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7841,30 +8466,26 @@ COPY payment_authorization (id, payment_id, processor, code1, code2, code3, appr
 
 
 --
--- TOC entry 2776 (class 0 OID 28934)
--- Dependencies: 233
 -- Data for Name: payment_info_cheque; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
 COPY payment_info_cheque (id, payment_id, bank, cheque_number, cheque_date, optlock) FROM stdin;
 1200	1200	A	1111	2013-03-18	0
+1300	1300	mk	l	2013-04-02	0
+1400	1400	j	j	2013-04-03	0
+1500	1500	s	22	2013-04-01	0
 \.
 
 
 --
--- TOC entry 2777 (class 0 OID 28937)
--- Dependencies: 234
 -- Data for Name: payment_invoice; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
 COPY payment_invoice (id, payment_id, invoice_id, amount, create_datetime, optlock) FROM stdin;
-1400	1200	4301	79312.5000000000	2013-03-18 17:48:49.425	0
 \.
 
 
 --
--- TOC entry 2778 (class 0 OID 28940)
--- Dependencies: 235
 -- Data for Name: payment_method; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7882,8 +8503,6 @@ COPY payment_method (id) FROM stdin;
 
 
 --
--- TOC entry 2779 (class 0 OID 28943)
--- Dependencies: 236
 -- Data for Name: payment_result; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7896,8 +8515,6 @@ COPY payment_result (id) FROM stdin;
 
 
 --
--- TOC entry 2780 (class 0 OID 28946)
--- Dependencies: 237
 -- Data for Name: period_unit; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7910,8 +8527,6 @@ COPY period_unit (id) FROM stdin;
 
 
 --
--- TOC entry 2781 (class 0 OID 28949)
--- Dependencies: 238
 -- Data for Name: permission; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -7972,8 +8587,6 @@ COPY permission (id, type_id, foreign_id) FROM stdin;
 
 
 --
--- TOC entry 2782 (class 0 OID 28952)
--- Dependencies: 239
 -- Data for Name: permission_role_map; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -8184,8 +8797,6 @@ COPY permission_role_map (permission_id, role_id) FROM stdin;
 
 
 --
--- TOC entry 2783 (class 0 OID 28955)
--- Dependencies: 240
 -- Data for Name: permission_type; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -8204,8 +8815,6 @@ COPY permission_type (id, description) FROM stdin;
 
 
 --
--- TOC entry 2784 (class 0 OID 28958)
--- Dependencies: 241
 -- Data for Name: permission_user; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -8214,14 +8823,11 @@ COPY permission_user (permission_id, user_id, is_grant, id) FROM stdin;
 
 
 --
--- TOC entry 2785 (class 0 OID 28961)
--- Dependencies: 242
 -- Data for Name: pluggable_task; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
 COPY pluggable_task (id, entity_id, type_id, processing_order, notes, optlock) FROM stdin;
 10	10	21	1	\N	0
-11	10	9	1	\N	0
 12	10	12	2	\N	0
 13	10	1	1	\N	0
 14	10	3	1	\N	0
@@ -8240,32 +8846,31 @@ COPY pluggable_task (id, entity_id, type_id, processing_order, notes, optlock) F
 170	10	92	3	25% VAT (itemId 1300)\r\nField "Taxes" in contact (100)	7
 180	10	93	3		1
 25	10	82	1		3
+11	10	9	1		6
 \.
 
 
 --
--- TOC entry 2786 (class 0 OID 28967)
--- Dependencies: 243
 -- Data for Name: pluggable_task_parameter; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
 COPY pluggable_task_parameter (id, task_id, name, int_value, str_value, float_value, optlock) FROM stdin;
 100	10	all	\N	yes	\N	0
-101	11	smtp_server	\N	localhost	\N	0
-102	11	port	\N	25	\N	0
-103	11	ssl_auth	\N	false	\N	0
-104	11	tls	\N	false	\N	0
-105	11	username	\N	username	\N	0
-106	11	password	\N	password	\N	0
 107	12	design	\N	simple_invoice_b2b	\N	0
 500	170	tax_item_id	\N	1300	\N	1
 700	180	cron_exp	\N	0 30 15 * * ?	\N	0
+104	11	tls	\N	true	\N	1
+105	11	username	\N	psalaberria002@gmail.com	\N	2
+106	11	password	\N	efesltkskhspxvxf	\N	2
+900	11	from_name	\N	Dataloy Systems AS	\N	0
+901	11	from	\N	psalaberria002@gmail.com	\N	0
+103	11	ssl_auth	\N	false	\N	2
+102	11	port	\N	587	\N	4
+101	11	smtp_server	\N	smtp.gmail.com	\N	3
 \.
 
 
 --
--- TOC entry 2787 (class 0 OID 28973)
--- Dependencies: 244
 -- Data for Name: pluggable_task_type; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -8360,8 +8965,6 @@ COPY pluggable_task_type (id, category_id, class_name, min_parameters) FROM stdi
 
 
 --
--- TOC entry 2788 (class 0 OID 28976)
--- Dependencies: 245
 -- Data for Name: pluggable_task_type_category; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -8394,8 +8997,6 @@ COPY pluggable_task_type_category (id, interface_name) FROM stdin;
 
 
 --
--- TOC entry 2789 (class 0 OID 28979)
--- Dependencies: 246
 -- Data for Name: preference; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -8403,15 +9004,14 @@ COPY preference (id, type_id, table_id, foreign_id, value) FROM stdin;
 10	4	5	10	5
 11	14	5	10	1
 21	18	5	10	
+40	32	5	10	1
 30	44	5	10	1
-22	31	5	10	2013-4-1
-20	19	5	10	104
+22	31	5	10	2013-4-4
+20	19	5	10	137
 \.
 
 
 --
--- TOC entry 2790 (class 0 OID 28982)
--- Dependencies: 247
 -- Data for Name: preference_type; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -8465,8 +9065,6 @@ COPY preference_type (id, def_value) FROM stdin;
 
 
 --
--- TOC entry 2791 (class 0 OID 28985)
--- Dependencies: 248
 -- Data for Name: process_run; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -8475,8 +9073,6 @@ COPY process_run (id, process_id, run_date, started, finished, payment_finished,
 
 
 --
--- TOC entry 2792 (class 0 OID 28988)
--- Dependencies: 249
 -- Data for Name: process_run_total; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -8485,8 +9081,6 @@ COPY process_run_total (id, process_run_id, currency_id, total_invoiced, total_p
 
 
 --
--- TOC entry 2793 (class 0 OID 28991)
--- Dependencies: 250
 -- Data for Name: process_run_total_pm; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -8495,8 +9089,6 @@ COPY process_run_total_pm (id, process_run_total_id, payment_method_id, total, o
 
 
 --
--- TOC entry 2794 (class 0 OID 28994)
--- Dependencies: 251
 -- Data for Name: process_run_user; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -8505,8 +9097,6 @@ COPY process_run_user (id, process_run_id, user_id, status, created, optlock) FR
 
 
 --
--- TOC entry 2795 (class 0 OID 28997)
--- Dependencies: 252
 -- Data for Name: promotion; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -8515,8 +9105,6 @@ COPY promotion (id, item_id, code, notes, once, since, until) FROM stdin;
 
 
 --
--- TOC entry 2796 (class 0 OID 29000)
--- Dependencies: 253
 -- Data for Name: purchase_order; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -8525,8 +9113,6 @@ COPY purchase_order (id, user_id, period_id, billing_type_id, active_since, acti
 
 
 --
--- TOC entry 2807 (class 0 OID 29961)
--- Dependencies: 264
 -- Data for Name: purchase_order_master; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -8535,23 +9121,19 @@ COPY purchase_order_master (order_id, master) FROM stdin;
 
 
 --
--- TOC entry 2797 (class 0 OID 29004)
--- Dependencies: 254
 -- Data for Name: recent_item; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
 COPY recent_item (id, type, object_id, user_id, version) FROM stdin;
-2344	CUSTOMER	50	10	0
-2345	ORDER	7613	10	0
-2346	CUSTOMER	30	10	0
-2347	CUSTOMER	50	10	0
-2348	ORDER	7613	10	0
+2899	ORDER	9103	10	0
+2900	CUSTOMER	60	10	0
+2901	INVOICE	5701	10	0
+2902	PRODUCT	1200	10	0
+2903	CUSTOMER	60	10	0
 \.
 
 
 --
--- TOC entry 2798 (class 0 OID 29007)
--- Dependencies: 255
 -- Data for Name: report; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -8569,8 +9151,6 @@ COPY report (id, type_id, name, file_name, optlock) FROM stdin;
 
 
 --
--- TOC entry 2799 (class 0 OID 29013)
--- Dependencies: 256
 -- Data for Name: report_parameter; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -8593,8 +9173,6 @@ COPY report_parameter (id, report_id, dtype, name) FROM stdin;
 
 
 --
--- TOC entry 2800 (class 0 OID 29016)
--- Dependencies: 257
 -- Data for Name: report_type; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -8607,8 +9185,6 @@ COPY report_type (id, name, optlock) FROM stdin;
 
 
 --
--- TOC entry 2801 (class 0 OID 29019)
--- Dependencies: 258
 -- Data for Name: role; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -8623,8 +9199,6 @@ COPY role (id, entity_id, role_type_id) FROM stdin;
 
 
 --
--- TOC entry 2802 (class 0 OID 29022)
--- Dependencies: 259
 -- Data for Name: shortcut; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -8633,8 +9207,6 @@ COPY shortcut (id, user_id, controller, action, name, object_id, version) FROM s
 
 
 --
--- TOC entry 2803 (class 0 OID 29028)
--- Dependencies: 260
 -- Data for Name: user_credit_card_map; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -8643,8 +9215,6 @@ COPY user_credit_card_map (user_id, credit_card_id) FROM stdin;
 
 
 --
--- TOC entry 2804 (class 0 OID 29031)
--- Dependencies: 261
 -- Data for Name: user_role_map; Type: TABLE DATA; Schema: public; Owner: jbilling
 --
 
@@ -8653,11 +9223,11 @@ COPY user_role_map (user_id, role_id) FROM stdin;
 30	5
 40	5
 50	5
+60	5
 \.
 
 
 --
--- TOC entry 2344 (class 2606 OID 29035)
 -- Name: ach_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8666,7 +9236,6 @@ ALTER TABLE ONLY ach
 
 
 --
--- TOC entry 2346 (class 2606 OID 29037)
 -- Name: ageing_entity_step_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8675,7 +9244,6 @@ ALTER TABLE ONLY ageing_entity_step
 
 
 --
--- TOC entry 2348 (class 2606 OID 29039)
 -- Name: base_user_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8684,7 +9252,6 @@ ALTER TABLE ONLY base_user
 
 
 --
--- TOC entry 2355 (class 2606 OID 29041)
 -- Name: billing_process_configuration_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8693,7 +9260,6 @@ ALTER TABLE ONLY billing_process_configuration
 
 
 --
--- TOC entry 2353 (class 2606 OID 29043)
 -- Name: billing_process_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8702,7 +9268,6 @@ ALTER TABLE ONLY billing_process
 
 
 --
--- TOC entry 2357 (class 2606 OID 29045)
 -- Name: blacklist_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8711,7 +9276,6 @@ ALTER TABLE ONLY blacklist
 
 
 --
--- TOC entry 2361 (class 2606 OID 29047)
 -- Name: breadcrumb_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8720,7 +9284,6 @@ ALTER TABLE ONLY breadcrumb
 
 
 --
--- TOC entry 2373 (class 2606 OID 29049)
 -- Name: contact_field_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8729,7 +9292,6 @@ ALTER TABLE ONLY contact_field
 
 
 --
--- TOC entry 2377 (class 2606 OID 29051)
 -- Name: contact_field_type_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8738,7 +9300,6 @@ ALTER TABLE ONLY contact_field_type
 
 
 --
--- TOC entry 2382 (class 2606 OID 29053)
 -- Name: contact_map_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8747,7 +9308,6 @@ ALTER TABLE ONLY contact_map
 
 
 --
--- TOC entry 2364 (class 2606 OID 29055)
 -- Name: contact_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8756,7 +9316,6 @@ ALTER TABLE ONLY contact
 
 
 --
--- TOC entry 2384 (class 2606 OID 29057)
 -- Name: contact_type_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8765,7 +9324,6 @@ ALTER TABLE ONLY contact_type
 
 
 --
--- TOC entry 2386 (class 2606 OID 29059)
 -- Name: country_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8774,7 +9332,6 @@ ALTER TABLE ONLY country
 
 
 --
--- TOC entry 2388 (class 2606 OID 29061)
 -- Name: credit_card_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8783,7 +9340,6 @@ ALTER TABLE ONLY credit_card
 
 
 --
--- TOC entry 2395 (class 2606 OID 29063)
 -- Name: currency_exchange_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8792,7 +9348,6 @@ ALTER TABLE ONLY currency_exchange
 
 
 --
--- TOC entry 2392 (class 2606 OID 29065)
 -- Name: currency_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8801,7 +9356,6 @@ ALTER TABLE ONLY currency
 
 
 --
--- TOC entry 2398 (class 2606 OID 29067)
 -- Name: customer_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8810,7 +9364,6 @@ ALTER TABLE ONLY customer
 
 
 --
--- TOC entry 2400 (class 2606 OID 29069)
 -- Name: entity_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8819,7 +9372,6 @@ ALTER TABLE ONLY entity
 
 
 --
--- TOC entry 2402 (class 2606 OID 29071)
 -- Name: entity_report_map_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8828,7 +9380,6 @@ ALTER TABLE ONLY entity_report_map
 
 
 --
--- TOC entry 2407 (class 2606 OID 29073)
 -- Name: event_log_message_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8837,7 +9388,6 @@ ALTER TABLE ONLY event_log_message
 
 
 --
--- TOC entry 2409 (class 2606 OID 29075)
 -- Name: event_log_module_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8846,7 +9396,6 @@ ALTER TABLE ONLY event_log_module
 
 
 --
--- TOC entry 2404 (class 2606 OID 29077)
 -- Name: event_log_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8855,7 +9404,6 @@ ALTER TABLE ONLY event_log
 
 
 --
--- TOC entry 2411 (class 2606 OID 29079)
 -- Name: filter_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8864,7 +9412,6 @@ ALTER TABLE ONLY filter
 
 
 --
--- TOC entry 2413 (class 2606 OID 29081)
 -- Name: filter_set_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8873,7 +9420,6 @@ ALTER TABLE ONLY filter_set
 
 
 --
--- TOC entry 2415 (class 2606 OID 29083)
 -- Name: generic_status_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8882,7 +9428,6 @@ ALTER TABLE ONLY generic_status
 
 
 --
--- TOC entry 2417 (class 2606 OID 29085)
 -- Name: generic_status_type_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8891,7 +9436,6 @@ ALTER TABLE ONLY generic_status_type
 
 
 --
--- TOC entry 2421 (class 2606 OID 29087)
 -- Name: international_description_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8900,7 +9444,6 @@ ALTER TABLE ONLY international_description
 
 
 --
--- TOC entry 2431 (class 2606 OID 29089)
 -- Name: invoice_delivery_method_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8909,7 +9452,6 @@ ALTER TABLE ONLY invoice_delivery_method
 
 
 --
--- TOC entry 2433 (class 2606 OID 29091)
 -- Name: invoice_line_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8918,7 +9460,6 @@ ALTER TABLE ONLY invoice_line
 
 
 --
--- TOC entry 2436 (class 2606 OID 29093)
 -- Name: invoice_line_type_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8927,7 +9468,6 @@ ALTER TABLE ONLY invoice_line_type
 
 
 --
--- TOC entry 2423 (class 2606 OID 29095)
 -- Name: invoice_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8936,7 +9476,6 @@ ALTER TABLE ONLY invoice
 
 
 --
--- TOC entry 2438 (class 2606 OID 29097)
 -- Name: item_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8945,7 +9484,6 @@ ALTER TABLE ONLY item
 
 
 --
--- TOC entry 2441 (class 2606 OID 29099)
 -- Name: item_price_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8954,7 +9492,6 @@ ALTER TABLE ONLY item_price
 
 
 --
--- TOC entry 2443 (class 2606 OID 29101)
 -- Name: item_type_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8963,7 +9500,6 @@ ALTER TABLE ONLY item_type
 
 
 --
--- TOC entry 2574 (class 2606 OID 29926)
 -- Name: item_user; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8972,7 +9508,6 @@ ALTER TABLE ONLY item_users
 
 
 --
--- TOC entry 2576 (class 2606 OID 29950)
 -- Name: item_user_dependency; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8981,7 +9516,6 @@ ALTER TABLE ONLY item_dependency
 
 
 --
--- TOC entry 2445 (class 2606 OID 29103)
 -- Name: jbilling_table_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8990,7 +9524,6 @@ ALTER TABLE ONLY jbilling_table
 
 
 --
--- TOC entry 2447 (class 2606 OID 29105)
 -- Name: language_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -8999,7 +9532,6 @@ ALTER TABLE ONLY language
 
 
 --
--- TOC entry 2449 (class 2606 OID 29107)
 -- Name: mediation_cfg_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9008,7 +9540,6 @@ ALTER TABLE ONLY mediation_cfg
 
 
 --
--- TOC entry 2451 (class 2606 OID 29109)
 -- Name: mediation_process_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9017,7 +9548,6 @@ ALTER TABLE ONLY mediation_process
 
 
 --
--- TOC entry 2457 (class 2606 OID 29111)
 -- Name: mediation_record_line_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9026,7 +9556,6 @@ ALTER TABLE ONLY mediation_record_line
 
 
 --
--- TOC entry 2454 (class 2606 OID 29113)
 -- Name: mediation_record_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9035,7 +9564,6 @@ ALTER TABLE ONLY mediation_record
 
 
 --
--- TOC entry 2459 (class 2606 OID 29115)
 -- Name: notification_category_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9044,7 +9572,6 @@ ALTER TABLE ONLY notification_category
 
 
 --
--- TOC entry 2465 (class 2606 OID 29117)
 -- Name: notification_message_arch_line_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9053,7 +9580,6 @@ ALTER TABLE ONLY notification_message_arch_line
 
 
 --
--- TOC entry 2463 (class 2606 OID 29119)
 -- Name: notification_message_arch_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9062,7 +9588,6 @@ ALTER TABLE ONLY notification_message_arch
 
 
 --
--- TOC entry 2467 (class 2606 OID 29121)
 -- Name: notification_message_line_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9071,7 +9596,6 @@ ALTER TABLE ONLY notification_message_line
 
 
 --
--- TOC entry 2461 (class 2606 OID 29123)
 -- Name: notification_message_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9080,7 +9604,6 @@ ALTER TABLE ONLY notification_message
 
 
 --
--- TOC entry 2469 (class 2606 OID 29125)
 -- Name: notification_message_section_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9089,7 +9612,6 @@ ALTER TABLE ONLY notification_message_section
 
 
 --
--- TOC entry 2471 (class 2606 OID 29127)
 -- Name: notification_message_type_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9098,7 +9620,6 @@ ALTER TABLE ONLY notification_message_type
 
 
 --
--- TOC entry 2473 (class 2606 OID 29129)
 -- Name: order_billing_type_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9107,7 +9628,6 @@ ALTER TABLE ONLY order_billing_type
 
 
 --
--- TOC entry 2477 (class 2606 OID 29131)
 -- Name: order_line_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9116,7 +9636,6 @@ ALTER TABLE ONLY order_line
 
 
 --
--- TOC entry 2479 (class 2606 OID 29133)
 -- Name: order_line_type_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9125,7 +9644,6 @@ ALTER TABLE ONLY order_line_type
 
 
 --
--- TOC entry 2481 (class 2606 OID 29135)
 -- Name: order_period_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9134,7 +9652,6 @@ ALTER TABLE ONLY order_period
 
 
 --
--- TOC entry 2486 (class 2606 OID 29137)
 -- Name: order_process_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9143,7 +9660,6 @@ ALTER TABLE ONLY order_process
 
 
 --
--- TOC entry 2488 (class 2606 OID 29139)
 -- Name: paper_invoice_batch_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9152,7 +9668,6 @@ ALTER TABLE ONLY paper_invoice_batch
 
 
 --
--- TOC entry 2494 (class 2606 OID 29141)
 -- Name: partner_payout_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9161,7 +9676,6 @@ ALTER TABLE ONLY partner_payout
 
 
 --
--- TOC entry 2491 (class 2606 OID 29143)
 -- Name: partner_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9170,7 +9684,6 @@ ALTER TABLE ONLY partner
 
 
 --
--- TOC entry 2497 (class 2606 OID 29145)
 -- Name: partner_range_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9179,7 +9692,6 @@ ALTER TABLE ONLY partner_range
 
 
 --
--- TOC entry 2505 (class 2606 OID 29147)
 -- Name: payment_authorization_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9188,7 +9700,6 @@ ALTER TABLE ONLY payment_authorization
 
 
 --
--- TOC entry 2508 (class 2606 OID 29149)
 -- Name: payment_info_cheque_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9197,7 +9708,6 @@ ALTER TABLE ONLY payment_info_cheque
 
 
 --
--- TOC entry 2511 (class 2606 OID 29151)
 -- Name: payment_invoice_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9206,7 +9716,6 @@ ALTER TABLE ONLY payment_invoice
 
 
 --
--- TOC entry 2513 (class 2606 OID 29153)
 -- Name: payment_method_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9215,7 +9724,6 @@ ALTER TABLE ONLY payment_method
 
 
 --
--- TOC entry 2501 (class 2606 OID 29155)
 -- Name: payment_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9224,7 +9732,6 @@ ALTER TABLE ONLY payment
 
 
 --
--- TOC entry 2515 (class 2606 OID 29157)
 -- Name: payment_result_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9233,7 +9740,6 @@ ALTER TABLE ONLY payment_result
 
 
 --
--- TOC entry 2517 (class 2606 OID 29159)
 -- Name: period_unit_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9242,7 +9748,6 @@ ALTER TABLE ONLY period_unit
 
 
 --
--- TOC entry 2519 (class 2606 OID 29161)
 -- Name: permission_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9251,7 +9756,6 @@ ALTER TABLE ONLY permission
 
 
 --
--- TOC entry 2522 (class 2606 OID 29163)
 -- Name: permission_type_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9260,7 +9764,6 @@ ALTER TABLE ONLY permission_type
 
 
 --
--- TOC entry 2525 (class 2606 OID 29165)
 -- Name: permission_user_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9269,7 +9772,6 @@ ALTER TABLE ONLY permission_user
 
 
 --
--- TOC entry 2529 (class 2606 OID 29167)
 -- Name: pluggable_task_parameter_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9278,7 +9780,6 @@ ALTER TABLE ONLY pluggable_task_parameter
 
 
 --
--- TOC entry 2527 (class 2606 OID 29169)
 -- Name: pluggable_task_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9287,7 +9788,6 @@ ALTER TABLE ONLY pluggable_task
 
 
 --
--- TOC entry 2533 (class 2606 OID 29171)
 -- Name: pluggable_task_type_category_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9296,7 +9796,6 @@ ALTER TABLE ONLY pluggable_task_type_category
 
 
 --
--- TOC entry 2531 (class 2606 OID 29173)
 -- Name: pluggable_task_type_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9305,7 +9804,6 @@ ALTER TABLE ONLY pluggable_task_type
 
 
 --
--- TOC entry 2535 (class 2606 OID 29175)
 -- Name: preference_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9314,7 +9812,6 @@ ALTER TABLE ONLY preference
 
 
 --
--- TOC entry 2537 (class 2606 OID 29177)
 -- Name: preference_type_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9323,7 +9820,6 @@ ALTER TABLE ONLY preference_type
 
 
 --
--- TOC entry 2540 (class 2606 OID 29179)
 -- Name: process_run_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9332,7 +9828,6 @@ ALTER TABLE ONLY process_run
 
 
 --
--- TOC entry 2543 (class 2606 OID 29181)
 -- Name: process_run_total_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9341,7 +9836,6 @@ ALTER TABLE ONLY process_run_total
 
 
 --
--- TOC entry 2546 (class 2606 OID 29183)
 -- Name: process_run_total_pm_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9350,7 +9844,6 @@ ALTER TABLE ONLY process_run_total_pm
 
 
 --
--- TOC entry 2549 (class 2606 OID 29185)
 -- Name: process_run_user_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9359,7 +9852,6 @@ ALTER TABLE ONLY process_run_user
 
 
 --
--- TOC entry 2552 (class 2606 OID 29187)
 -- Name: promotion_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9368,7 +9860,6 @@ ALTER TABLE ONLY promotion
 
 
 --
--- TOC entry 2578 (class 2606 OID 29965)
 -- Name: purchase_order_master_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9377,7 +9868,6 @@ ALTER TABLE ONLY purchase_order_master
 
 
 --
--- TOC entry 2557 (class 2606 OID 29189)
 -- Name: purchase_order_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9386,7 +9876,6 @@ ALTER TABLE ONLY purchase_order
 
 
 --
--- TOC entry 2559 (class 2606 OID 29191)
 -- Name: recent_item_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9395,7 +9884,6 @@ ALTER TABLE ONLY recent_item
 
 
 --
--- TOC entry 2563 (class 2606 OID 29193)
 -- Name: report_parameter_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9404,7 +9892,6 @@ ALTER TABLE ONLY report_parameter
 
 
 --
--- TOC entry 2561 (class 2606 OID 29195)
 -- Name: report_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9413,7 +9900,6 @@ ALTER TABLE ONLY report
 
 
 --
--- TOC entry 2565 (class 2606 OID 29197)
 -- Name: report_type_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9422,7 +9908,6 @@ ALTER TABLE ONLY report_type
 
 
 --
--- TOC entry 2567 (class 2606 OID 29199)
 -- Name: role_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9431,7 +9916,6 @@ ALTER TABLE ONLY role
 
 
 --
--- TOC entry 2569 (class 2606 OID 29201)
 -- Name: shortcut_pkey; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9440,7 +9924,6 @@ ALTER TABLE ONLY shortcut
 
 
 --
--- TOC entry 2351 (class 2606 OID 29203)
 -- Name: unique_username; Type: CONSTRAINT; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9449,7 +9932,6 @@ ALTER TABLE ONLY base_user
 
 
 --
--- TOC entry 2342 (class 1259 OID 29204)
 -- Name: ach_i_2; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9457,7 +9939,6 @@ CREATE INDEX ach_i_2 ON ach USING btree (user_id);
 
 
 --
--- TOC entry 2544 (class 1259 OID 29205)
 -- Name: bp_pm_index_total; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9465,7 +9946,6 @@ CREATE INDEX bp_pm_index_total ON process_run_total_pm USING btree (process_run_
 
 
 --
--- TOC entry 2538 (class 1259 OID 29206)
 -- Name: bp_run_process_ix; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9473,7 +9953,6 @@ CREATE INDEX bp_run_process_ix ON process_run USING btree (process_id);
 
 
 --
--- TOC entry 2541 (class 1259 OID 29207)
 -- Name: bp_run_total_run_ix; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9481,7 +9960,6 @@ CREATE INDEX bp_run_total_run_ix ON process_run_total USING btree (process_run_i
 
 
 --
--- TOC entry 2547 (class 1259 OID 29208)
 -- Name: bp_run_user_run_ix; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9489,7 +9967,6 @@ CREATE INDEX bp_run_user_run_ix ON process_run_user USING btree (process_run_id,
 
 
 --
--- TOC entry 2362 (class 1259 OID 29209)
 -- Name: contact_i_del; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9497,7 +9974,6 @@ CREATE INDEX contact_i_del ON contact USING btree (deleted);
 
 
 --
--- TOC entry 2379 (class 1259 OID 29210)
 -- Name: contact_map_i_1; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9505,7 +9981,6 @@ CREATE INDEX contact_map_i_1 ON contact_map USING btree (table_id, foreign_id, t
 
 
 --
--- TOC entry 2380 (class 1259 OID 29211)
 -- Name: contact_map_i_3; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9513,7 +9988,6 @@ CREATE INDEX contact_map_i_3 ON contact_map USING btree (contact_id);
 
 
 --
--- TOC entry 2502 (class 1259 OID 29212)
 -- Name: create_datetime; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9521,7 +9995,6 @@ CREATE INDEX create_datetime ON payment_authorization USING btree (create_dateti
 
 
 --
--- TOC entry 2393 (class 1259 OID 29213)
 -- Name: currency_entity_map_i_2; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9529,7 +10002,6 @@ CREATE INDEX currency_entity_map_i_2 ON currency_entity_map USING btree (currenc
 
 
 --
--- TOC entry 2396 (class 1259 OID 29214)
 -- Name: customer_i_2; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9537,7 +10009,6 @@ CREATE INDEX customer_i_2 ON customer USING btree (user_id);
 
 
 --
--- TOC entry 2418 (class 1259 OID 29215)
 -- Name: int_description_i_lan; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9545,7 +10016,6 @@ CREATE INDEX int_description_i_lan ON international_description USING btree (lan
 
 
 --
--- TOC entry 2419 (class 1259 OID 29216)
 -- Name: international_description_i_2; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9553,7 +10023,6 @@ CREATE INDEX international_description_i_2 ON international_description USING bt
 
 
 --
--- TOC entry 2349 (class 1259 OID 29217)
 -- Name: ix_base_user_un; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9561,7 +10030,6 @@ CREATE INDEX ix_base_user_un ON base_user USING btree (entity_id, user_name);
 
 
 --
--- TOC entry 2358 (class 1259 OID 29218)
 -- Name: ix_blacklist_entity_type; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9569,7 +10037,6 @@ CREATE INDEX ix_blacklist_entity_type ON blacklist USING btree (entity_id, type)
 
 
 --
--- TOC entry 2359 (class 1259 OID 29219)
 -- Name: ix_blacklist_user_type; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9577,7 +10044,6 @@ CREATE INDEX ix_blacklist_user_type ON blacklist USING btree (user_id, type);
 
 
 --
--- TOC entry 2389 (class 1259 OID 29220)
 -- Name: ix_cc_number; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9585,7 +10051,6 @@ CREATE INDEX ix_cc_number ON credit_card USING btree (cc_number_plain);
 
 
 --
--- TOC entry 2390 (class 1259 OID 29221)
 -- Name: ix_cc_number_encrypted; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9593,7 +10058,6 @@ CREATE INDEX ix_cc_number_encrypted ON credit_card USING btree (cc_number);
 
 
 --
--- TOC entry 2378 (class 1259 OID 29222)
 -- Name: ix_cf_type_entity; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9601,7 +10065,6 @@ CREATE INDEX ix_cf_type_entity ON contact_field_type USING btree (entity_id);
 
 
 --
--- TOC entry 2365 (class 1259 OID 29223)
 -- Name: ix_contact_address; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9609,7 +10072,6 @@ CREATE INDEX ix_contact_address ON contact USING btree (street_addres1, city, po
 
 
 --
--- TOC entry 2374 (class 1259 OID 29224)
 -- Name: ix_contact_field_cid; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9617,7 +10079,6 @@ CREATE INDEX ix_contact_field_cid ON contact_field USING btree (contact_id);
 
 
 --
--- TOC entry 2375 (class 1259 OID 29225)
 -- Name: ix_contact_field_content; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9625,7 +10086,6 @@ CREATE INDEX ix_contact_field_content ON contact_field USING btree (content);
 
 
 --
--- TOC entry 2366 (class 1259 OID 29226)
 -- Name: ix_contact_fname; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9633,7 +10093,6 @@ CREATE INDEX ix_contact_fname ON contact USING btree (first_name);
 
 
 --
--- TOC entry 2367 (class 1259 OID 29227)
 -- Name: ix_contact_fname_lname; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9641,7 +10100,6 @@ CREATE INDEX ix_contact_fname_lname ON contact USING btree (first_name, last_nam
 
 
 --
--- TOC entry 2368 (class 1259 OID 29228)
 -- Name: ix_contact_lname; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9649,7 +10107,6 @@ CREATE INDEX ix_contact_lname ON contact USING btree (last_name);
 
 
 --
--- TOC entry 2369 (class 1259 OID 29229)
 -- Name: ix_contact_orgname; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9657,7 +10114,6 @@ CREATE INDEX ix_contact_orgname ON contact USING btree (organization_name);
 
 
 --
--- TOC entry 2370 (class 1259 OID 29230)
 -- Name: ix_contact_phone; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9665,7 +10121,6 @@ CREATE INDEX ix_contact_phone ON contact USING btree (phone_phone_number, phone_
 
 
 --
--- TOC entry 2405 (class 1259 OID 29231)
 -- Name: ix_el_main; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9673,7 +10128,6 @@ CREATE INDEX ix_el_main ON event_log USING btree (module_id, message_id, create_
 
 
 --
--- TOC entry 2424 (class 1259 OID 29232)
 -- Name: ix_invoice_date; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9681,7 +10135,6 @@ CREATE INDEX ix_invoice_date ON invoice USING btree (create_datetime);
 
 
 --
--- TOC entry 2425 (class 1259 OID 29233)
 -- Name: ix_invoice_due_date; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9689,7 +10142,6 @@ CREATE INDEX ix_invoice_due_date ON invoice USING btree (user_id, due_date);
 
 
 --
--- TOC entry 2434 (class 1259 OID 29234)
 -- Name: ix_invoice_line_invoice_id; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9697,7 +10149,6 @@ CREATE INDEX ix_invoice_line_invoice_id ON invoice_line USING btree (invoice_id)
 
 
 --
--- TOC entry 2426 (class 1259 OID 29235)
 -- Name: ix_invoice_number; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9705,7 +10156,6 @@ CREATE INDEX ix_invoice_number ON invoice USING btree (user_id, public_number);
 
 
 --
--- TOC entry 2427 (class 1259 OID 29236)
 -- Name: ix_invoice_process; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9713,7 +10163,6 @@ CREATE INDEX ix_invoice_process ON invoice USING btree (billing_process_id);
 
 
 --
--- TOC entry 2428 (class 1259 OID 29237)
 -- Name: ix_invoice_ts; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9721,7 +10170,6 @@ CREATE INDEX ix_invoice_ts ON invoice USING btree (create_timestamp, user_id);
 
 
 --
--- TOC entry 2429 (class 1259 OID 29238)
 -- Name: ix_invoice_user_id; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9729,7 +10177,6 @@ CREATE INDEX ix_invoice_user_id ON invoice USING btree (user_id, deleted);
 
 
 --
--- TOC entry 2439 (class 1259 OID 29239)
 -- Name: ix_item_ent; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9737,7 +10184,6 @@ CREATE INDEX ix_item_ent ON item USING btree (entity_id, internal_number);
 
 
 --
--- TOC entry 2455 (class 1259 OID 29240)
 -- Name: ix_mrl_order_line; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9745,7 +10191,6 @@ CREATE INDEX ix_mrl_order_line ON mediation_record_line USING btree (order_line_
 
 
 --
--- TOC entry 2474 (class 1259 OID 29241)
 -- Name: ix_order_line_item_id; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9753,7 +10198,6 @@ CREATE INDEX ix_order_line_item_id ON order_line USING btree (item_id);
 
 
 --
--- TOC entry 2475 (class 1259 OID 29242)
 -- Name: ix_order_line_order_id; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9761,7 +10205,6 @@ CREATE INDEX ix_order_line_order_id ON order_line USING btree (order_id);
 
 
 --
--- TOC entry 2482 (class 1259 OID 29243)
 -- Name: ix_order_process_in; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9769,7 +10212,6 @@ CREATE INDEX ix_order_process_in ON order_process USING btree (invoice_id);
 
 
 --
--- TOC entry 2503 (class 1259 OID 29244)
 -- Name: ix_pa_payment; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9777,7 +10219,6 @@ CREATE INDEX ix_pa_payment ON payment_authorization USING btree (payment_id);
 
 
 --
--- TOC entry 2550 (class 1259 OID 29245)
 -- Name: ix_promotion_code; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9785,7 +10226,6 @@ CREATE INDEX ix_promotion_code ON promotion USING btree (code);
 
 
 --
--- TOC entry 2553 (class 1259 OID 29246)
 -- Name: ix_purchase_order_date; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9793,7 +10233,6 @@ CREATE INDEX ix_purchase_order_date ON purchase_order USING btree (user_id, crea
 
 
 --
--- TOC entry 2483 (class 1259 OID 29247)
 -- Name: ix_uq_order_process_or_bp; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9801,7 +10240,6 @@ CREATE INDEX ix_uq_order_process_or_bp ON order_process USING btree (order_id, b
 
 
 --
--- TOC entry 2484 (class 1259 OID 29248)
 -- Name: ix_uq_order_process_or_in; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9809,7 +10247,6 @@ CREATE INDEX ix_uq_order_process_or_in ON order_process USING btree (order_id, i
 
 
 --
--- TOC entry 2509 (class 1259 OID 29249)
 -- Name: ix_uq_payment_inv_map_pa_in; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9817,7 +10254,6 @@ CREATE INDEX ix_uq_payment_inv_map_pa_in ON payment_invoice USING btree (payment
 
 
 --
--- TOC entry 2371 (class 1259 OID 29250)
 -- Name: ix_user; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9825,7 +10261,6 @@ CREATE INDEX ix_user ON contact USING btree (user_id);
 
 
 --
--- TOC entry 2452 (class 1259 OID 29251)
 -- Name: mediation_record_i; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9833,7 +10268,6 @@ CREATE INDEX mediation_record_i ON mediation_record USING btree (id, status_id);
 
 
 --
--- TOC entry 2489 (class 1259 OID 29252)
 -- Name: partner_i_3; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9841,7 +10275,6 @@ CREATE INDEX partner_i_3 ON partner USING btree (user_id);
 
 
 --
--- TOC entry 2492 (class 1259 OID 29253)
 -- Name: partner_payout_i_2; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9849,7 +10282,6 @@ CREATE INDEX partner_payout_i_2 ON partner_payout USING btree (partner_id);
 
 
 --
--- TOC entry 2495 (class 1259 OID 29254)
 -- Name: partner_range_p; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9857,7 +10289,6 @@ CREATE INDEX partner_range_p ON partner_range USING btree (partner_id);
 
 
 --
--- TOC entry 2498 (class 1259 OID 29255)
 -- Name: payment_i_2; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9865,7 +10296,6 @@ CREATE INDEX payment_i_2 ON payment USING btree (user_id, create_datetime);
 
 
 --
--- TOC entry 2499 (class 1259 OID 29256)
 -- Name: payment_i_3; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9873,7 +10303,6 @@ CREATE INDEX payment_i_3 ON payment USING btree (user_id, balance);
 
 
 --
--- TOC entry 2520 (class 1259 OID 29257)
 -- Name: permission_role_map_i_2; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9881,7 +10310,6 @@ CREATE INDEX permission_role_map_i_2 ON permission_role_map USING btree (permiss
 
 
 --
--- TOC entry 2523 (class 1259 OID 29258)
 -- Name: permission_user_map_i_2; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9889,7 +10317,6 @@ CREATE INDEX permission_user_map_i_2 ON permission_user USING btree (permission_
 
 
 --
--- TOC entry 2554 (class 1259 OID 29259)
 -- Name: purchase_order_i_notif; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9897,7 +10324,6 @@ CREATE INDEX purchase_order_i_notif ON purchase_order USING btree (active_until,
 
 
 --
--- TOC entry 2555 (class 1259 OID 29260)
 -- Name: purchase_order_i_user; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9905,7 +10331,6 @@ CREATE INDEX purchase_order_i_user ON purchase_order USING btree (user_id, delet
 
 
 --
--- TOC entry 2506 (class 1259 OID 29261)
 -- Name: transaction_id; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9913,7 +10338,6 @@ CREATE INDEX transaction_id ON payment_authorization USING btree (transaction_id
 
 
 --
--- TOC entry 2570 (class 1259 OID 29262)
 -- Name: user_credit_card_map_i_2; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9921,7 +10345,6 @@ CREATE INDEX user_credit_card_map_i_2 ON user_credit_card_map USING btree (user_
 
 
 --
--- TOC entry 2571 (class 1259 OID 29263)
 -- Name: user_role_map_i_2; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9929,7 +10352,6 @@ CREATE INDEX user_role_map_i_2 ON user_role_map USING btree (user_id, role_id);
 
 
 --
--- TOC entry 2572 (class 1259 OID 29264)
 -- Name: user_role_map_i_role; Type: INDEX; Schema: public; Owner: jbilling; Tablespace: 
 --
 
@@ -9937,7 +10359,6 @@ CREATE INDEX user_role_map_i_role ON user_role_map USING btree (role_id);
 
 
 --
--- TOC entry 2579 (class 2606 OID 29265)
 -- Name: ach_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -9946,7 +10367,6 @@ ALTER TABLE ONLY ach
 
 
 --
--- TOC entry 2580 (class 2606 OID 29270)
 -- Name: ageing_entity_step_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -9955,7 +10375,6 @@ ALTER TABLE ONLY ageing_entity_step
 
 
 --
--- TOC entry 2581 (class 2606 OID 29275)
 -- Name: ageing_entity_step_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -9964,7 +10383,6 @@ ALTER TABLE ONLY ageing_entity_step
 
 
 --
--- TOC entry 2582 (class 2606 OID 29280)
 -- Name: base_user_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -9973,7 +10391,6 @@ ALTER TABLE ONLY base_user
 
 
 --
--- TOC entry 2583 (class 2606 OID 29285)
 -- Name: base_user_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -9982,7 +10399,6 @@ ALTER TABLE ONLY base_user
 
 
 --
--- TOC entry 2584 (class 2606 OID 29290)
 -- Name: base_user_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -9991,7 +10407,6 @@ ALTER TABLE ONLY base_user
 
 
 --
--- TOC entry 2585 (class 2606 OID 29295)
 -- Name: base_user_fk_4; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10000,7 +10415,6 @@ ALTER TABLE ONLY base_user
 
 
 --
--- TOC entry 2586 (class 2606 OID 29300)
 -- Name: base_user_fk_5; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10009,7 +10423,6 @@ ALTER TABLE ONLY base_user
 
 
 --
--- TOC entry 2590 (class 2606 OID 29305)
 -- Name: billing_process_configuration_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10018,7 +10431,6 @@ ALTER TABLE ONLY billing_process_configuration
 
 
 --
--- TOC entry 2591 (class 2606 OID 29310)
 -- Name: billing_process_configuration_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10027,7 +10439,6 @@ ALTER TABLE ONLY billing_process_configuration
 
 
 --
--- TOC entry 2587 (class 2606 OID 29315)
 -- Name: billing_process_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10036,7 +10447,6 @@ ALTER TABLE ONLY billing_process
 
 
 --
--- TOC entry 2588 (class 2606 OID 29320)
 -- Name: billing_process_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10045,7 +10455,6 @@ ALTER TABLE ONLY billing_process
 
 
 --
--- TOC entry 2589 (class 2606 OID 29325)
 -- Name: billing_process_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10054,7 +10463,6 @@ ALTER TABLE ONLY billing_process
 
 
 --
--- TOC entry 2592 (class 2606 OID 29330)
 -- Name: blacklist_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10063,7 +10471,6 @@ ALTER TABLE ONLY blacklist
 
 
 --
--- TOC entry 2593 (class 2606 OID 29335)
 -- Name: blacklist_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10072,7 +10479,6 @@ ALTER TABLE ONLY blacklist
 
 
 --
--- TOC entry 2594 (class 2606 OID 29340)
 -- Name: contact_field_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10081,7 +10487,6 @@ ALTER TABLE ONLY contact_field
 
 
 --
--- TOC entry 2595 (class 2606 OID 29345)
 -- Name: contact_field_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10090,7 +10495,6 @@ ALTER TABLE ONLY contact_field
 
 
 --
--- TOC entry 2596 (class 2606 OID 29350)
 -- Name: contact_field_type_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10099,7 +10503,6 @@ ALTER TABLE ONLY contact_field_type
 
 
 --
--- TOC entry 2597 (class 2606 OID 29355)
 -- Name: contact_map_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10108,7 +10511,6 @@ ALTER TABLE ONLY contact_map
 
 
 --
--- TOC entry 2598 (class 2606 OID 29360)
 -- Name: contact_map_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10117,7 +10519,6 @@ ALTER TABLE ONLY contact_map
 
 
 --
--- TOC entry 2599 (class 2606 OID 29365)
 -- Name: contact_map_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10126,7 +10527,6 @@ ALTER TABLE ONLY contact_map
 
 
 --
--- TOC entry 2600 (class 2606 OID 29370)
 -- Name: contact_type_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10135,7 +10535,6 @@ ALTER TABLE ONLY contact_type
 
 
 --
--- TOC entry 2602 (class 2606 OID 29375)
 -- Name: currency_entity_map_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10144,7 +10543,6 @@ ALTER TABLE ONLY currency_entity_map
 
 
 --
--- TOC entry 2601 (class 2606 OID 29380)
 -- Name: currency_entity_map_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10153,7 +10551,6 @@ ALTER TABLE ONLY currency_entity_map
 
 
 --
--- TOC entry 2603 (class 2606 OID 29385)
 -- Name: currency_exchange_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10162,7 +10559,6 @@ ALTER TABLE ONLY currency_exchange
 
 
 --
--- TOC entry 2604 (class 2606 OID 29390)
 -- Name: customer_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10171,7 +10567,6 @@ ALTER TABLE ONLY customer
 
 
 --
--- TOC entry 2605 (class 2606 OID 29395)
 -- Name: customer_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10180,7 +10575,6 @@ ALTER TABLE ONLY customer
 
 
 --
--- TOC entry 2606 (class 2606 OID 29400)
 -- Name: customer_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10189,7 +10583,6 @@ ALTER TABLE ONLY customer
 
 
 --
--- TOC entry 2610 (class 2606 OID 29405)
 -- Name: entity_delivery_method_map_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10198,7 +10591,6 @@ ALTER TABLE ONLY entity_delivery_method_map
 
 
 --
--- TOC entry 2609 (class 2606 OID 29410)
 -- Name: entity_delivery_method_map_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10207,7 +10599,6 @@ ALTER TABLE ONLY entity_delivery_method_map
 
 
 --
--- TOC entry 2607 (class 2606 OID 29415)
 -- Name: entity_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10216,7 +10607,6 @@ ALTER TABLE ONLY entity
 
 
 --
--- TOC entry 2608 (class 2606 OID 29420)
 -- Name: entity_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10225,7 +10615,6 @@ ALTER TABLE ONLY entity
 
 
 --
--- TOC entry 2612 (class 2606 OID 29425)
 -- Name: entity_payment_method_map_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10234,7 +10623,6 @@ ALTER TABLE ONLY entity_payment_method_map
 
 
 --
--- TOC entry 2611 (class 2606 OID 29430)
 -- Name: entity_payment_method_map_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10243,7 +10631,6 @@ ALTER TABLE ONLY entity_payment_method_map
 
 
 --
--- TOC entry 2613 (class 2606 OID 29435)
 -- Name: entity_report_map_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10252,7 +10639,6 @@ ALTER TABLE ONLY entity_report_map
 
 
 --
--- TOC entry 2614 (class 2606 OID 29440)
 -- Name: entity_report_map_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10261,7 +10647,6 @@ ALTER TABLE ONLY entity_report_map
 
 
 --
--- TOC entry 2615 (class 2606 OID 29445)
 -- Name: event_log_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10270,7 +10655,6 @@ ALTER TABLE ONLY event_log
 
 
 --
--- TOC entry 2616 (class 2606 OID 29450)
 -- Name: event_log_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10279,7 +10663,6 @@ ALTER TABLE ONLY event_log
 
 
 --
--- TOC entry 2617 (class 2606 OID 29455)
 -- Name: event_log_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10288,7 +10671,6 @@ ALTER TABLE ONLY event_log
 
 
 --
--- TOC entry 2618 (class 2606 OID 29460)
 -- Name: event_log_fk_4; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10297,7 +10679,6 @@ ALTER TABLE ONLY event_log
 
 
 --
--- TOC entry 2619 (class 2606 OID 29465)
 -- Name: event_log_fk_5; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10306,7 +10687,6 @@ ALTER TABLE ONLY event_log
 
 
 --
--- TOC entry 2620 (class 2606 OID 29470)
 -- Name: event_log_fk_6; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10315,7 +10695,6 @@ ALTER TABLE ONLY event_log
 
 
 --
--- TOC entry 2621 (class 2606 OID 29475)
 -- Name: filter_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10324,7 +10703,6 @@ ALTER TABLE ONLY filter
 
 
 --
--- TOC entry 2622 (class 2606 OID 29480)
 -- Name: generic_status_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10333,7 +10711,6 @@ ALTER TABLE ONLY generic_status
 
 
 --
--- TOC entry 2623 (class 2606 OID 29485)
 -- Name: international_description_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10342,7 +10719,6 @@ ALTER TABLE ONLY international_description
 
 
 --
--- TOC entry 2624 (class 2606 OID 29490)
 -- Name: invoice_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10351,7 +10727,6 @@ ALTER TABLE ONLY invoice
 
 
 --
--- TOC entry 2625 (class 2606 OID 29495)
 -- Name: invoice_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10360,7 +10735,6 @@ ALTER TABLE ONLY invoice
 
 
 --
--- TOC entry 2626 (class 2606 OID 29500)
 -- Name: invoice_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10369,7 +10743,6 @@ ALTER TABLE ONLY invoice
 
 
 --
--- TOC entry 2627 (class 2606 OID 29505)
 -- Name: invoice_fk_4; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10378,7 +10751,6 @@ ALTER TABLE ONLY invoice
 
 
 --
--- TOC entry 2628 (class 2606 OID 29510)
 -- Name: invoice_fk_5; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10387,7 +10759,6 @@ ALTER TABLE ONLY invoice
 
 
 --
--- TOC entry 2629 (class 2606 OID 29515)
 -- Name: invoice_line_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10396,7 +10767,6 @@ ALTER TABLE ONLY invoice_line
 
 
 --
--- TOC entry 2630 (class 2606 OID 29520)
 -- Name: invoice_line_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10405,7 +10775,6 @@ ALTER TABLE ONLY invoice_line
 
 
 --
--- TOC entry 2631 (class 2606 OID 29525)
 -- Name: invoice_line_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10414,7 +10783,6 @@ ALTER TABLE ONLY invoice_line
 
 
 --
--- TOC entry 2708 (class 2606 OID 29956)
 -- Name: item_dependency_child_item_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10423,7 +10791,6 @@ ALTER TABLE ONLY item_dependency
 
 
 --
--- TOC entry 2709 (class 2606 OID 29951)
 -- Name: item_dependency_item_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10432,7 +10799,6 @@ ALTER TABLE ONLY item_dependency
 
 
 --
--- TOC entry 2632 (class 2606 OID 29530)
 -- Name: item_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10441,7 +10807,6 @@ ALTER TABLE ONLY item
 
 
 --
--- TOC entry 2633 (class 2606 OID 29535)
 -- Name: item_price_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10450,7 +10815,6 @@ ALTER TABLE ONLY item_price
 
 
 --
--- TOC entry 2634 (class 2606 OID 29540)
 -- Name: item_price_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10459,7 +10823,6 @@ ALTER TABLE ONLY item_price
 
 
 --
--- TOC entry 2637 (class 2606 OID 29545)
 -- Name: item_type_exclude_map_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10468,7 +10831,6 @@ ALTER TABLE ONLY item_type_exclude_map
 
 
 --
--- TOC entry 2636 (class 2606 OID 29550)
 -- Name: item_type_exclude_map_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10477,7 +10839,6 @@ ALTER TABLE ONLY item_type_exclude_map
 
 
 --
--- TOC entry 2635 (class 2606 OID 29555)
 -- Name: item_type_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10486,7 +10847,6 @@ ALTER TABLE ONLY item_type
 
 
 --
--- TOC entry 2639 (class 2606 OID 29560)
 -- Name: item_type_map_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10495,7 +10855,6 @@ ALTER TABLE ONLY item_type_map
 
 
 --
--- TOC entry 2638 (class 2606 OID 29565)
 -- Name: item_type_map_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10504,7 +10863,6 @@ ALTER TABLE ONLY item_type_map
 
 
 --
--- TOC entry 2707 (class 2606 OID 29927)
 -- Name: item_users_item_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10513,7 +10871,6 @@ ALTER TABLE ONLY item_users
 
 
 --
--- TOC entry 2706 (class 2606 OID 29932)
 -- Name: item_users_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10522,7 +10879,6 @@ ALTER TABLE ONLY item_users
 
 
 --
--- TOC entry 2640 (class 2606 OID 29570)
 -- Name: mediation_cfg_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10531,7 +10887,6 @@ ALTER TABLE ONLY mediation_cfg
 
 
 --
--- TOC entry 2642 (class 2606 OID 29575)
 -- Name: mediation_order_map_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10540,7 +10895,6 @@ ALTER TABLE ONLY mediation_order_map
 
 
 --
--- TOC entry 2641 (class 2606 OID 29580)
 -- Name: mediation_order_map_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10549,7 +10903,6 @@ ALTER TABLE ONLY mediation_order_map
 
 
 --
--- TOC entry 2643 (class 2606 OID 29585)
 -- Name: mediation_process_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10558,7 +10911,6 @@ ALTER TABLE ONLY mediation_process
 
 
 --
--- TOC entry 2644 (class 2606 OID 29590)
 -- Name: mediation_record_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10567,7 +10919,6 @@ ALTER TABLE ONLY mediation_record
 
 
 --
--- TOC entry 2645 (class 2606 OID 29595)
 -- Name: mediation_record_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10576,7 +10927,6 @@ ALTER TABLE ONLY mediation_record
 
 
 --
--- TOC entry 2646 (class 2606 OID 29600)
 -- Name: mediation_record_line_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10585,7 +10935,6 @@ ALTER TABLE ONLY mediation_record_line
 
 
 --
--- TOC entry 2647 (class 2606 OID 29605)
 -- Name: mediation_record_line_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10594,7 +10943,6 @@ ALTER TABLE ONLY mediation_record_line
 
 
 --
--- TOC entry 2651 (class 2606 OID 29610)
 -- Name: notif_mess_arch_line_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10603,7 +10951,6 @@ ALTER TABLE ONLY notification_message_arch_line
 
 
 --
--- TOC entry 2648 (class 2606 OID 29615)
 -- Name: notification_message_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10612,7 +10959,6 @@ ALTER TABLE ONLY notification_message
 
 
 --
--- TOC entry 2649 (class 2606 OID 29620)
 -- Name: notification_message_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10621,7 +10967,6 @@ ALTER TABLE ONLY notification_message
 
 
 --
--- TOC entry 2650 (class 2606 OID 29625)
 -- Name: notification_message_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10630,7 +10975,6 @@ ALTER TABLE ONLY notification_message
 
 
 --
--- TOC entry 2652 (class 2606 OID 29630)
 -- Name: notification_message_line_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10639,7 +10983,6 @@ ALTER TABLE ONLY notification_message_line
 
 
 --
--- TOC entry 2653 (class 2606 OID 29635)
 -- Name: notification_message_section_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10648,7 +10991,6 @@ ALTER TABLE ONLY notification_message_section
 
 
 --
--- TOC entry 2654 (class 2606 OID 29640)
 -- Name: notification_message_type_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10657,7 +10999,6 @@ ALTER TABLE ONLY notification_message_type
 
 
 --
--- TOC entry 2655 (class 2606 OID 29645)
 -- Name: order_line_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10666,7 +11007,6 @@ ALTER TABLE ONLY order_line
 
 
 --
--- TOC entry 2656 (class 2606 OID 29650)
 -- Name: order_line_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10675,7 +11015,6 @@ ALTER TABLE ONLY order_line
 
 
 --
--- TOC entry 2657 (class 2606 OID 29655)
 -- Name: order_line_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10684,7 +11023,6 @@ ALTER TABLE ONLY order_line
 
 
 --
--- TOC entry 2658 (class 2606 OID 29660)
 -- Name: order_period_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10693,7 +11031,6 @@ ALTER TABLE ONLY order_period
 
 
 --
--- TOC entry 2659 (class 2606 OID 29665)
 -- Name: order_period_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10702,7 +11039,6 @@ ALTER TABLE ONLY order_period
 
 
 --
--- TOC entry 2660 (class 2606 OID 29670)
 -- Name: order_process_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10711,7 +11047,6 @@ ALTER TABLE ONLY order_process
 
 
 --
--- TOC entry 2661 (class 2606 OID 29675)
 -- Name: partner_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10720,7 +11055,6 @@ ALTER TABLE ONLY partner
 
 
 --
--- TOC entry 2662 (class 2606 OID 29680)
 -- Name: partner_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10729,7 +11063,6 @@ ALTER TABLE ONLY partner
 
 
 --
--- TOC entry 2663 (class 2606 OID 29685)
 -- Name: partner_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10738,7 +11071,6 @@ ALTER TABLE ONLY partner
 
 
 --
--- TOC entry 2664 (class 2606 OID 29690)
 -- Name: partner_fk_4; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10747,7 +11079,6 @@ ALTER TABLE ONLY partner
 
 
 --
--- TOC entry 2665 (class 2606 OID 29695)
 -- Name: partner_payout_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10756,7 +11087,6 @@ ALTER TABLE ONLY partner_payout
 
 
 --
--- TOC entry 2672 (class 2606 OID 29700)
 -- Name: payment_authorization_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10765,7 +11095,6 @@ ALTER TABLE ONLY payment_authorization
 
 
 --
--- TOC entry 2666 (class 2606 OID 29705)
 -- Name: payment_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10774,7 +11103,6 @@ ALTER TABLE ONLY payment
 
 
 --
--- TOC entry 2667 (class 2606 OID 29710)
 -- Name: payment_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10783,7 +11111,6 @@ ALTER TABLE ONLY payment
 
 
 --
--- TOC entry 2668 (class 2606 OID 29715)
 -- Name: payment_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10792,7 +11119,6 @@ ALTER TABLE ONLY payment
 
 
 --
--- TOC entry 2669 (class 2606 OID 29720)
 -- Name: payment_fk_4; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10801,7 +11127,6 @@ ALTER TABLE ONLY payment
 
 
 --
--- TOC entry 2670 (class 2606 OID 29725)
 -- Name: payment_fk_5; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10810,7 +11135,6 @@ ALTER TABLE ONLY payment
 
 
 --
--- TOC entry 2671 (class 2606 OID 29730)
 -- Name: payment_fk_6; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10819,7 +11143,6 @@ ALTER TABLE ONLY payment
 
 
 --
--- TOC entry 2673 (class 2606 OID 29735)
 -- Name: payment_info_cheque_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10828,7 +11151,6 @@ ALTER TABLE ONLY payment_info_cheque
 
 
 --
--- TOC entry 2674 (class 2606 OID 29740)
 -- Name: payment_invoice_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10837,7 +11159,6 @@ ALTER TABLE ONLY payment_invoice
 
 
 --
--- TOC entry 2675 (class 2606 OID 29745)
 -- Name: payment_invoice_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10846,7 +11167,6 @@ ALTER TABLE ONLY payment_invoice
 
 
 --
--- TOC entry 2676 (class 2606 OID 29750)
 -- Name: permission_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10855,7 +11175,6 @@ ALTER TABLE ONLY permission
 
 
 --
--- TOC entry 2678 (class 2606 OID 29755)
 -- Name: permission_role_map_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10864,7 +11183,6 @@ ALTER TABLE ONLY permission_role_map
 
 
 --
--- TOC entry 2677 (class 2606 OID 29760)
 -- Name: permission_role_map_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10873,7 +11191,6 @@ ALTER TABLE ONLY permission_role_map
 
 
 --
--- TOC entry 2679 (class 2606 OID 29765)
 -- Name: permission_user_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10882,7 +11199,6 @@ ALTER TABLE ONLY permission_user
 
 
 --
--- TOC entry 2680 (class 2606 OID 29770)
 -- Name: permission_user_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10891,7 +11207,6 @@ ALTER TABLE ONLY permission_user
 
 
 --
--- TOC entry 2681 (class 2606 OID 29775)
 -- Name: pluggable_task_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10900,7 +11215,6 @@ ALTER TABLE ONLY pluggable_task
 
 
 --
--- TOC entry 2682 (class 2606 OID 29780)
 -- Name: pluggable_task_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10909,7 +11223,6 @@ ALTER TABLE ONLY pluggable_task
 
 
 --
--- TOC entry 2683 (class 2606 OID 29785)
 -- Name: pluggable_task_parameter_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10918,7 +11231,6 @@ ALTER TABLE ONLY pluggable_task_parameter
 
 
 --
--- TOC entry 2684 (class 2606 OID 29790)
 -- Name: pluggable_task_type_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10927,7 +11239,6 @@ ALTER TABLE ONLY pluggable_task_type
 
 
 --
--- TOC entry 2685 (class 2606 OID 29795)
 -- Name: preference_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10936,7 +11247,6 @@ ALTER TABLE ONLY preference
 
 
 --
--- TOC entry 2686 (class 2606 OID 29800)
 -- Name: preference_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10945,7 +11255,6 @@ ALTER TABLE ONLY preference
 
 
 --
--- TOC entry 2687 (class 2606 OID 29805)
 -- Name: process_run_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10954,7 +11263,6 @@ ALTER TABLE ONLY process_run
 
 
 --
--- TOC entry 2688 (class 2606 OID 29810)
 -- Name: process_run_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10963,7 +11271,6 @@ ALTER TABLE ONLY process_run
 
 
 --
--- TOC entry 2689 (class 2606 OID 29815)
 -- Name: process_run_total_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10972,7 +11279,6 @@ ALTER TABLE ONLY process_run_total
 
 
 --
--- TOC entry 2690 (class 2606 OID 29820)
 -- Name: process_run_total_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10981,7 +11287,6 @@ ALTER TABLE ONLY process_run_total
 
 
 --
--- TOC entry 2691 (class 2606 OID 29825)
 -- Name: process_run_total_pm_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10990,7 +11295,6 @@ ALTER TABLE ONLY process_run_total_pm
 
 
 --
--- TOC entry 2692 (class 2606 OID 29830)
 -- Name: process_run_user_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -10999,7 +11303,6 @@ ALTER TABLE ONLY process_run_user
 
 
 --
--- TOC entry 2693 (class 2606 OID 29835)
 -- Name: process_run_user_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -11008,7 +11311,6 @@ ALTER TABLE ONLY process_run_user
 
 
 --
--- TOC entry 2694 (class 2606 OID 29840)
 -- Name: promotion_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -11017,7 +11319,6 @@ ALTER TABLE ONLY promotion
 
 
 --
--- TOC entry 2695 (class 2606 OID 29845)
 -- Name: purchase_order_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -11026,7 +11327,6 @@ ALTER TABLE ONLY purchase_order
 
 
 --
--- TOC entry 2696 (class 2606 OID 29850)
 -- Name: purchase_order_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -11035,7 +11335,6 @@ ALTER TABLE ONLY purchase_order
 
 
 --
--- TOC entry 2697 (class 2606 OID 29855)
 -- Name: purchase_order_fk_3; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -11044,7 +11343,6 @@ ALTER TABLE ONLY purchase_order
 
 
 --
--- TOC entry 2698 (class 2606 OID 29860)
 -- Name: purchase_order_fk_4; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -11053,7 +11351,6 @@ ALTER TABLE ONLY purchase_order
 
 
 --
--- TOC entry 2699 (class 2606 OID 29865)
 -- Name: purchase_order_fk_5; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -11062,7 +11359,6 @@ ALTER TABLE ONLY purchase_order
 
 
 --
--- TOC entry 2700 (class 2606 OID 29870)
 -- Name: purchase_order_fk_6; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -11071,7 +11367,6 @@ ALTER TABLE ONLY purchase_order
 
 
 --
--- TOC entry 2710 (class 2606 OID 29966)
 -- Name: purchase_order_master_order_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -11080,7 +11375,6 @@ ALTER TABLE ONLY purchase_order_master
 
 
 --
--- TOC entry 2701 (class 2606 OID 29875)
 -- Name: report_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -11089,7 +11383,6 @@ ALTER TABLE ONLY report
 
 
 --
--- TOC entry 2702 (class 2606 OID 29880)
 -- Name: report_parameter_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -11098,7 +11391,6 @@ ALTER TABLE ONLY report_parameter
 
 
 --
--- TOC entry 2703 (class 2606 OID 29885)
 -- Name: role_entity_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -11107,7 +11399,6 @@ ALTER TABLE ONLY role
 
 
 --
--- TOC entry 2705 (class 2606 OID 29890)
 -- Name: user_role_map_fk_1; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -11116,7 +11407,6 @@ ALTER TABLE ONLY user_role_map
 
 
 --
--- TOC entry 2704 (class 2606 OID 29895)
 -- Name: user_role_map_fk_2; Type: FK CONSTRAINT; Schema: public; Owner: jbilling
 --
 
@@ -11125,8 +11415,6 @@ ALTER TABLE ONLY user_role_map
 
 
 --
--- TOC entry 2814 (class 0 OID 0)
--- Dependencies: 6
 -- Name: public; Type: ACL; Schema: -; Owner: postgres
 --
 
@@ -11136,7 +11424,15 @@ GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
--- Completed on 2013-03-18 18:09:01
+--
+-- Name: DEFAULT PRIVILEGES FOR TABLES; Type: DEFAULT ACL; Schema: -; Owner: postgres
+--
+
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres REVOKE ALL ON TABLES  FROM PUBLIC;
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres REVOKE ALL ON TABLES  FROM postgres;
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres GRANT ALL ON TABLES  TO postgres;
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres GRANT ALL ON TABLES  TO PUBLIC;
+
 
 --
 -- PostgreSQL database dump complete
