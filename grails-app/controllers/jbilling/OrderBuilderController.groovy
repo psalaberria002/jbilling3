@@ -128,6 +128,7 @@ class OrderBuilderController {
                         new OrderBillingTypeDTO(Constants.ORDER_BILLING_PRE_PAID),
                         new OrderBillingTypeDTO(Constants.ORDER_BILLING_POST_PAID)
                 ]
+				
 
                 // model scope for this flow
                 flow.company = company
@@ -381,7 +382,7 @@ class OrderBuilderController {
 
             on("save").to("saveOrder")
             // on("save").to("checkItem")  // check to see if an item exists, and show an information page before saving
-            // on("save").to("beforeSave") // show an information page before saving
+            //on("save").to("beforeSave") // show an information page before saving
 
             on("cancel").to("finish")
         }
@@ -429,17 +430,38 @@ class OrderBuilderController {
                         if (SpringSecurityUtils.ifAllGranted("ORDER_20"))  {
 							//Creating a new order. Not adding to the master order
 							if(order.addToMaster != 1 ){
+								def dependencyMap=webServicesSession.checkDependencies(order)
+								//Save the order. Not more dependencies.
+								if(dependencyMap.isEmpty()){
+									//println "create new order, not to master"
+									log.debug("creating order ${order}")
+									order.id = webServicesSession.createOrder(order)
+									
+									//webServicesSession.updateOrder(order) //updates the order, adding a row into purchase_order_master
+									
+									// set success message in session, contents of the flash scope doesn't survive
+									// the redirect to the order list when the web-flow finishes
+									session.message = 'order.created'
+									session.args = [ order.id, order.userId ]
+								}
+								//Some dependencies yet. 
+								else{
+									ArrayList<String> messages=new ArrayList<String>();
+									String message;
+									for (Map.Entry<Integer, Integer> entry : dependencyMap.entrySet())
+									{
+										message="You have to buy "+entry.getValue()+" more "+entry.getKey();
+										messages.add(message);
+									}
+									//When the arraylist contains just one message, create an empty message to interpret it as arraylist in the view
+									if(messages.size()==1){
+										messages.add(0,"");
+									}
+									params.dependencies=messages//Add dependencies to the params. 
+									
+									update();//Go to build. Review template will show the dependencies.
+								}
 								
-								//println "create new order, not to master"
-								log.debug("creating order ${order}")
-								order.id = webServicesSession.createOrder(order)
-								
-							    //webServicesSession.updateOrder(order) //updates the order, adding a row into purchase_order_master
-								
-								// set success message in session, contents of the flash scope doesn't survive
-								// the redirect to the order list when the web-flow finishes
-								session.message = 'order.created'
-								session.args = [ order.id, order.userId ]
 							}
 							//Creating and adding a new order to the master order
 							else {
@@ -502,6 +524,7 @@ class OrderBuilderController {
                     error()
                 }
             }
+			on("update").to("build")
             on("error").to("build")
             on("success").to("finish")
         }
@@ -805,9 +828,7 @@ class OrderBuilderController {
 			
 		}
 		
-		return masterOrder;
-		
-		
+		return masterOrder;	
 	}
 	
 }

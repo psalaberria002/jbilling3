@@ -40,6 +40,23 @@
             <g:set var="errorMessages" value=""/>
         </g:if>
     </div>
+    
+    <!-- dependencies message -->
+    <div id="dependencies">
+        <g:if test="${params.dependencies}">
+            <div class="msg-box error">
+                <ul>
+                    <g:each var="dep" in="${params.dependencies}">
+                    <g:if test="${!dep.equals('')}">
+                        <li>${dep}</li>
+                    </g:if>
+                    </g:each>
+                </ul>
+            </div>
+
+            <g:set var="dependencies" value=""/>
+        </g:if>
+    </div>
 
     <div class="box no-heading">
 

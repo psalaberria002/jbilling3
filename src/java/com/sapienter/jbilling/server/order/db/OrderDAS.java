@@ -371,6 +371,9 @@ public class OrderDAS extends AbstractDAS<OrderDTO> {
                 .setParameter("userId", userId)
                 .uniqueResult();
    	 	//System.out.println(result+" number of users for item "+itemId+" and user "+userId);
+   	 	if(result==null){
+   	 		result=new Integer(0);
+   	 	}
     	return (Integer)result;
     }
   

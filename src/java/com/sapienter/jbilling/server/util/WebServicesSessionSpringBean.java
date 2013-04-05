@@ -2976,7 +2976,7 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
     	return list;
     }
     
-    public List getParentDependencies(Integer childId){
+    public List<Integer> getParentDependencies(Integer childId){
     	ItemDAS itemDas=new ItemDAS();
     	List<Integer> list=itemDas.getParents(childId);
     	
@@ -2990,9 +2990,89 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
     		for(Integer parentId: parents){
         		itemDas.setParent(childId, parentId);
         	}
-    	}
-    	
-    	
+    	}	
     }
+    
+    /**
+     * Giving an order, the method checks the dependencies of the order lines.
+     * @param order
+     * @return A map of Integers (item_id,users_difference). if not dependencies-> Map.isEmpty=true
+     */
+	public Map<Integer,Integer> checkDependencies(OrderWS order){
+		LOG.debug("CheckDependencies(OrderWS order)");
+		Map<Integer,Integer> neededProductsAndQuantities=new HashMap<Integer,Integer>();
+		OrderLineWS[] newOrderLines=order.getOrderLines();
+		//Each line in order
+		for(int i=0;i< newOrderLines.length;i++) { 
+			OrderLineWS nol=newOrderLines[i];
+			Map<Integer,Integer> dep=checkDependencies(order, nol);
+			//Merging to Maps
+			if(!dep.isEmpty()){
+				Set<Map.Entry<Integer, Integer>> entries = dep.entrySet();
+				for ( Map.Entry<Integer,Integer> entry : entries ) {
+				  Integer neededProductsAndQuantitiesMapValue = neededProductsAndQuantities.get( entry.getKey() );
+				  if ( neededProductsAndQuantitiesMapValue == null ) {
+					  neededProductsAndQuantities.put( entry.getKey(), entry.getValue() );
+				  }
+				  else if(entry.getValue()>neededProductsAndQuantitiesMapValue){
+						  neededProductsAndQuantities.put( entry.getKey(), entry.getValue() );
+				  }
+				}
+			}
+		}
+		
+		return neededProductsAndQuantities;
+	}
+	/**
+	 * Giving an order and an order line, the method checks the dependencies of the order line looking into the order and into the database. 
+	 * @param order
+	 * @param orderLine
+	 * @return A map of Integers (item_id,users_difference). if not dependencies-> Map.isEmpty=true
+	 */
+	public Map<Integer,Integer> checkDependencies(OrderWS order,OrderLineWS orderLine){
+		LOG.debug("CheckDependencies(OrderWS order,OrderLineWS orderLine)");
+		Map<Integer,Integer> needed=new HashMap<Integer,Integer>();
+		Integer itemId=orderLine.getItemId();
+		List<Integer> parents=getParentDependencies(itemId);
+		if(!parents.isEmpty()){
+			Integer userId=order.getUserId();
+			OrderDAS orderDas=new OrderDAS();
+			Integer difference=null;
+			Integer childQuantity=null;
+			Integer parentQuantity=null;
+			for(Integer parentId: parents){
+				parentQuantity=orderDas.findNumberUsers(parentId, userId)+this.findItemQuantityInOrder(order,parentId);//total:order + database
+				childQuantity=orderLine.getQuantityAsDecimal().intValueExact()+orderDas.findNumberUsers(orderLine.getItemId(), userId);//total: order + database
+				if( parentQuantity < childQuantity){
+					difference=childQuantity-parentQuantity;
+					if( (needed.containsKey(parentId)&&(needed.get(parentId)<difference)) || !needed.containsKey(parentId)){
+						needed.put(parentId, difference);
+					}
+				}
+				
+			}
+			
+			
+		}
+		return needed;
+	}
+	/**
+	 * Given an itemId and an order, it returns the total quantity for an item into the order
+	 * @param order
+	 * @param itemId
+	 * @return quantity of the product in this order (Can be found in more than one lines)
+	 */
+	public Integer findItemQuantityInOrder(OrderWS order, Integer itemId) {
+		LOG.debug("findItemQuantityInOrder "+order.toString());
+		OrderLineWS[] arr=order.getOrderLines();
+		Integer cont=new Integer(0);
+		for(int i = 0; i < arr.length; i++) {
+			   OrderLineWS line = arr[i];
+			   if(line.getItemId().equals(itemId)){
+				   cont+=line.getQuantityAsDecimal().intValueExact();
+			   }
+			 }
+		return cont;
+	}
     
 }
