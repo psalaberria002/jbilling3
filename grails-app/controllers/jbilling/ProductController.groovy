@@ -22,6 +22,7 @@ import com.sapienter.jbilling.server.item.CurrencyBL
 import com.sapienter.jbilling.server.item.ItemDTOEx
 import com.sapienter.jbilling.server.item.ItemPriceDTOEx
 import com.sapienter.jbilling.server.item.ItemTypeWS
+import com.sapienter.jbilling.server.item.db.ItemDAS;
 import com.sapienter.jbilling.server.item.db.ItemDTO
 import com.sapienter.jbilling.server.item.db.ItemTypeDTO
 import com.sapienter.jbilling.server.user.db.CompanyDTO
@@ -246,10 +247,9 @@ class ProductController {
     @Secured(["PRODUCT_42"])
     def deleteProduct = {
         if (params.id) {
+			webServicesSession.deleteItemDependenciesAndPeriod(params.int('id'));
             webServicesSession.deleteItem(params.int('id'))
-
             log.debug("Deleted item ${params.id}.");
-
             flash.message = 'product.deleted'
             flash.args = [ params.id  as String]
         }
@@ -374,11 +374,17 @@ class ProductController {
     @Secured(["hasAnyRole('PRODUCT_40', 'PRODUCT_41')"])
     def editProduct = {
         def product
-		def dependencies=webServicesSession.getParentDependencies(params.int('id'))
-		def doubleLinkedDependencies=webServicesSession.getDoubleLinkedDependencies(params.int('id'))
-		println doubleLinkedDependencies+" dld"
+		def dependencies
+		def doubleLinkedDependencies
+		def period
+		if(params.int('id')!=null){
+			println "!null"
+			dependencies=webServicesSession.getParentDependencies(params.int('id'))
+			doubleLinkedDependencies=webServicesSession.getDoubleLinkedDependencies(params.int('id'))
+			period=webServicesSession.getItemPeriod(params.int('id'))
+		}
 		def products =  getProducts(null, null)
-
+		
         try {
             product = params.id ? webServicesSession.getItem(params.int('id'), session['user_id'], null) : null
         } catch (SessionInternalError e) {
@@ -393,7 +399,7 @@ class ProductController {
 
         breadcrumbService.addBreadcrumb(controllerName, actionName, params.id ? 'update' : 'create', params.int('id'), product?.number)
 
-        [ product: product, currencies: currencies, categories: getProductCategories(), categoryId: params.category, products: products ,dependencies: dependencies, doubleLinkedDependencies:doubleLinkedDependencies]
+        [ product: product, currencies: currencies, categories: getProductCategories(), categoryId: params.category, products: products ,dependencies: dependencies, doubleLinkedDependencies:doubleLinkedDependencies, period:period]
     }
 
     /**
@@ -404,8 +410,6 @@ class ProductController {
         def product = new ItemDTOEx()
         bindProduct(product, params)
 		
-		this.setParentDependencies(params)
-
         try{
             // save or update
             if (!product.id || product.id == 0) {
@@ -415,6 +419,11 @@ class ProductController {
                     log.debug("creating product ${product}")
 
                     product.id = webServicesSession.createItem(product)
+					
+					String s=params.period.yearly ? 'Yearly' : 'One time'
+					this.setParentDependencies(params,product.id)
+					//setting period to item_period
+					this.setItemPeriod(s,product.id)
 
                     flash.message = 'product.created'
                     flash.args = [ product.id ]
@@ -439,6 +448,11 @@ class ProductController {
                     log.debug("saving changes to product ${product.id}")
 
                     webServicesSession.updateItem(product)
+					
+					String s=params.period.yearly ? 'Yearly' : 'One time'
+					this.setParentDependencies(params,product.id)
+					//setting period to item_period
+					this.setItemPeriod(s,product.id,)
 
                     flash.message = 'product.updated'
                     flash.args = [ product.id ]
@@ -494,7 +508,8 @@ class ProductController {
         return currencies.findAll { it.inUse }
     }
 	
-	def setParentDependencies(GrailsParameterMap params){
+	def setParentDependencies(GrailsParameterMap params, itemId){
+		println itemId+" "+itemId.getClass()
 		List<Integer> parents=new ArrayList<Integer>();
 		println params
 		params.parent.collect { parentId, checked ->
@@ -520,6 +535,7 @@ class ProductController {
 			try{
 				d = parentId as Integer
 				println d+" d"
+				println d
 				doubleLinked.add(d)
 			}
 			catch(NumberFormatException e){
@@ -530,12 +546,21 @@ class ProductController {
 		
 		//product.priceManual = params.product.priceManual ? 1 : 0
 		}
-		
-		def childId= Integer.parseInt(params.product.id)
+		def childId=null;
+		itemId.collect{it ->
+			println it
+			childId=it as Integer
+			
+		}
 		webServicesSession.setParentDependencies(childId,parents,doubleLinked)
 		
+	}
+	
+	def void setItemPeriod(String s,Integer itemId){
 		
-		
+		//String s=params.period.yearly ? 'Yearly' : 'One time'
+		println s
+		webServicesSession.setItemPeriod(itemId,s)
 	}
 
 }

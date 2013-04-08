@@ -75,12 +75,12 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
        }
 	@SuppressWarnings("unchecked")
 	public List<Integer> getParents(Integer childId){
-		
       	 Query query = getSession()
                    .createSQLQuery("select a.item_id from item_dependency a " +
                    		"WHERE a.child_item_id=:childId ORDER BY a.item_id ASC")
                    		.setParameter("childId", childId);
-      	 	
+      	 
+      	 System.out.println(query);	
        	return query.list();
        }
 	@SuppressWarnings("unchecked")
@@ -113,6 +113,67 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
       	query.executeUpdate();
        	
        }
+	@SuppressWarnings("unchecked")
+	public List<Integer> getDoubleLinkedChilds(Integer parentId) {
+		Query query = getSession()
+                .createSQLQuery("select a.child_item_id from item_dependency a " +
+                		"WHERE a.item_id=:parentId AND double_linked=1 ORDER BY a.item_id ASC")
+                		.setParameter("parentId", parentId);
+   
+    	return query.list();
+	}
+	@SuppressWarnings("unchecked")
+	public String getItemPeriod(Integer itemId) {
+		Query query = getSession()
+                .createSQLQuery("select a.period from item_period a " +
+                		"WHERE a.item_id=:itemId")
+                		.setParameter("itemId", itemId);
+   
+    	return (String)query.uniqueResult();
+	}
 
+	public void setItemPeriod(Integer itemId, String period) {
+		Object result = (Object) getSession()
+                .createSQLQuery("select * from item_period where item_id=:itemId")
+                .setParameter("itemId", itemId)
+                .uniqueResult();
+   	 	//System.out.println(result);
+   	 	Query query=null; 
+   	 	if(result!=null){
+   	 		//System.out.println("notnull");
+   	 		query = getSession().createSQLQuery(
+ 	    			"UPDATE item_period SET period=:period WHERE item_id=:itemId")
+ 	    			.setParameter("itemId", itemId)
+ 	    			.setParameter("period", period);
+   	 	}
+   	 	else{
+   	 		//System.out.println("yesnull");
+   	 		query = getSession()
+                .createSQLQuery("insert into item_period values (:itemId,:period)")
+                	.setParameter("itemId", itemId)
+                		.setParameter("period", period);
+   	 	
+   	 	}
+   	 
+		
+   	 	query.executeUpdate();
+	}
+
+	public void deleteItemDependencies(Integer itemId) {
+		Query query = getSession()
+                .createSQLQuery("delete from item_dependency where item_id=:itemId OR child_item_id=:itemId")
+            	.setParameter("itemId", itemId);
+		query.executeUpdate();
+		
+	}
+
+	public void deleteItemPeriod(Integer itemId) {
+		System.out.println(itemId+" deleteItemPeriod");
+		Query query = getSession()
+                .createSQLQuery("delete from item_period where item_id=:itemId")
+            	.setParameter("itemId", itemId);
+		query.executeUpdate();
+		
+	}
 	
 }

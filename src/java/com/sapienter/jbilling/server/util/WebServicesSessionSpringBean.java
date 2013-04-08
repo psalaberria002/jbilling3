@@ -3087,4 +3087,19 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 		return cont;
 	}
     
+	public String getItemPeriod(Integer itemId){
+		ItemDAS itemDas=new ItemDAS();
+    	String p=itemDas.getItemPeriod(itemId);
+    	return p;
+	}
+	public void setItemPeriod(Integer itemId,String period){
+		
+		ItemDAS itemDas=new ItemDAS();
+    	itemDas.setItemPeriod(itemId,period);
+	}
+	public void deleteItemDependenciesAndPeriod(Integer itemId){
+		ItemDAS itemDas=new ItemDAS();
+		itemDas.deleteItemDependencies(itemId);
+		itemDas.deleteItemPeriod(itemId);
+	}
 }

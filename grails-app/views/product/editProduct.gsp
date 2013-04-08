@@ -73,6 +73,12 @@
                             <content tag="label.for">product.description</content>
                             <g:textField class="field" name="product.description" value="${product?.description}" size="40"/>
                         </g:applyLayout>
+                        
+                        <g:applyLayout name="form/checkbox">
+                            <content tag="label"><g:message code="period.yearly"/></content>
+                            <content tag="label.for">period.yearly</content>
+                            <g:checkBox class="cb checkbox" name="period.yearly" checked="${period.equals('Yearly')}"/>
+                        </g:applyLayout>
 
                         <g:applyLayout name="form/input">
                             <content tag="label"><g:message code="product.percentage"/></content>
@@ -167,18 +173,16 @@
                 </div>
                 
                 <!-- dependencies controls -->
-                <div id="pricing" class="box-cards box-cards-open">
+                <div id="dependencies" class="box-cards box-cards-open">
                     <div class="box-cards-title">
                         <a class="btn-open" href="#"><span><g:message code="product.dependencies"/></span></a>
                     </div>
                     <div class="box-card-hold">
                         <div class="form-columns">
-                            
-
                             <div class="column">
                             
                             	<g:each var="item" in="${products.sort{ it.id }}">
-                            	<g:if test="${!product.id.equals(item.id) }">
+                            	<g:if test="${ !product?.id?.equals(item.id) }">
                                 <g:applyLayout name="form/checkbox">
                                 
                                     <content tag="label"><g:message code="${item.description }"/></content>
@@ -197,7 +201,7 @@
                             <div class="column">
                             	
                             	<g:each var="item" in="${products.sort{ it.id }}">
-                            	<g:if test="${!product.id.equals(item.id) }">
+                            	<g:if test="${!product?.id?.equals(item.id) }">
                                 <g:applyLayout name="form/checkbox">
                                     <content tag="label"><g:message code="${item.description }"/></content>
                                     <g:set var="checked" value="${false}"/>

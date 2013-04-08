@@ -380,9 +380,9 @@ class OrderBuilderController {
             on("update").to("updateOrder")
 			
 
-            on("save").to("saveOrder")
+            //on("save").to("saveOrder")
             // on("save").to("checkItem")  // check to see if an item exists, and show an information page before saving
-            //on("save").to("beforeSave") // show an information page before saving
+            on("save").to("beforeSave") // show an information page before saving
 
             on("cancel").to("finish")
         }
@@ -414,6 +414,20 @@ class OrderBuilderController {
          * Uncomment the "save" to "beforeSave" transition in the builder() state to use.
          */
         beforeSave {
+			
+			if(params.doubleLinkedOrder){
+				def order = conversation.order
+				def masterOrder = webServicesSession.getMasterOrder(order.userId)
+				if(masterOrder==null){
+					createMasterOrderWithDoubleLinked(order)
+					order=cleanOrder(order)
+					conversation.order=order
+				}
+				else{
+					
+				}
+			}
+			save()
             on("save").to("saveOrder")
             on("cancel").to("build")
         }
@@ -428,11 +442,13 @@ class OrderBuilderController {
 
                     if (!order.id || order.id == 0) {
                         if (SpringSecurityUtils.ifAllGranted("ORDER_20"))  {
+							def dependencyMap=webServicesSession.checkDependencies(order)
+							if(dependencyMap.isEmpty()){
 							//Creating a new order. Not adding to the master order
-							if(order.addToMaster != 1 ){
-								def dependencyMap=webServicesSession.checkDependencies(order)
+								if(order.addToMaster != 1 ){
+								
 								//Save the order. Not more dependencies.
-								if(dependencyMap.isEmpty()){
+								
 									//println "create new order, not to master"
 									log.debug("creating order ${order}")
 									order.id = webServicesSession.createOrder(order)
@@ -444,8 +460,33 @@ class OrderBuilderController {
 									session.message = 'order.created'
 									session.args = [ order.id, order.userId ]
 								}
-								//Some dependencies yet. 
-								else{
+								//Creating and adding a new order to the master order
+								else {
+									//println "editOrders!!!"
+									log.debug("creating edited order ${order}")
+									def masterOrder = webServicesSession.getMasterOrder(order.userId)
+									
+									//Edit master order and new order
+									masterOrder=editOrders(order,masterOrder);
+									
+									//println "pasa"
+	
+									order.orderLines = order.orderLines.sort { it.itemId }
+								
+									order.id = webServicesSession.createUpdateOrder(order)
+									
+									
+									OrderBL obl = new OrderBL(order.id);
+									order=obl.getWS(session['language_id']);
+									//webServicesSession.updateOrder(order) //updates the order, adding a row into purchase_order_master
+	
+									// set success message in session, contents of the flash scope doesn't survive
+									// the redirect to the order list when the web-flow finishes
+									session.message = 'order.created'
+									session.args = [ order.id, order.userId ]
+								}
+							}//Some dependencies yet. 
+							else{
 									ArrayList<String> messages=new ArrayList<String>();
 									String message;
 									for (Map.Entry<Integer, Integer> entry : dependencyMap.entrySet())
@@ -463,33 +504,7 @@ class OrderBuilderController {
 								}
 								
 							}
-							//Creating and adding a new order to the master order
-							else {
-								//println "editOrders!!!"
-								log.debug("creating edited order ${order}")
-								def masterOrder = webServicesSession.getMasterOrder(order.userId)
-								
-								//Edit master order and new order
-								masterOrder=editOrders(order,masterOrder);
-								
-								//println "pasa"
-
-								order.orderLines = order.orderLines.sort { it.itemId }
 							
-								order.id = webServicesSession.createUpdateOrder(order)
-								
-								
-								OrderBL obl = new OrderBL(order.id);
-								order=obl.getWS(session['language_id']);
-								//webServicesSession.updateOrder(order) //updates the order, adding a row into purchase_order_master
-
-								// set success message in session, contents of the flash scope doesn't survive
-								// the redirect to the order list when the web-flow finishes
-								session.message = 'order.created'
-								session.args = [ order.id, order.userId ]
-							}
-							
-						}
                          else {
                             redirect controller: 'login', action: 'denied'
                         }
@@ -829,6 +844,27 @@ class OrderBuilderController {
 		}
 		
 		return masterOrder;	
+	}
+	
+	/**
+	 * It creates a master order using the double linked items of a given order.
+	 * @param order
+	 * @return
+	 */
+	def createMasterOrderWithDoubleLinked(order){
+		def newOrderLines = order.getOrderLines()
+		newOrderLines.each{nol->
+			
+		}
+	}
+	
+	/**
+	 * Removes
+	 * @param order
+	 * @return
+	 */
+	def cleanOrder(order){
+		
 	}
 	
 }
