@@ -374,8 +374,9 @@ class ProductController {
     @Secured(["hasAnyRole('PRODUCT_40', 'PRODUCT_41')"])
     def editProduct = {
         def product
-		
 		def dependencies=webServicesSession.getParentDependencies(params.int('id'))
+		def doubleLinkedDependencies=webServicesSession.getDoubleLinkedDependencies(params.int('id'))
+		println doubleLinkedDependencies+" dld"
 		def products =  getProducts(null, null)
 
         try {
@@ -392,7 +393,7 @@ class ProductController {
 
         breadcrumbService.addBreadcrumb(controllerName, actionName, params.id ? 'update' : 'create', params.int('id'), product?.number)
 
-        [ product: product, currencies: currencies, categories: getProductCategories(), categoryId: params.category, products: products ,dependencies: dependencies]
+        [ product: product, currencies: currencies, categories: getProductCategories(), categoryId: params.category, products: products ,dependencies: dependencies, doubleLinkedDependencies:doubleLinkedDependencies]
     }
 
     /**
@@ -501,7 +502,7 @@ class ProductController {
 			def i
 			try{
 				i = parentId as Integer
-				println i
+				println i+" i"
 				parents.add(i)
 			}
 			catch(NumberFormatException e){
@@ -512,9 +513,26 @@ class ProductController {
 		
 		//product.priceManual = params.product.priceManual ? 1 : 0
 		}
+		List<Integer> doubleLinked=new ArrayList<Integer>();
+		params.doubleLinked.collect { parentId, checked ->
+			
+			def d
+			try{
+				d = parentId as Integer
+				println d+" d"
+				doubleLinked.add(d)
+			}
+			catch(NumberFormatException e){
+				println e
+				d=null
+			}
+			
+		
+		//product.priceManual = params.product.priceManual ? 1 : 0
+		}
 		
 		def childId= Integer.parseInt(params.product.id)
-		webServicesSession.setParentDependencies(childId,parents)
+		webServicesSession.setParentDependencies(childId,parents,doubleLinked)
 		
 		
 		

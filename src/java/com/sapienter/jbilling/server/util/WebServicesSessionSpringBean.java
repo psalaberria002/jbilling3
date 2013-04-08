@@ -2983,14 +2983,26 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
     	return list;
     }
     
-    public void setParentDependencies(Integer childId, List<Integer> parents){
+    public void setParentDependencies(Integer childId, List<Integer> parents, List<Integer> doubleLinked){
     	ItemDAS itemDas=new ItemDAS();
     	itemDas.removeAllParents(childId);
     	if(!parents.isEmpty()){
     		for(Integer parentId: parents){
-        		itemDas.setParent(childId, parentId);
+    			if(doubleLinked.contains(parentId)){
+    				itemDas.setParent(childId, parentId,1);
+    			}
+    			else{
+    				itemDas.setParent(childId, parentId,0);
+    			}
+        		
         	}
     	}	
+    }
+    
+    public List<Integer> getDoubleLinkedDependencies(Integer childId){
+    	ItemDAS itemDas=new ItemDAS();
+    	List<Integer> list=itemDas.getDoubleLinkedParents(childId);
+    	return list;
     }
     
     /**

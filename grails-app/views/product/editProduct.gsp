@@ -194,6 +194,24 @@
                                 </g:if>
                                  </g:each>
                             </div>
+                            <div class="column">
+                            	
+                            	<g:each var="item" in="${products.sort{ it.id }}">
+                            	<g:if test="${!product.id.equals(item.id) }">
+                                <g:applyLayout name="form/checkbox">
+                                    <content tag="label"><g:message code="${item.description }"/></content>
+                                    <g:set var="checked" value="${false}"/>
+                                    <g:each var="doubleLinked" in="${doubleLinkedDependencies}">
+                                    <g:if test="${doubleLinked.equals(item.id) }">
+                                    	<g:set var="checked" value="${true}"/>
+                                   	</g:if>
+                                   	</g:each>
+                                    <g:checkBox class="cb checkbox" name="doubleLinked.${item.id}" checked="${checked}"/>
+                                
+                                </g:applyLayout>
+                                </g:if>
+                                 </g:each>
+                            </div>
                         </div>
                     </div>
                 </div>

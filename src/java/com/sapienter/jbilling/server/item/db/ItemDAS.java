@@ -84,12 +84,23 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
        	return query.list();
        }
 	@SuppressWarnings("unchecked")
-	public void setParent(Integer childId, Integer parentId){
+	public List<Integer> getDoubleLinkedParents(Integer childId) {
+		Query query = getSession()
+                .createSQLQuery("select a.item_id from item_dependency a " +
+                		"WHERE a.child_item_id=:childId AND double_linked=1 ORDER BY a.item_id ASC")
+                		.setParameter("childId", childId);
+   
+    	return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void setParent(Integer childId, Integer parentId,Integer isDoubleLinked){
 		
       	 Query query = getSession()
-                   .createSQLQuery("insert into item_dependency values (:parentId,:childId)")
+                   .createSQLQuery("insert into item_dependency values (:parentId,:childId,:doubleLinked)")
                    	.setParameter("parentId", parentId)
-                   		.setParameter("childId", childId);
+                   		.setParameter("childId", childId)
+                   		.setParameter("doubleLinked",isDoubleLinked);
       	 	query.executeUpdate();
        	
        }
@@ -102,4 +113,6 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
       	query.executeUpdate();
        	
        }
+
+	
 }
