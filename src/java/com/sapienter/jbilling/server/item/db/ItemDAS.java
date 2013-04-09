@@ -168,12 +168,12 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
 	}
 
 	public void deleteItemPeriod(Integer itemId) {
-		System.out.println(itemId+" deleteItemPeriod");
 		Query query = getSession()
                 .createSQLQuery("delete from item_period where item_id=:itemId")
             	.setParameter("itemId", itemId);
 		query.executeUpdate();
 		
 	}
+	
 	
 }

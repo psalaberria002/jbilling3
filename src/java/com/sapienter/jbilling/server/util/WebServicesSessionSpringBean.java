@@ -3017,20 +3017,23 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 		//Each line in order
 		for(int i=0;i< newOrderLines.length;i++) { 
 			OrderLineWS nol=newOrderLines[i];
-			Map<Integer,Integer> dep=checkDependencies(order, nol);
-			//Merging to Maps
-			if(!dep.isEmpty()){
-				Set<Map.Entry<Integer, Integer>> entries = dep.entrySet();
-				for ( Map.Entry<Integer,Integer> entry : entries ) {
-				  Integer neededProductsAndQuantitiesMapValue = neededProductsAndQuantities.get( entry.getKey() );
-				  if ( neededProductsAndQuantitiesMapValue == null ) {
-					  neededProductsAndQuantities.put( entry.getKey(), entry.getValue() );
-				  }
-				  else if(entry.getValue()>neededProductsAndQuantitiesMapValue){
+			if(nol.getDeleted()==0){
+				Map<Integer,Integer> dep=checkDependencies(order, nol);
+				//Merging to Maps
+				if(!dep.isEmpty()){
+					Set<Map.Entry<Integer, Integer>> entries = dep.entrySet();
+					for ( Map.Entry<Integer,Integer> entry : entries ) {
+					  Integer neededProductsAndQuantitiesMapValue = neededProductsAndQuantities.get( entry.getKey() );
+					  if ( neededProductsAndQuantitiesMapValue == null ) {
 						  neededProductsAndQuantities.put( entry.getKey(), entry.getValue() );
-				  }
+					  }
+					  else if(entry.getValue()>neededProductsAndQuantitiesMapValue){
+							  neededProductsAndQuantities.put( entry.getKey(), entry.getValue() );
+					  }
+					}
 				}
 			}
+			
 		}
 		
 		return neededProductsAndQuantities;
@@ -3080,7 +3083,7 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 		Integer cont=new Integer(0);
 		for(int i = 0; i < arr.length; i++) {
 			   OrderLineWS line = arr[i];
-			   if(line.getItemId().equals(itemId)){
+			   if(line.getItemId().equals(itemId)&&line.getDeleted()==0){
 				   cont+=line.getQuantityAsDecimal().intValueExact();
 			   }
 			 }
@@ -3101,5 +3104,14 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 		ItemDAS itemDas=new ItemDAS();
 		itemDas.deleteItemDependencies(itemId);
 		itemDas.deleteItemPeriod(itemId);
+	}
+	public boolean isOneTimer(Integer itemId){
+		ItemDAS itemDas=new ItemDAS();
+		if(itemDas.getItemPeriod(itemId).equals("One time")||itemDas.getItemPeriod(itemId).equals(null)||itemDas.getItemPeriod(itemId).equals("")){
+			return true;
+		}
+		else{
+			return false;
+		}
 	}
 }

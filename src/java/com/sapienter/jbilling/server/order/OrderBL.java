@@ -389,7 +389,7 @@ public class OrderBL extends ResultList implements OrderSQL {
 						if (oldQuantity == null) {
 							oldQuantity = new Integer(0);
 						}
-
+						System.out.println(oldQuantity+" oldQuantity");
 						Integer newQuantity = oldQuantity
 								+ (temp.getQuantityInt());
 						orderDas.updateOrInsertItemUsers(temp.getItemId(),

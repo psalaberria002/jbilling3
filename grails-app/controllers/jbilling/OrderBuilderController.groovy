@@ -1,3 +1,5 @@
+
+
 /*
  jBilling - The Enterprise Open Source Billing System
  Copyright (C) 2003-2011 Enterprise jBilling Software Ltd. and Emiliano Conde
@@ -19,11 +21,11 @@
  */
 
 package jbilling
-
 import grails.plugins.springsecurity.Secured
 
 import java.math.RoundingMode
 
+import org.apache.poi.common.usermodel.LineStyle;
 import org.codehaus.groovy.grails.plugins.springsecurity.SpringSecurityUtils
 import org.jopendocument.dom.spreadsheet.SpreadSheet
 
@@ -80,7 +82,7 @@ class OrderBuilderController {
                     redirect controller: 'login', action: 'denied'
                     return
                 }
-
+				
                 def order = params.id ? webServicesSession.getOrder(params.int('id')) : new OrderWS()
 
                 if (!order) {
@@ -111,7 +113,6 @@ class OrderBuilderController {
                     order.isCurrent     = 0
                     order.orderLines    = []
                 }
-
                 // add breadcrumb for order editing
                 if (params.id) {
                     breadcrumbService.addBreadcrumb(controllerName, actionName, null, params.int('id'))
@@ -383,8 +384,7 @@ class OrderBuilderController {
             //on("save").to("saveOrder")
             // on("save").to("checkItem")  // check to see if an item exists, and show an information page before saving
             on("save").to("beforeSave") // show an information page before saving
-
-            on("cancel").to("finish")
+            //on("cancel").to("finish")
         }
 
         /**
@@ -413,24 +413,66 @@ class OrderBuilderController {
          *
          * Uncomment the "save" to "beforeSave" transition in the builder() state to use.
          */
-        beforeSave {
-			
-			if(params.doubleLinkedOrder){
-				def order = conversation.order
-				def masterOrder = webServicesSession.getMasterOrder(order.userId)
-				if(masterOrder==null){
-					createMasterOrderWithDoubleLinked(order)
-					order=cleanOrder(order)
-					conversation.order=order
+		beforeSave{
+			action{
+				def order=conversation.order
+				println order.toString()
+				def dependencyMap=webServicesSession.checkDependencies(order)
+				if(dependencyMap.isEmpty()){
+					def masterOrder = webServicesSession.getMasterOrder(order.userId)
+					def newOrder
+					if(masterOrder==null){
+						
+						if(order.isMaster==1){
+							order=addDoubleLinkedItems(order)
+							newOrder=moveOneTimersToNewOrder(order)
+							save()
+						}
+						else if(order.addToMaster==1){
+								cancel()
+						}
+						//Normal order
+						else{
+							save()
+						}
+					}
+					else{
+						if(order.isMaster==1){
+							cancel()
+						}
+						else if(order.addToMaster==1){
+							order=addDoubleLinkedItems(order)
+							newOrder=moveOneTimersToNewOrder(order)
+							save()
+						}
+						else{
+							save()
+						}
+					}
+				
 				}
+				//Some dependencies yet.
 				else{
-					
+						ArrayList<String> messages=new ArrayList<String>();
+						String message;
+						for (Map.Entry<Integer, Integer> entry : dependencyMap.entrySet())
+						{
+							message="You have to buy "+entry.getValue()+" more "+entry.getKey();
+							messages.add(message);
+						}
+						//When the arraylist contains just one message, create an empty message to interpret it as arraylist in the view
+						if(messages.size()==1){
+							messages.add(0,"");
+						}
+						params.dependencies=messages//Add dependencies to the params.
+						
+						cancel();//Go to build. Review template will show the dependencies.
 				}
+				
 			}
-			save()
-            on("save").to("saveOrder")
-            on("cancel").to("build")
-        }
+			on("save").to("saveOrder")
+			on("cancel").to("build")
+		}
 
         /**
          * Saves the order and exits the builder flow.
@@ -442,8 +484,6 @@ class OrderBuilderController {
 
                     if (!order.id || order.id == 0) {
                         if (SpringSecurityUtils.ifAllGranted("ORDER_20"))  {
-							def dependencyMap=webServicesSession.checkDependencies(order)
-							if(dependencyMap.isEmpty()){
 							//Creating a new order. Not adding to the master order
 								if(order.addToMaster != 1 ){
 								
@@ -485,24 +525,6 @@ class OrderBuilderController {
 									session.message = 'order.created'
 									session.args = [ order.id, order.userId ]
 								}
-							}//Some dependencies yet. 
-							else{
-									ArrayList<String> messages=new ArrayList<String>();
-									String message;
-									for (Map.Entry<Integer, Integer> entry : dependencyMap.entrySet())
-									{
-										message="You have to buy "+entry.getValue()+" more "+entry.getKey();
-										messages.add(message);
-									}
-									//When the arraylist contains just one message, create an empty message to interpret it as arraylist in the view
-									if(messages.size()==1){
-										messages.add(0,"");
-									}
-									params.dependencies=messages//Add dependencies to the params. 
-									
-									update();//Go to build. Review template will show the dependencies.
-								}
-								
 							}
 							
                          else {
@@ -851,11 +873,12 @@ class OrderBuilderController {
 	 * @param order
 	 * @return
 	 */
-	def createMasterOrderWithDoubleLinked(order){
+	def addDoubleLinkedItems(order){
 		def newOrderLines = order.getOrderLines()
 		newOrderLines.each{nol->
 			
 		}
+		return order;
 	}
 	
 	/**
@@ -863,8 +886,74 @@ class OrderBuilderController {
 	 * @param order
 	 * @return
 	 */
-	def cleanOrder(order){
+	def moveOneTimersToNewOrder(order){
+		OrderWS newOrder=null;
+		def linesToDelete=null;
+		def orderLines = order.getOrderLines()
+		orderLines.each{ol->
+			if(ol.getDeleted()==0){
+				if(webServicesSession.isOneTimer(ol.getItemId())){
+					if(newOrder==null){
+						newOrder=new OrderWS();
+						
+						newOrder.userId        = order.getUserId()
+						newOrder.currencyId    = order.getCurrencyId()
+						newOrder.statusId      = Constants.ORDER_STATUS_ACTIVE
+						newOrder.period        = Constants.ORDER_PERIOD_ONCE
+						newOrder.billingTypeId = Constants.ORDER_BILLING_PRE_PAID
+						newOrder.activeSince   = order.getActiveSince()
+						newOrder.isCurrent     = 0
+						newOrder.billingTypeStr= order.getBillingTypeStr()
+						newOrder.orderLines    = []
+						newOrder.payPlan       = order.getPayPlan()
+						newOrder.isMaster      = 0
+						newOrder.addToMaster   = 0
+						
+					}
+					def lines = newOrder.orderLines as List
+					// build line
+					def olclone = new OrderLineWS()
+					olclone.typeId = Constants.ORDER_LINE_TYPE_ITEM
+					olclone.quantity = ol.quantity
+					olclone.setPrice(ol.price)
+					olclone.setAmount(ol.amount)
+					olclone.itemId=ol.itemId
+					olclone.useItem = ol.useItem
+					olclone.description=ol.description
+					//println line.toString()
+					lines.add(olclone)
+					newOrder.orderLines = lines.toArray()
+					
+					if(linesToDelete==null){
+						linesToDelete= new ArrayList<OrderLineWS>()
+					}
+					linesToDelete.add(ol)
+					//ol.setDeleted(1);//delete line from order
+					
+					
+				}
+			}
+			
+			
+		}
+		if(linesToDelete){
+			def olines = order.orderLines as List
+			for(OrderLineWS oline: linesToDelete){
+				println oline
+				olines.remove(oline)
+			}
+			
+			order.orderLines=olines.toArray()
+		}
+		if(newOrder!=null){
+			println newOrder.toString()
+			def newOrderId = webServicesSession.createOrder(newOrder)
+			println newOrderId+" newOrderId"
+		}
 		
+		
+		
+		return order;
 	}
 	
 }

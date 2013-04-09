@@ -1,1 +1,1 @@
-pg_dump -c jbilling_test > /Users/paulsmsm/Google\ Drive/Dataloy/JBilling/sql/backup/04_04_2013.backup
+pg_dump -U jbilling -c jbilling_test > %date%_jbilling_test.backup
