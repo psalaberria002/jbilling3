@@ -3029,6 +3029,7 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 				if(!dep.isEmpty()){
 					Set<Map.Entry<Integer, Integer>> entries = dep.entrySet();
 					for ( Map.Entry<Integer,Integer> entry : entries ) {
+						System.out.println(entry+" entry "+nol.getItemId());
 					  Integer neededProductsAndQuantitiesMapValue = neededProductsAndQuantities.get( entry.getKey() );
 					  if ( neededProductsAndQuantitiesMapValue == null ) {
 						  neededProductsAndQuantities.put( entry.getKey(), entry.getValue() );

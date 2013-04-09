@@ -458,8 +458,11 @@ class OrderBuilderController {
 		beforeSave{
 			action{
 				def order=conversation.order
-				println order.toString()
-				def dependencyMap=webServicesSession.checkDependencies(order)
+				def dependencyMap=new HashMap<Integer,Integer>();
+				//Check dependencies just when creating, not when editing. 
+				if(order.getId().equals(null)||order.getId().equals(0)){
+					dependencyMap=webServicesSession.checkDependencies(order)
+				} 
 				if(dependencyMap.isEmpty()){
 					def masterOrder = webServicesSession.getMasterOrder(order.userId)
 					def newOrder
@@ -471,7 +474,16 @@ class OrderBuilderController {
 							save()
 						}
 						else if(order.addToMaster==1){
-								cancel()
+							ArrayList<String> messages=new ArrayList<String>();
+							String message;
+							message="Not able to add this order to the master order. Create a master order first!";
+							messages.add(message);
+							//When the arraylist contains just one message, create an empty message to interpret it as arraylist in the view
+							if(messages.size()==1){
+								messages.add(0,"");
+							}
+							params.dependencies=messages
+							cancel()
 						}
 						//Normal order
 						else{
@@ -480,7 +492,21 @@ class OrderBuilderController {
 					}
 					else{
 						if(order.isMaster==1){
-							cancel()
+							if(order.getId().equals(null)||order.getId().equals(0)){
+								ArrayList<String> messages=new ArrayList<String>();
+								String message;
+								message="You cannot create more than one master order for this user. The master order for "+order.getUserId+" is already created!";
+								messages.add(message);
+								//When the arraylist contains just one message, create an empty message to interpret it as arraylist in the view
+								if(messages.size()==1){
+									messages.add(0,"");
+								}
+								params.dependencies=messages
+								cancel()
+							}
+							else{
+								save()
+							}		
 						}
 						else if(order.addToMaster==1){
 							//order=addDoubleLinkedItems(order)
