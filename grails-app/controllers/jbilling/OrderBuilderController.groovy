@@ -189,11 +189,34 @@ class OrderBuilderController {
                 line.itemId = params.int('id')
                 line.useItem = true
 				
-
-                // add line to order
-                def order = conversation.order
-                def lines = order.orderLines as List
-                lines.add(line)
+				//Add double linked items to the linesToAdd ArrayList
+				def doubleLinkedChildren=new ArrayList<Integer>();
+				def linesToAdd=new ArrayList<OrderLineWS>();
+				
+					doubleLinkedChildren=webServicesSession.getDoubleLinkedChildren(line.itemId)
+					if(!doubleLinkedChildren.isEmpty()){
+						for(Integer itemId: doubleLinkedChildren){
+							// build line
+							def l = new OrderLineWS()
+							l.typeId = Constants.ORDER_LINE_TYPE_ITEM
+							l.quantity = line.getQuantityAsDecimal()
+							l.itemId = itemId
+							l.useItem = true
+							
+							linesToAdd.add(l)
+						}
+					}
+					
+				// add line to order
+				def order = conversation.order
+				def lines = order.orderLines as List
+				lines.add(line)
+				//add double linked item lines to order
+				if(!linesToAdd.isEmpty()){
+					for(OrderLineWS oline: linesToAdd){
+						lines.add(oline)
+					}
+				}
                 order.orderLines = lines.toArray()
 
                 // rate order
@@ -255,7 +278,26 @@ class OrderBuilderController {
 
                 // add line to order
                 order.orderLines[index] = line
-
+				
+				//update double linked items in order
+				def doubleLinkedChildren=webServicesSession.getDoubleLinkedChildren(line.itemId)
+				//def linesToChange=new ArrayList<OrderLineWS>();
+					if(!doubleLinkedChildren.isEmpty()){
+						def lines = order.orderLines as List
+						int cont=0;
+						for(OrderLineWS li:lines){
+							cont+=1;
+							for(Integer itemId: doubleLinkedChildren){
+								if(itemId.equals(li.getItemId())){
+									// edit line quantity
+									li.quantity = line.getQuantityAsDecimal()
+								}
+								
+							}
+						}
+						
+					}
+				
                 // rate order
                 if (order.orderLines) {
 					//println order+" order"
@@ -424,7 +466,7 @@ class OrderBuilderController {
 					if(masterOrder==null){
 						
 						if(order.isMaster==1){
-							order=addDoubleLinkedItems(order)
+							//order=addDoubleLinkedItems(order)
 							newOrder=moveOneTimersToNewOrder(order)
 							save()
 						}
@@ -441,7 +483,7 @@ class OrderBuilderController {
 							cancel()
 						}
 						else if(order.addToMaster==1){
-							order=addDoubleLinkedItems(order)
+							//order=addDoubleLinkedItems(order)
 							newOrder=moveOneTimersToNewOrder(order)
 							save()
 						}
