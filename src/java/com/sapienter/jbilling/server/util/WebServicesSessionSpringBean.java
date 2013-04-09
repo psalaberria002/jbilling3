@@ -2999,9 +2999,15 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
     	}	
     }
     
-    public List<Integer> getDoubleLinkedDependencies(Integer childId){
+    public List<Integer> getDoubleLinkedParents(Integer childId){
     	ItemDAS itemDas=new ItemDAS();
     	List<Integer> list=itemDas.getDoubleLinkedParents(childId);
+    	return list;
+    }
+    
+    public List<Integer> getDoubleLinkedChildren(Integer parentId){
+    	ItemDAS itemDas=new ItemDAS();
+    	List<Integer> list=itemDas.getDoubleLinkedChildren(parentId);
     	return list;
     }
     

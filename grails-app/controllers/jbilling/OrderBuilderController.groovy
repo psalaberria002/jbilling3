@@ -869,20 +869,43 @@ class OrderBuilderController {
 	}
 	
 	/**
-	 * It creates a master order using the double linked items of a given order.
+	 * It adds to the order the double linked items for the given order lines.
 	 * @param order
 	 * @return
 	 */
 	def addDoubleLinkedItems(order){
+		def doubleLinkedChildren=new ArrayList<Integer>();
+		def linesToAdd=new ArrayList<OrderLineWS>();
 		def newOrderLines = order.getOrderLines()
 		newOrderLines.each{nol->
-			
+			doubleLinkedChildren=webServicesSession.getDoubleLinkedChildren(nol.getItemId())
+			if(!doubleLinkedChildren.isEmpty()){
+				for(Integer itemId: doubleLinkedChildren){
+					// build line
+					def line = new OrderLineWS()
+					line.typeId = Constants.ORDER_LINE_TYPE_ITEM
+					line.quantity = nol.getQuantityAsDecimal()
+					line.itemId = itemId
+					line.useItem = true
+					
+					linesToAdd.add(line)
+				}
+			}
 		}
+		if(!linesToAdd.isEmpty()){
+			def olines = order.orderLines as List
+			for(OrderLineWS oline: linesToAdd){
+				olines.add(oline)
+			}
+			
+			order.orderLines=olines.toArray()
+		}
+		
 		return order;
 	}
 	
 	/**
-	 * Removes
+	 * It will remove one timer items from the given order, and it will create a new one time order with these. 
 	 * @param order
 	 * @return
 	 */
@@ -950,9 +973,7 @@ class OrderBuilderController {
 			def newOrderId = webServicesSession.createOrder(newOrder)
 			println newOrderId+" newOrderId"
 		}
-		
-		
-		
+
 		return order;
 	}
 	

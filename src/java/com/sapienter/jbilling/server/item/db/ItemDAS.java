@@ -83,6 +83,17 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
       	 System.out.println(query);	
        	return query.list();
        }
+	
+	@SuppressWarnings("unchecked")
+	public List<Integer> getDoubleLinkedChildren(Integer parentId) {
+		Query query = getSession()
+                .createSQLQuery("select a.child_item_id from item_dependency a " +
+                		"WHERE a.item_id=:parentId AND double_linked=1 ORDER BY a.item_id ASC")
+                		.setParameter("parentId", parentId);
+   
+    	return query.list();
+	}
+	
 	@SuppressWarnings("unchecked")
 	public List<Integer> getDoubleLinkedParents(Integer childId) {
 		Query query = getSession()
@@ -113,15 +124,7 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
       	query.executeUpdate();
        	
        }
-	@SuppressWarnings("unchecked")
-	public List<Integer> getDoubleLinkedChilds(Integer parentId) {
-		Query query = getSession()
-                .createSQLQuery("select a.child_item_id from item_dependency a " +
-                		"WHERE a.item_id=:parentId AND double_linked=1 ORDER BY a.item_id ASC")
-                		.setParameter("parentId", parentId);
-   
-    	return query.list();
-	}
+	
 	@SuppressWarnings("unchecked")
 	public String getItemPeriod(Integer itemId) {
 		Query query = getSession()

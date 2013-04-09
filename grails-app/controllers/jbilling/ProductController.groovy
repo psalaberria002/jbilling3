@@ -380,7 +380,7 @@ class ProductController {
 		if(params.int('id')!=null){
 			println "!null"
 			dependencies=webServicesSession.getParentDependencies(params.int('id'))
-			doubleLinkedDependencies=webServicesSession.getDoubleLinkedDependencies(params.int('id'))
+			doubleLinkedDependencies=webServicesSession.getDoubleLinkedParents(params.int('id'))
 			period=webServicesSession.getItemPeriod(params.int('id'))
 		}
 		def products =  getProducts(null, null)
