@@ -231,7 +231,7 @@ class OrderBuilderController {
 				
                 conversation.order = order
 
-                params.newLineIndex = lines.size() - 1
+                params.newLineIndex = lines.size() - (doubleLinkedChildren.size()+1)
                 params.template = 'review'
             }
             on("success").to("build")
@@ -460,9 +460,15 @@ class OrderBuilderController {
 				def order=conversation.order
 				def dependencyMap=new HashMap<Integer,Integer>();
 				//Check dependencies just when creating, not when editing. 
-				if(order.getId().equals(null)||order.getId().equals(0)){
-					dependencyMap=webServicesSession.checkDependencies(order)
-				} 
+				if (!order.id || order.id == 0) {
+                        if (SpringSecurityUtils.ifAllGranted("ORDER_20"))  {
+							dependencyMap=webServicesSession.checkDependencies(order)
+						} 
+						else{
+							redirect controller: 'login', action: 'denied'
+						}
+				}
+				
 				if(dependencyMap.isEmpty()){
 					def masterOrder = webServicesSession.getMasterOrder(order.userId)
 					def newOrder
