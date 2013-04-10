@@ -279,25 +279,12 @@ class OrderBuilderController {
                 // add line to order
                 order.orderLines[index] = line
 				
-				//update double linked items in order
-				def doubleLinkedChildren=webServicesSession.getDoubleLinkedChildren(line.itemId)
-				//def linesToChange=new ArrayList<OrderLineWS>();
-					if(!doubleLinkedChildren.isEmpty()){
-						def lines = order.orderLines as List
-						int cont=0;
-						for(OrderLineWS li:lines){
-							cont+=1;
-							for(Integer itemId: doubleLinkedChildren){
-								if(itemId.equals(li.getItemId())){
-									// edit line quantity
-									li.quantity = line.getQuantityAsDecimal()
-								}
-								
-							}
-						}
-						
-					}
+				def lines = order.orderLines as List
+				def checked=new ArrayList<Integer>();
+				def visited=webServicesSession.bfsRelatedItemsInOrder(line,lines)
+				lines=webServicesSession.updateQuantityInOrderLines(lines,visited,line.getQuantityAsDecimal())
 				
+				order.orderLines=lines;
                 // rate order
                 if (order.orderLines) {
 					//println order+" order"
@@ -681,7 +668,7 @@ class OrderBuilderController {
 		def newOrderActiveSinceYear= calActive.get(Calendar.YEAR);
 		def monthStart = calActive.get(Calendar.MONTH);
 		def dayStart = calActive.get(Calendar.DAY_OF_MONTH);
-		System.out.println(newOrderActiveSinceYear+" "+monthStart+" "+dayStart);
+		//System.out.println(newOrderActiveSinceYear+" "+monthStart+" "+dayStart);
 		//Getting next billable day of the master order
 		def masterOrderNextBillableDay = masterOrder.getNextBillableDay()
 		Calendar cal=Calendar.getInstance();
@@ -693,16 +680,16 @@ class OrderBuilderController {
 		//Getting previous day of the master order next billable day
 		cal.add(Calendar.DAY_OF_MONTH, -1);
 		cal.add(Calendar.MONTH, 1)
-		System.out.println(cal.getTime());
+		//System.out.println(cal.getTime());
 		def prevDayNext = cal.get(Calendar.DAY_OF_MONTH);
 		def prevMonthNext = cal.get(Calendar.MONTH);
 		def prevYearNext = cal.get(Calendar.YEAR);
-		System.out.println(prevDayNext+" "+prevMonthNext+" "+prevYearNext);
+		//System.out.println(prevDayNext+" "+prevMonthNext+" "+prevYearNext);
 		//Getting the next month of the activeSince for the new order (Since January is 0, it will take the value 1 instead)
 		//It is just for creating the description (Period from mm/dd/yyyy to mm/dd/yyyy)
 		calActive.add(Calendar.MONTH, 1);
 		def monthStartPrint = calActive.get(Calendar.MONTH);
-		System.out.println(monthStartPrint);
+		//System.out.println(monthStartPrint);
 		//If the years are different
 		if(newOrderActiveSinceYear!=masterOrderNextBillableYear){
 			monthNext+=12;
@@ -785,7 +772,7 @@ class OrderBuilderController {
 								nol.quantity= totalQuantity
 								nol.setAmount(amount*monthsLeft/12)
 								nol.setPrice(amount*monthsLeft/12/totalQuantity)
-								println monthStartPrint
+								//println monthStartPrint
 								monthStartPrint = (monthStartPrint < 10 ? '0' : '') + monthStartPrint;
 								dayStart = (dayStart < 10 ? "0" : "") + dayStart;
 								prevMonthNext= (prevMonthNext < 10 ? "0" : "") + prevMonthNext;
@@ -1036,16 +1023,16 @@ class OrderBuilderController {
 		if(linesToDelete){
 			def olines = order.orderLines as List
 			for(OrderLineWS oline: linesToDelete){
-				println oline
+				//println oline
 				olines.remove(oline)
 			}
 			
 			order.orderLines=olines.toArray()
 		}
 		if(newOrder!=null){
-			println newOrder.toString()
+			//println newOrder.toString()
 			def newOrderId = webServicesSession.createOrder(newOrder)
-			println newOrderId+" newOrderId"
+			//println newOrderId+" newOrderId"
 		}
 
 		return order;

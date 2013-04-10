@@ -389,7 +389,7 @@ public class OrderBL extends ResultList implements OrderSQL {
 						if (oldQuantity == null) {
 							oldQuantity = new Integer(0);
 						}
-						System.out.println(oldQuantity+" oldQuantity");
+						//System.out.println(oldQuantity+" oldQuantity");
 						Integer newQuantity = oldQuantity
 								+ (temp.getQuantityInt());
 						orderDas.updateOrInsertItemUsers(temp.getItemId(),
@@ -775,9 +775,9 @@ public class OrderBL extends ResultList implements OrderSQL {
 					for (Iterator it2 = order.getLines().iterator(); it2
 							.hasNext();) {
 						OrderLineDTO temp = (OrderLineDTO) it2.next();
-						System.out.println(tempDel.getItemId()+" "+ temp.getItemId()+" "+temp.getDeleted());
+						//System.out.println(tempDel.getItemId()+" "+ temp.getItemId()+" "+temp.getDeleted());
 						if((temp.getDeleted()==0) && (tempDel.getItemId().equals(temp.getItemId()))){
-							System.out.println("deleted 0");
+							//System.out.println("deleted 0");
 							found=true;
 						}
 						

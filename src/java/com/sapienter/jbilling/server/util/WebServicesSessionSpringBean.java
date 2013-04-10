@@ -38,6 +38,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 import javax.naming.NamingException;
@@ -2972,14 +2973,18 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
     public List getAllDependencies(){
     	ItemDAS itemDas=new ItemDAS();
     	List<Object[]> list=itemDas.getAllDependencies();
-    	Iterator it=list.iterator();
+    	if(list==null){
+    		return new ArrayList<Integer>();
+    	}
     	return list;
     }
     
     public List<Integer> getParentDependencies(Integer childId){
     	ItemDAS itemDas=new ItemDAS();
     	List<Integer> list=itemDas.getParents(childId);
-    	
+    	if(list==null){
+    		return new ArrayList<Integer>();
+    	}
     	return list;
     }
     
@@ -2999,15 +3004,31 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
     	}	
     }
     
+    public List<Integer> getChildrenDependencies(Integer parentId){
+    	ItemDAS itemDas=new ItemDAS();
+    	List<Integer> list=itemDas.getChildren(parentId);
+    	if(list==null){
+    		return new ArrayList<Integer>();
+    	}
+    	
+    	return list;
+    }
+    
     public List<Integer> getDoubleLinkedParents(Integer childId){
     	ItemDAS itemDas=new ItemDAS();
     	List<Integer> list=itemDas.getDoubleLinkedParents(childId);
+    	if(list==null){
+    		return new ArrayList<Integer>();
+    	}
     	return list;
     }
     
     public List<Integer> getDoubleLinkedChildren(Integer parentId){
     	ItemDAS itemDas=new ItemDAS();
     	List<Integer> list=itemDas.getDoubleLinkedChildren(parentId);
+    	if(list==null){
+    		return new ArrayList<Integer>();
+    	}
     	return list;
     }
     
@@ -3029,7 +3050,7 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 				if(!dep.isEmpty()){
 					Set<Map.Entry<Integer, Integer>> entries = dep.entrySet();
 					for ( Map.Entry<Integer,Integer> entry : entries ) {
-						System.out.println(entry+" entry "+nol.getItemId());
+						//System.out.println(entry+" entry "+nol.getItemId());
 					  Integer neededProductsAndQuantitiesMapValue = neededProductsAndQuantities.get( entry.getKey() );
 					  if ( neededProductsAndQuantitiesMapValue == null ) {
 						  neededProductsAndQuantities.put( entry.getKey(), entry.getValue() );
@@ -3112,6 +3133,11 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 		itemDas.deleteItemDependencies(itemId);
 		itemDas.deleteItemPeriod(itemId);
 	}
+	/**Returns true if the order with the given itemId has "One time" as period, else returns false
+	 * 
+	 * @param itemId
+	 * @return boolean
+	 */
 	public boolean isOneTimer(Integer itemId){
 		ItemDAS itemDas=new ItemDAS();
 		if(itemDas.getItemPeriod(itemId).equals("One time")||itemDas.getItemPeriod(itemId).equals(null)||itemDas.getItemPeriod(itemId).equals("")){
@@ -3120,5 +3146,104 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 		else{
 			return false;
 		}
+	}
+	
+	
+	/**
+	 * Updates the given quantity to the visited order lines
+	 * @param lines Order lines
+	 * @param visited Visited order lines
+	 * @param q Quantity
+	 * @return
+	 */
+	public ArrayList<OrderLineWS> updateQuantityInOrderLines(ArrayList<OrderLineWS> lines, ArrayList<OrderLineWS> visited,BigDecimal q){
+		for(OrderLineWS oline: lines){
+			for(OrderLineWS visitedLine: visited){
+				if(oline.getItemId().equals(visitedLine.getItemId())){
+					oline.setQuantity(q);
+				}
+			}
+		}
+		return lines;
+	}
+	/**
+	 * A breath first search to visit and collect all the dependent items. 
+	 * Double linked parent and children, and childrenDependencies.
+	 * @param line
+	 * @param lines
+	 * @return
+	 */
+	public ArrayList<OrderLineWS> bfsRelatedItemsInOrder(OrderLineWS line,ArrayList<OrderLineWS> lines){
+		Queue<OrderLineWS> queue = new LinkedList<OrderLineWS>();
+		ArrayList<OrderLineWS> visited=new ArrayList<OrderLineWS>();
+		queue.add(line);
+		while(!queue.isEmpty()) {
+			OrderLineWS node = (OrderLineWS)queue.remove();
+			ArrayList<OrderLineWS> unvisited=getUnvisitedChildNodes(node,lines,visited);
+			if(!unvisited.isEmpty()){
+				for(OrderLineWS child : unvisited) {
+					if(!visited.contains(node)){
+						visited.add(node);
+					}
+					queue.add(child);
+				}
+			}
+			else{
+				if(!visited.contains(node)){
+					visited.add(node);
+				}
+			}
+		}
+		
+		return visited;
+	}
+	/**
+	 * This method return a list of unvisited lines that have to be visited. These are dependent lines.
+	 * @param line
+	 * @param lines
+	 * @param visited
+	 * @return
+	 */
+	public ArrayList<OrderLineWS> getUnvisitedChildNodes(OrderLineWS line, ArrayList<OrderLineWS> lines, ArrayList<OrderLineWS> visited){
+		ArrayList<OrderLineWS> unvisited=new ArrayList<OrderLineWS>();
+		ArrayList<Integer> doubleLinkedChildren=(ArrayList<Integer>) getDoubleLinkedChildren(line.getItemId());
+		ArrayList<Integer> doubleLinkedParents=(ArrayList<Integer>) getDoubleLinkedParents(line.getItemId());
+		ArrayList<Integer> childrenDependencies=(ArrayList<Integer>) getChildrenDependencies(line.getItemId());
+		if(!doubleLinkedChildren.isEmpty()||!doubleLinkedParents.isEmpty()||!childrenDependencies.isEmpty()){
+			for(OrderLineWS li:lines){
+				if(!visited.contains(li)){
+					if(!doubleLinkedChildren.isEmpty()){
+						for(Integer itemId: doubleLinkedChildren){
+							if(itemId.equals(li.getItemId())){
+								if(!unvisited.contains(li)){
+									unvisited.add(li);
+								}					
+							}
+						}
+					}
+					if(!doubleLinkedParents.isEmpty()){
+						for(Integer itemId: doubleLinkedParents){
+							if(itemId.equals(li.getItemId())){
+								if(!unvisited.contains(li)){
+									unvisited.add(li);
+								}
+							}
+						}
+					}
+					if(!childrenDependencies.isEmpty()){
+						for(Integer itemId: childrenDependencies){
+							if(itemId.equals(li.getItemId())){
+								if(!unvisited.contains(li)){
+									unvisited.add(li);
+								}
+							}
+						}
+					}
+				}
+				
+				
+			}	
+		}
+		return unvisited;
 	}
 }

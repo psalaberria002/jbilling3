@@ -85,6 +85,17 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
        }
 	
 	@SuppressWarnings("unchecked")
+	public List<Integer> getChildren(Integer parentId){
+      	 Query query = getSession()
+                   .createSQLQuery("select a.child_item_id from item_dependency a " +
+                   		"WHERE a.item_id=:parentId ORDER BY a.item_id ASC")
+                   		.setParameter("parentId", parentId);
+      	 
+      	 System.out.println(query);	
+       	return query.list();
+       }
+	
+	@SuppressWarnings("unchecked")
 	public List<Integer> getDoubleLinkedChildren(Integer parentId) {
 		Query query = getSession()
                 .createSQLQuery("select a.child_item_id from item_dependency a " +
