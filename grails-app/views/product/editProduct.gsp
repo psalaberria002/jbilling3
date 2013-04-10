@@ -180,7 +180,9 @@
                     <div class="box-card-hold">
                         <div class="form-columns">
                             <div class="column">
-                            
+                            	<g:applyLayout name="form/checkbox">
+   									<h3><b><%="Depends on... (e.g. API depends on VMS M&S)" %></b></h3>
+								</g:applyLayout>
                             	<g:each var="item" in="${products.sort{ it.id }}">
                             	<g:if test="${ !product?.id?.equals(item.id) }">
                                 <g:applyLayout name="form/checkbox">
@@ -199,7 +201,9 @@
                                  </g:each>
                             </div>
                             <div class="column">
-                            	
+                            	<g:applyLayout name="form/checkbox">
+   									<h3><b><%="Double linked parents" %></b></h3>
+								</g:applyLayout>
                             	<g:each var="item" in="${products.sort{ it.id }}">
                             	<g:if test="${!product?.id?.equals(item.id) }">
                                 <g:applyLayout name="form/checkbox">

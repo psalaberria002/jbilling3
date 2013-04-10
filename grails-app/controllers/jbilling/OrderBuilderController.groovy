@@ -369,9 +369,9 @@ class OrderBuilderController {
 				
 				
 
-                // one time orders are ALWAYS post-paid
+                // one time orders are ALWAYS pre-paid
                 if (order.period == Constants.ORDER_PERIOD_ONCE)
-                    order.billingTypeId = Constants.ORDER_BILLING_POST_PAID
+                    order.billingTypeId = Constants.ORDER_BILLING_PRE_PAID
 				
 					
 

@@ -182,7 +182,7 @@
         $(function() {
             $('#period').change(function() {
                 if ($(this).val() == ${Constants.ORDER_PERIOD_ONCE}) {
-                    $('#billingTypeId').val(${Constants.ORDER_BILLING_POST_PAID});
+                    $('#billingTypeId').val(${Constants.ORDER_BILLING_PRE_PAID});
                     $('#billingTypeId').attr('disabled', true);
                 } else {
                     $('#billingTypeId').attr('disabled', '');
@@ -202,6 +202,7 @@
              $('#isMaster').click(function(){
                 if ($('#isMaster').attr('checked')) {
                     $('#addToMaster').attr('checked', false)
+                    $('#period').val(${orderPeriods.get(orderPeriods.size()-1).id})
                 } else {
                     
                 }
