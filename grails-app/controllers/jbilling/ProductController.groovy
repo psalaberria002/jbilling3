@@ -383,7 +383,13 @@ class ProductController {
 			doubleLinkedDependencies=webServicesSession.getDoubleLinkedParents(params.int('id'))
 			period=webServicesSession.getItemPeriod(params.int('id'))
 		}
-		def products =  getProducts(null, null)
+		def products =  ItemDTO.createCriteria().list(){
+			eq("deleted", 0)
+		}
+		
+		products.each{
+			println it.getDescription()
+		}
 		
         try {
             product = params.id ? webServicesSession.getItem(params.int('id'), session['user_id'], null) : null
