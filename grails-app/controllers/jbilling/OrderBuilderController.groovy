@@ -458,12 +458,13 @@ class OrderBuilderController {
 				
 				if(dependencyMap.isEmpty()){
 					def masterOrder = webServicesSession.getMasterOrder(order.userId)
-					def newOrder
 					if(masterOrder==null){
 						
 						if(order.isMaster==1){
-							//order=addDoubleLinkedItems(order)
-							newOrder=moveOneTimersToNewOrder(order)
+							//order=webServicesSession.addDoubleLinkedItems(order)
+							order=webServicesSession.moveOneTimersToNewOrder(order)
+							conversation.order=order
+							println "dependency map not empty, masterOrder=null and isMaster=1 "+order
 							save()
 						}
 						else if(order.addToMaster==1){
@@ -488,7 +489,7 @@ class OrderBuilderController {
 							if(order.getId().equals(null)||order.getId().equals(0)){
 								ArrayList<String> messages=new ArrayList<String>();
 								String message;
-								message="You cannot create more than one master order for this user. The master order for "+order.getUserId+" is already created!";
+								message="You cannot create more than one master order for this user. The master order for "+order.getUserId()+" is already created!";
 								messages.add(message);
 								//When the arraylist contains just one message, create an empty message to interpret it as arraylist in the view
 								if(messages.size()==1){
@@ -502,8 +503,10 @@ class OrderBuilderController {
 							}		
 						}
 						else if(order.addToMaster==1){
-							//order=addDoubleLinkedItems(order)
-							newOrder=moveOneTimersToNewOrder(order)
+							//order=webServicesSession.addDoubleLinkedItems(order)
+							order=webServicesSession.moveOneTimersToNewOrder(order)
+							conversation.order=order
+							println "dependency map not empty, masterOrder exists and addToMaster=1 "+order
 							save()
 						}
 						else{
@@ -542,7 +545,7 @@ class OrderBuilderController {
             action {
                 try {
                     def order = conversation.order
-
+					println "Save order"
                     if (!order.id || order.id == 0) {
                         if (SpringSecurityUtils.ifAllGranted("ORDER_20"))  {
 							//Creating a new order. Not adding to the master order
@@ -566,9 +569,9 @@ class OrderBuilderController {
 									//println "editOrders!!!"
 									log.debug("creating edited order ${order}")
 									def masterOrder = webServicesSession.getMasterOrder(order.userId)
-									
+									//println "before"
 									//Edit master order and new order
-									masterOrder=editOrders(order,masterOrder);
+									order=webServicesSession.editOrders(order,masterOrder);
 									
 									//println "pasa"
 	
@@ -633,409 +636,5 @@ class OrderBuilderController {
 		
 		
     }
-	
-	
-	
-	def int monthsLeft(order,masterOrder) {
-		
-		//Getting next billable day of the master order
-		def masterOrderNextBillableDay = masterOrder.getNextBillableDay()
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(masterOrderNextBillableDay);
-		def monthNext = cal.get(Calendar.MONTH)+12;
-		//Getting the starting day of the new order
-		def orderActiveDay = order.getActiveSince()
-		cal.setTime(orderActiveDay);
-		def monthStart = cal.get(Calendar.MONTH);
-		//Months for the new order
-		return monthNext-monthStart
-		
-    }
-	/**
-	 * Having a new order, this method edits the master order with the new quantity, price and amount.
-	 * Also edits the new order adding lines with the money back in case they have paid from before
-	 * @param order
-	 * @param masterOrder
-	 * @param monthsLeft
-	 * @return
-	 */
-	def  editOrders(order, masterOrder){
-		//monthsLeft
-		//Getting the starting day of the new order
-		def orderActiveDay = order.getActiveSince()
-		Calendar calActive = Calendar.getInstance();
-		calActive.setTime(orderActiveDay);
-		def newOrderActiveSinceYear= calActive.get(Calendar.YEAR);
-		def monthStart = calActive.get(Calendar.MONTH);
-		def dayStart = calActive.get(Calendar.DAY_OF_MONTH);
-		//System.out.println(newOrderActiveSinceYear+" "+monthStart+" "+dayStart);
-		//Getting next billable day of the master order
-		def masterOrderNextBillableDay = masterOrder.getNextBillableDay()
-		Calendar cal=Calendar.getInstance();
-		cal.setTime(masterOrderNextBillableDay);
-		def masterOrderNextBillableYear= cal.get(Calendar.YEAR);
-		def masterYear= masterOrderNextBillableYear-1;
-		def monthNext = cal.get(Calendar.MONTH);
-		
-		//Getting previous day of the master order next billable day
-		cal.add(Calendar.DAY_OF_MONTH, -1);
-		cal.add(Calendar.MONTH, 1)
-		//System.out.println(cal.getTime());
-		def prevDayNext = cal.get(Calendar.DAY_OF_MONTH);
-		def prevMonthNext = cal.get(Calendar.MONTH);
-		def prevYearNext = cal.get(Calendar.YEAR);
-		//System.out.println(prevDayNext+" "+prevMonthNext+" "+prevYearNext);
-		//Getting the next month of the activeSince for the new order (Since January is 0, it will take the value 1 instead)
-		//It is just for creating the description (Period from mm/dd/yyyy to mm/dd/yyyy)
-		calActive.add(Calendar.MONTH, 1);
-		def monthStartPrint = calActive.get(Calendar.MONTH);
-		//System.out.println(monthStartPrint);
-		//If the years are different
-		if(newOrderActiveSinceYear!=masterOrderNextBillableYear){
-			monthNext+=12;
-		}
-		
-		
-		//Months for the new order
-		def monthsLeft=monthNext-monthStart
-		
-		def back=0
-		def masterOrderLines = masterOrder.getOrderLines()
-		def newOrderLines = order.getOrderLines()
-		def nolQuantity=0
-		def molQuantity=0
-		def totalQuantity=0
-		newOrderLines.each { nol -> 
-			newOrderActiveSinceYear= calActive.get(Calendar.YEAR);
-			monthStartPrint = calActive.get(Calendar.MONTH);
-			dayStart = calActive.get(Calendar.DAY_OF_MONTH);
-			prevDayNext = cal.get(Calendar.DAY_OF_MONTH);
-			prevMonthNext = cal.get(Calendar.MONTH);
-			prevYearNext = cal.get(Calendar.YEAR);
-			totalQuantity=0
-			boolean found=false
-			nolQuantity=nol.getQuantityAsDecimal()
-			masterOrderLines.each { mol ->
-				newOrderActiveSinceYear= calActive.get(Calendar.YEAR);
-				monthStartPrint = calActive.get(Calendar.MONTH);
-				dayStart = calActive.get(Calendar.DAY_OF_MONTH);
-				prevDayNext = cal.get(Calendar.DAY_OF_MONTH);
-				prevMonthNext = cal.get(Calendar.MONTH);
-				prevYearNext = cal.get(Calendar.YEAR);
-				if(found==false){
-					if (nol.getItemId()==mol.getItemId()){
-						found=true;
-						if((nol.getTypeId()!=(Constants.ORDER_LINE_TYPE_TAX))){
-							molQuantity=mol.getQuantityAsDecimal()
-							totalQuantity=molQuantity+nolQuantity
-							BigDecimal molOldAvgPrice
-							//println "BERDINTZA "+BigDecimal.ZERO.compareTo(totalQuantity)
-							if((BigDecimal.ZERO.compareTo(totalQuantity) != 0)){
-								def payPlan=masterOrder.getPayPlan()
-								molOldAvgPrice = mol.getPriceAsDecimal()
-								//println molOldAvgPrice+" masterOrderLineAvgPrice"
-								//println molQuantity+" molQuantity"
-								back=molOldAvgPrice*molQuantity*monthsLeft/12
-								//println back
-								//println "resources/pay_plans/${payPlan}${mol.description}.ods"
-								def file = new File("resources/pay_plans/${payPlan}_${mol.description}.ods");
-								//println file.toPath()
-								def sheet = SpreadSheet.createFromFile(file).getSheet(""+masterYear)
-								//Negative number change to positive
-								boolean negative=false;
-								if(totalQuantity.intValue()<0){
-									negative=true;
-									totalQuantity=totalQuantity.negate();
-								}
-								BigDecimal value=sheet.getCellAt("B${totalQuantity.intValue()}").getValue()
-								BigDecimal amount=sheet.getCellAt("C${totalQuantity.intValue()}").getValue()
-								
-								
-								if(negative==true){
-									amount=amount.negate();
-								}
-								//println value+" "+totalQuantity+" "+amount
-								BigDecimal avgPrice=(BigDecimal)(amount/totalQuantity)
-								//println avgPrice+" avgPrice"
-								
-								//Edit master order line
-								mol.setPrice(avgPrice)
-								mol.setQuantityAsDecimal(totalQuantity)
-								mol.setAmount(amount)
-								mol.useItem = true
-								
-								//webServicesSession.updateOrderLine(mol) //update Master Order Line
-								//println mol.getPrice()+" "+mol.getAmount()
-								
-								//Edit new order line
-								//println "Order before"+order
-								nol.quantity= totalQuantity
-								nol.setAmount(amount*monthsLeft/12)
-								nol.setPrice(amount*monthsLeft/12/totalQuantity)
-								//println monthStartPrint
-								monthStartPrint = (monthStartPrint < 10 ? '0' : '') + monthStartPrint;
-								dayStart = (dayStart < 10 ? "0" : "") + dayStart;
-								prevMonthNext= (prevMonthNext < 10 ? "0" : "") + prevMonthNext;
-								prevDayNext= (prevDayNext < 10 ? "0" : "") + prevDayNext;
-								nol.description=mol.getDescription()+" Period from "+monthStartPrint+"/"+dayStart+"/"+newOrderActiveSinceYear+" to "+prevMonthNext+"/"+prevDayNext+"/"+prevYearNext
-								nol.useItem = false
-								
-								// build line
-								def line = new OrderLineWS()
-								line.typeId = Constants.ORDER_LINE_TYPE_ITEM
-								line.quantity = (-1)*molQuantity
-								line.setPrice(molOldAvgPrice*monthsLeft/12)
-								line.setAmount(back*(-1))
-								line.itemId=mol.getItemId()
-								line.useItem = false
-								line.description=mol.getDescription()+" Period from "+monthStartPrint+"/"+dayStart+"/"+newOrderActiveSinceYear+" to "+prevMonthNext+"/"+prevDayNext+"/"+prevYearNext
-								
-				
-								// add line to order
-								
-								def lines = order.orderLines as List
-								lines.add(line)
-								order.orderLines = lines.toArray()
-							}
-							//When quantity == 0 just add back order line and delete from master.
-							else{
-								
-								molOldAvgPrice = mol.getPriceAsDecimal()
-								//println molOldAvgPrice+" masterOrderLineAvgPrice"
-								//println molQuantity+" molQuantity"
-								back=molOldAvgPrice*molQuantity*monthsLeft/12
-								//println back+" back"
-								
-								//Edit master order line
-								mol.setQuantityAsDecimal(totalQuantity)
-								mol.setAmount(new BigDecimal(0))
-								mol.useItem = false
-								mol.setDeleted(1)
-								
-								//println nol+" nol"
-								
-								//Edit new order line
-								nol.setDeleted(1)
-								
-								//println nol+" nol"
-								
-								// build line
-								def line = new OrderLineWS()
-								line.typeId = Constants.ORDER_LINE_TYPE_ITEM
-								line.quantity = (-1)*molQuantity
-								line.setPrice(molOldAvgPrice*monthsLeft/12)
-								line.setAmount(back*(-1))
-								line.itemId=mol.getItemId()
-								line.useItem = false
-								monthStartPrint = (monthStartPrint < 10 ? "0" : "") + monthStartPrint;
-								dayStart = (dayStart < 10 ? "0" : "") + dayStart;
-								prevMonthNext= (prevMonthNext < 10 ? "0" : "") + prevMonthNext;
-								prevDayNext= (prevDayNext < 10 ? "0" : "") + prevDayNext;
-								line.description=mol.getDescription()+" Period from "+monthStartPrint+"/"+dayStart+"/"+newOrderActiveSinceYear+" to "+prevMonthNext+"/"+prevDayNext+"/"+prevYearNext
-				
-								// add line to order
-								
-								def lines = order.orderLines as List
-								lines.remove(nol)
-								lines.add(line)
-								order.orderLines = lines.toArray()
-								
-							}
-							
-							
-							
-							
-							
-						}
-						
-						
-		
-						
-					}
-				}
-				
-				
-			}
-			if(found==false){
-				
-				
-				// build line
-				def nolclone = new OrderLineWS()
-				nolclone.typeId = Constants.ORDER_LINE_TYPE_ITEM
-				nolclone.quantity = nol.quantity
-				nolclone.setPrice(nol.price)
-				nolclone.setAmount(nol.amount)
-				nolclone.itemId=nol.itemId
-				nolclone.useItem = true
-				nolclone.description=nol.description
-				//println line.toString()
-				
-				def linesm = masterOrder.orderLines as List
-				linesm.add(nolclone)
-				masterOrder.orderLines = linesm.toArray()
-				
-				def payPlan=masterOrder.getPayPlan()
-				def file = new File("resources/pay_plans/${payPlan}_${nol.description}.ods");
-				def sheet = SpreadSheet.createFromFile(file).getSheet(""+masterYear)
-				def q=nol.getQuantityAsDecimal()
-				//println q+" q"
-				BigDecimal value=sheet.getCellAt("B${q.intValue()}").getValue()
-				BigDecimal amount=sheet.getCellAt("C${q.intValue()}").getValue()
-				//println value+" value "+q+" q"+amount+" amount"
-				
-				
-				//Edit new order line
-				nol.setAmount(amount*monthsLeft/12)
-				nol.setPrice(amount*monthsLeft/12/q)
-				monthStartPrint = (monthStartPrint < 10 ? "0" : "")+ monthStartPrint;
-				dayStart = (dayStart < 10 ? "0" : "") + dayStart;
-				prevMonthNext= (prevMonthNext < 10 ? "0" : "") + prevMonthNext;
-				prevDayNext= (prevDayNext < 10 ? "0" : "") + prevDayNext;
-				nol.description=nol.getDescription()+" Period from "+monthStartPrint+"/"+dayStart+"/"+newOrderActiveSinceYear+" to "+prevMonthNext+"/"+prevDayNext+"/"+prevYearNext
-				nol.useItem = false
-				
-			}
-			
-			
-		}
-		//println order+" order"
-		//println masterOrder+" masterOrder"
-		//Check if there is a non deleted master order line. In that case update the order
-		def molines=masterOrder.getOrderLines()
-		boolean hasNotDeleted=false;
-		molines.each { finalMol ->
-			//println finalMol.deleted+" deleted"
-			if(finalMol.deleted==0 && hasNotDeleted==false){
-				hasNotDeleted=true;
-				masterOrder.orderLines = masterOrder.orderLines.sort { it.itemId }
-				webServicesSession.updateOrder(masterOrder)
-			}
-			
-		}
-		if(hasNotDeleted==false){
-			//println "MASTER with deleted lines"
-			//Set the lines to not deleted for updating the table item_users
-			molines.each { finalMol ->
-				finalMol.setDeleted(0)
-				
-			}
-			webServicesSession.updateOrder(masterOrder)
-			//If all the lines are deleted, delete the master order
-			webServicesSession.deleteOrder(masterOrder.getId())
-			
-			
-		}
-		
-		return masterOrder;	
-	}
-	
-	/**
-	 * It adds to the order the double linked items for the given order lines.
-	 * @param order
-	 * @return
-	 */
-	def addDoubleLinkedItems(order){
-		def doubleLinkedChildren=new ArrayList<Integer>();
-		def linesToAdd=new ArrayList<OrderLineWS>();
-		def newOrderLines = order.getOrderLines()
-		newOrderLines.each{nol->
-			doubleLinkedChildren=webServicesSession.getDoubleLinkedChildren(nol.getItemId())
-			if(!doubleLinkedChildren.isEmpty()){
-				for(Integer itemId: doubleLinkedChildren){
-					// build line
-					def line = new OrderLineWS()
-					line.typeId = Constants.ORDER_LINE_TYPE_ITEM
-					line.quantity = nol.getQuantityAsDecimal()
-					line.itemId = itemId
-					line.useItem = true
-					
-					linesToAdd.add(line)
-				}
-			}
-		}
-		if(!linesToAdd.isEmpty()){
-			def olines = order.orderLines as List
-			for(OrderLineWS oline: linesToAdd){
-				olines.add(oline)
-			}
-			
-			order.orderLines=olines.toArray()
-		}
-		
-		return order;
-	}
-	
-	/**
-	 * It will remove one timer items from the given order, and it will create a new one time order with these. 
-	 * @param order
-	 * @return
-	 */
-	def moveOneTimersToNewOrder(order){
-		OrderWS newOrder=null;
-		def linesToDelete=null;
-		def orderLines = order.getOrderLines()
-		orderLines.each{ol->
-			if(ol.getDeleted()==0){
-				if(webServicesSession.isOneTimer(ol.getItemId())){
-					if(newOrder==null){
-						newOrder=new OrderWS();
-						
-						newOrder.userId        = order.getUserId()
-						newOrder.currencyId    = order.getCurrencyId()
-						newOrder.statusId      = Constants.ORDER_STATUS_ACTIVE
-						newOrder.period        = Constants.ORDER_PERIOD_ONCE
-						newOrder.billingTypeId = Constants.ORDER_BILLING_PRE_PAID
-						newOrder.activeSince   = order.getActiveSince()
-						newOrder.isCurrent     = 0
-						newOrder.billingTypeStr= order.getBillingTypeStr()
-						newOrder.orderLines    = []
-						newOrder.payPlan       = order.getPayPlan()
-						newOrder.isMaster      = 0
-						newOrder.addToMaster   = 0
-						
-					}
-					def lines = newOrder.orderLines as List
-					// build line
-					def olclone = new OrderLineWS()
-					olclone.typeId = Constants.ORDER_LINE_TYPE_ITEM
-					olclone.quantity = ol.quantity
-					olclone.setPrice(ol.price)
-					olclone.setAmount(ol.amount)
-					olclone.itemId=ol.itemId
-					olclone.useItem = ol.useItem
-					olclone.description=ol.description
-					//println line.toString()
-					lines.add(olclone)
-					newOrder.orderLines = lines.toArray()
-					
-					if(linesToDelete==null){
-						linesToDelete= new ArrayList<OrderLineWS>()
-					}
-					linesToDelete.add(ol)
-					//ol.setDeleted(1);//delete line from order
-					
-					
-				}
-			}
-			
-			
-		}
-		if(linesToDelete){
-			def olines = order.orderLines as List
-			for(OrderLineWS oline: linesToDelete){
-				//println oline
-				olines.remove(oline)
-			}
-			
-			order.orderLines=olines.toArray()
-		}
-		if(newOrder!=null){
-			//println newOrder.toString()
-			def newOrderId = webServicesSession.createOrder(newOrder)
-			//println newOrderId+" newOrderId"
-		}
-
-		return order;
-	}
 	
 }

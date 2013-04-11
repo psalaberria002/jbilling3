@@ -23,6 +23,8 @@ package com.sapienter.jbilling.server.util;
 
 import grails.plugins.springsecurity.SpringSecurityService;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
@@ -32,6 +34,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,6 +48,8 @@ import javax.naming.NamingException;
 import javax.sql.rowset.CachedRowSet;
 
 import org.apache.log4j.Logger;
+import org.jopendocument.dom.spreadsheet.Sheet;
+import org.jopendocument.dom.spreadsheet.SpreadSheet;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.transaction.annotation.Propagation;
@@ -2953,6 +2958,295 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
     	
     }
     
+    /**
+	 * Having a new order, this method edits the master order with the new quantity, price and amount.
+	 * Also edits the new order adding lines with the money back in case they have paid from before
+	 * @param order
+	 * @param masterOrder
+	 * @param monthsLeft
+	 * @return
+     * @throws IOException 
+	 */
+	public OrderWS editOrders(OrderWS order, OrderWS masterOrder) throws IOException{
+		//monthsLeft
+		//Getting the starting day of the new order
+		Date orderActiveDay = order.getActiveSince();
+		Calendar calActive = Calendar.getInstance();
+		calActive.setTime(orderActiveDay);
+		int newOrderActiveSinceYear= calActive.get(Calendar.YEAR);
+		int monthStart = calActive.get(Calendar.MONTH);
+		int dayStart = calActive.get(Calendar.DAY_OF_MONTH);
+		//System.out.println(newOrderActiveSinceYear+" "+monthStart+" "+dayStart);
+		//Getting next billable day of the master order
+		Date masterOrderNextBillableDay = masterOrder.getNextBillableDay();
+		Calendar cal=Calendar.getInstance();
+		cal.setTime(masterOrderNextBillableDay);
+		int masterOrderNextBillableYear= cal.get(Calendar.YEAR);
+		int masterYear= masterOrderNextBillableYear-1;
+		int monthNext = cal.get(Calendar.MONTH);
+		
+		//Getting previous day of the master order next billable day
+		cal.add(Calendar.DAY_OF_MONTH, -1);
+		cal.add(Calendar.MONTH, 1);
+		//System.out.println(cal.getTime());
+		int prevDayNext = cal.get(Calendar.DAY_OF_MONTH);
+		int prevMonthNext = cal.get(Calendar.MONTH);
+		int prevYearNext = cal.get(Calendar.YEAR);
+		//System.out.println(prevDayNext+" "+prevMonthNext+" "+prevYearNext);
+		//Getting the next month of the activeSince for the new order (Since January is 0, it will take the value 1 instead)
+		//It is just for creating the description (Period from mm/dd/yyyy to mm/dd/yyyy)
+		calActive.add(Calendar.MONTH, 1);
+		int monthStartPrint = calActive.get(Calendar.MONTH);
+		//System.out.println(monthStartPrint);
+		//If the years are different
+		if(newOrderActiveSinceYear!=masterOrderNextBillableYear){
+			monthNext+=12;
+		}
+		//Months for the new order
+		int monthsLeft=monthNext-monthStart;
+		
+		BigDecimal back=new BigDecimal(0);
+		OrderLineWS[] masterOrderLines = masterOrder.getOrderLines();
+		OrderLineWS[] newOrderLines = order.getOrderLines();
+		BigDecimal nolQuantity=new BigDecimal(0);
+		BigDecimal molQuantity=new BigDecimal(0);
+		BigDecimal totalQuantity=new BigDecimal(0);
+		String monthStartPrintWithZero;
+		String dayStartWithZero;
+		String prevMonthNextWithZero;
+		String prevDayNextWithZero;
+		for(int i=0;i<newOrderLines.length;i++) { 
+			OrderLineWS nol= newOrderLines[i];
+			newOrderActiveSinceYear= calActive.get(Calendar.YEAR);
+			monthStartPrint = calActive.get(Calendar.MONTH);
+			dayStart = calActive.get(Calendar.DAY_OF_MONTH);
+			prevDayNext = cal.get(Calendar.DAY_OF_MONTH);
+			prevMonthNext = cal.get(Calendar.MONTH);
+			prevYearNext = cal.get(Calendar.YEAR);
+			totalQuantity=new BigDecimal(0);
+			boolean found=false;
+			nolQuantity=nol.getQuantityAsDecimal();
+			for(int j=0;j<masterOrderLines.length;j++) {
+				OrderLineWS mol= masterOrderLines[j];
+				newOrderActiveSinceYear= calActive.get(Calendar.YEAR);
+				monthStartPrint = calActive.get(Calendar.MONTH);
+				dayStart = calActive.get(Calendar.DAY_OF_MONTH);
+				prevDayNext = cal.get(Calendar.DAY_OF_MONTH);
+				prevMonthNext = cal.get(Calendar.MONTH);
+				prevYearNext = cal.get(Calendar.YEAR);
+				if(found==false){
+					if (nol.getItemId().equals(mol.getItemId())){
+						found=true;
+						if((nol.getTypeId()!=(Constants.ORDER_LINE_TYPE_TAX))){
+							molQuantity=mol.getQuantityAsDecimal();
+							totalQuantity=molQuantity.add(nolQuantity);
+							BigDecimal molOldAvgPrice;
+							//println "BERDINTZA "+BigDecimal.ZERO.compareTo(totalQuantity)
+							if((BigDecimal.ZERO.compareTo(totalQuantity) != 0)){
+								String payPlan=masterOrder.getPayPlan();
+								molOldAvgPrice = mol.getPriceAsDecimal();
+								//println molOldAvgPrice+" masterOrderLineAvgPrice"
+								//println molQuantity+" molQuantity"
+								back=molOldAvgPrice.multiply(molQuantity).multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12));
+								//println back
+								//println "resources/pay_plans/${payPlan}${mol.description}.ods"
+								File file = new File("resources/pay_plans/"+payPlan+"_"+mol.getDescription()+".ods");
+								//println file.toPath()
+								Sheet sheet = SpreadSheet.createFromFile(file).getSheet(""+masterYear);
+								//Negative number change to positive
+								boolean negative=false;
+								if(totalQuantity.intValue()<0){
+									negative=true;
+									totalQuantity=totalQuantity.negate();
+								}
+								BigDecimal value=(BigDecimal) sheet.getCellAt("B"+totalQuantity.intValue()).getValue();
+								BigDecimal amount=(BigDecimal) sheet.getCellAt("C"+totalQuantity.intValue()).getValue();
+								
+								
+								if(negative==true){
+									amount=amount.negate();
+								}
+								//println value+" "+totalQuantity+" "+amount
+								BigDecimal avgPrice=(BigDecimal)(amount.divide(totalQuantity));
+								//println avgPrice+" avgPrice"
+								
+								//Edit master order line
+								mol.setPrice(avgPrice);
+								mol.setQuantityAsDecimal(totalQuantity);
+								mol.setAmount(amount);
+								mol.setUseItem(true);
+								
+								//webServicesSession.updateOrderLine(mol) //update Master Order Line
+								//println mol.getPrice()+" "+mol.getAmount()
+								
+								//Edit new order line
+								//println "Order before"+order
+								nol.setQuantity(totalQuantity);
+								nol.setAmount(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12)));
+								nol.setPrice(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12)).divide(totalQuantity));
+								//println monthStartPrint
+								monthStartPrintWithZero= (monthStartPrint < 10 ? "0" : "") + monthStartPrint;
+								dayStartWithZero = (dayStart < 10 ? "0" : "") + dayStart;
+								prevMonthNextWithZero= (prevMonthNext < 10 ? "0" : "") + prevMonthNext;
+								prevDayNextWithZero= (prevDayNext < 10 ? "0" : "") + prevDayNext;
+								nol.setDescription(mol.getDescription()+" Period from "+monthStartPrintWithZero+"/" +
+										""+dayStartWithZero+"/"+newOrderActiveSinceYear+" to "+prevMonthNextWithZero+"/"+prevDayNextWithZero+"/"+prevYearNext);
+								nol.setUseItem(false);
+								
+								// build line
+								OrderLineWS line = new OrderLineWS();
+								line.setTypeId(Constants.ORDER_LINE_TYPE_ITEM);
+								line.setQuantity(molQuantity.negate());
+								line.setPrice(molOldAvgPrice.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12)));
+								line.setAmount(back.negate());
+								line.setItemId(mol.getItemId());
+								line.setUseItem(false);
+								line.setDescription(mol.getDescription()+" Period from "+monthStartPrintWithZero+"/"+dayStartWithZero+"/" +
+										""+newOrderActiveSinceYear+" to "+prevMonthNextWithZero+"/"+prevDayNextWithZero+"/"+prevYearNext);
+								
+				
+								// add line to order
+								ArrayList<OrderLineWS> lines = new ArrayList<OrderLineWS>(Arrays.asList(order.getOrderLines()));
+								lines.add(line);
+								OrderLineWS[] x = lines.toArray(new OrderLineWS[lines.size()]);
+								order.setOrderLines(x);
+							}
+							//When quantity == 0 just add back order line and delete from master.
+							else{
+								
+								molOldAvgPrice = mol.getPriceAsDecimal();
+								//println molOldAvgPrice+" masterOrderLineAvgPrice"
+								//println molQuantity+" molQuantity"
+								back=molOldAvgPrice.multiply(molQuantity).multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12));
+								//println back+" back"
+								
+								//Edit master order line
+								mol.setQuantityAsDecimal(totalQuantity);
+								mol.setAmount(new BigDecimal(0));
+								mol.setUseItem(false);
+								mol.setDeleted(1);
+								
+								//println nol+" nol"
+								
+								//Edit new order line
+								nol.setDeleted(1);
+								
+								//println nol+" nol"
+								
+								// build line
+								OrderLineWS line = new OrderLineWS();
+								line.setTypeId(Constants.ORDER_LINE_TYPE_ITEM);
+								line.setQuantity(molQuantity.negate());
+								line.setPrice(molOldAvgPrice.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12)));
+								line.setAmount(back.negate());
+								line.setItemId(mol.getItemId());
+								line.setUseItem(false);
+								monthStartPrintWithZero = (monthStartPrint < 10 ? "0" : "") + monthStartPrint;
+								dayStartWithZero = (dayStart < 10 ? "0" : "") + dayStart;
+								prevMonthNextWithZero= (prevMonthNext < 10 ? "0" : "") + prevMonthNext;
+								prevDayNextWithZero= (prevDayNext < 10 ? "0" : "") + prevDayNext;
+								line.setDescription(mol.getDescription()+" Period from "+monthStartPrintWithZero+"/"+dayStartWithZero+"/" +
+										""+newOrderActiveSinceYear+" to "+prevMonthNextWithZero+"/"+prevDayNextWithZero+"/"+prevYearNext);
+				
+								// add line to order
+								ArrayList<OrderLineWS> lines = new ArrayList<OrderLineWS>(Arrays.asList(order.getOrderLines()));
+								lines.remove(nol);
+								lines.add(line);
+								OrderLineWS[] x = lines.toArray(new OrderLineWS[lines.size()]);
+								order.setOrderLines(x);
+								
+							}		
+						}	
+					}
+				}	
+			}
+			if(found==false){
+				
+				
+				// build line
+				OrderLineWS nolclone = new OrderLineWS();
+				nolclone.setTypeId(Constants.ORDER_LINE_TYPE_ITEM);
+				nolclone.setQuantity(nol.getQuantityAsDecimal());
+				nolclone.setPrice(nol.getPriceAsDecimal());
+				nolclone.setAmount(nol.getAmountAsDecimal());
+				nolclone.setItemId(nol.getItemId());
+				nolclone.setUseItem(true);
+				nolclone.setDescription(nol.getDescription());
+				//println line.toString()
+				
+				ArrayList<OrderLineWS> linesm = new ArrayList<OrderLineWS>(Arrays.asList(masterOrder.getOrderLines()));
+				linesm.add(nolclone);
+				OrderLineWS[] x = linesm.toArray(new OrderLineWS[linesm.size()]);
+				masterOrder.setOrderLines(x);
+				
+				String payPlan=masterOrder.getPayPlan();
+				File file = new File("resources/pay_plans/"+payPlan+"_"+nol.getDescription()+".ods");
+				Sheet sheet = SpreadSheet.createFromFile(file).getSheet(""+masterYear);
+				BigDecimal q=nol.getQuantityAsDecimal();
+				//println q+" q"
+				BigDecimal value=(BigDecimal) sheet.getCellAt("B"+q.intValue()).getValue();
+				BigDecimal amount=(BigDecimal) sheet.getCellAt("C"+q.intValue()).getValue();
+				//println value+" value "+q+" q"+amount+" amount"
+				
+				
+				//Edit new order line
+				nol.setAmount(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12)));
+				nol.setPrice(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12)).divide(q));
+				monthStartPrintWithZero = (monthStartPrint < 10 ? "0" : "")+ monthStartPrint;
+				dayStartWithZero = (dayStart < 10 ? "0" : "") + dayStart;
+				prevMonthNextWithZero= (prevMonthNext < 10 ? "0" : "") + prevMonthNext;
+				prevDayNextWithZero= (prevDayNext < 10 ? "0" : "") + prevDayNext;
+				nol.setDescription(nol.getDescription()+" Period from "+monthStartPrintWithZero+"/"+dayStartWithZero+"/" +
+						""+newOrderActiveSinceYear+" to "+prevMonthNextWithZero+"/"+prevDayNextWithZero+"/"+prevYearNext);
+				nol.setUseItem(false);
+				
+			}
+			
+			
+		}
+		//println order+" order"
+		//println masterOrder+" masterOrder"
+		//Check if there is a non deleted master order line. In that case update the order
+		ArrayList<OrderLineWS> molines = new ArrayList<OrderLineWS>(Arrays.asList(masterOrder.getOrderLines()));
+		boolean hasNotDeleted=false;
+		Iterator<OrderLineWS> it=molines.iterator();
+		while(it.hasNext()) { 
+			OrderLineWS finalMol= it.next();
+			//println finalMol.deleted+" deleted"
+			if(finalMol.getDeleted()==0 && hasNotDeleted==false){
+				hasNotDeleted=true;
+				Collections.sort(molines, new Comparator<OrderLineWS>() {
+					@Override
+					public int compare(OrderLineWS o1, OrderLineWS o2) {
+						
+						return o1.getItemId()-o2.getItemId();
+					}
+				});
+				OrderLineWS[] x = molines.toArray(new OrderLineWS[molines.size()]);
+				masterOrder.setOrderLines(x);
+				System.out.println("Updating master order in editOrders");
+				updateOrder(masterOrder);
+			}
+			
+		}
+		if(hasNotDeleted==false){
+			//println "MASTER with deleted lines"
+			//Set the lines to not deleted for updating the table item_users
+			it=molines.iterator();
+			while(it.hasNext()) {
+				OrderLineWS finalMol =it.next();
+				finalMol.setDeleted(0);
+			}
+			System.out.println("Updating master order 2 in editOrders");
+			updateOrder(masterOrder);
+			//If all the lines are deleted, delete the master order
+			System.out.println("Deleting master order in editOrders");
+			deleteOrder(masterOrder.getId());	
+		}
+		System.out.println("returning "+order);
+		return order;	
+	}
+    
     public List<Map<String,String>> getItemUsersWithDescription(Integer userId){
     	OrderDAS orderDas=new OrderDAS();
     	List<Object[]> list=orderDas.findItemUsersWithDescription(userId);
@@ -3158,9 +3452,11 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 	 */
 	public ArrayList<OrderLineWS> updateQuantityInOrderLines(ArrayList<OrderLineWS> lines, ArrayList<OrderLineWS> visited,BigDecimal q){
 		for(OrderLineWS oline: lines){
-			for(OrderLineWS visitedLine: visited){
-				if(oline.getItemId().equals(visitedLine.getItemId())){
-					oline.setQuantity(q);
+			if(oline.getDeleted()==0){
+				for(OrderLineWS visitedLine: visited){
+					if(oline.getItemId().equals(visitedLine.getItemId())){
+						oline.setQuantity(q);
+					}
 				}
 			}
 		}
@@ -3211,7 +3507,7 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 		ArrayList<Integer> childrenDependencies=(ArrayList<Integer>) getChildrenDependencies(line.getItemId());
 		if(!doubleLinkedChildren.isEmpty()||!doubleLinkedParents.isEmpty()||!childrenDependencies.isEmpty()){
 			for(OrderLineWS li:lines){
-				if(!visited.contains(li)){
+				if(!visited.contains(li)&& li.getDeleted()==0){
 					if(!doubleLinkedChildren.isEmpty()){
 						for(Integer itemId: doubleLinkedChildren){
 							if(itemId.equals(li.getItemId())){
@@ -3245,5 +3541,113 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 			}	
 		}
 		return unvisited;
+	}
+	
+	/**
+	 * It will remove one timer items from the given order, and it will create a new one time order with these. 
+	 * @param order
+	 * @return
+	 */
+	public OrderWS moveOneTimersToNewOrder(OrderWS order){
+		OrderWS newOrder=null;
+		ArrayList<OrderLineWS> linesToDelete=null;
+		OrderLineWS[] orderLines = order.getOrderLines();
+		for(OrderLineWS ol: orderLines){
+			if(ol.getDeleted()==0){
+				if(isOneTimer(ol.getItemId())){
+					if(newOrder==null){
+						newOrder=new OrderWS();
+						
+						newOrder.setUserId(order.getUserId());
+						newOrder.setCurrencyId(order.getCurrencyId()); 
+						newOrder.setStatusId(Constants.ORDER_STATUS_ACTIVE);    
+						newOrder.setPeriod(Constants.ORDER_PERIOD_ONCE);
+						newOrder.setBillingTypeId(Constants.ORDER_BILLING_PRE_PAID);
+						newOrder.setActiveSince(order.getActiveSince()); 
+						newOrder.setIsCurrent(0);
+						newOrder.setBillingTypeStr(order.getBillingTypeStr());
+						List<OrderLineWS> list = new ArrayList<OrderLineWS>();
+						OrderLineWS[] x = list.toArray(new OrderLineWS[list.size()]);
+						newOrder.setOrderLines(x);
+						newOrder.setPayPlan(order.getPayPlan());
+						newOrder.setIsMaster(0);
+						newOrder.setAddToMaster(0);
+						
+					}
+					List<OrderLineWS> lines=new ArrayList<OrderLineWS>(Arrays.asList(newOrder.getOrderLines()));
+					System.out.println(lines+" lines");
+					// build line
+					OrderLineWS olclone = new OrderLineWS();
+					olclone.setTypeId(Constants.ORDER_LINE_TYPE_ITEM);
+					olclone.setQuantity(ol.getQuantityAsDecimal());
+					olclone.setPrice(ol.getPriceAsDecimal());
+					olclone.setAmount(ol.getAmountAsDecimal());
+					olclone.setItemId(ol.getItemId());
+					olclone.setUseItem(ol.getUseItem());
+					olclone.setDescription(ol.getDescription());
+					lines.add(olclone);
+					OrderLineWS[] l = lines.toArray(new OrderLineWS[lines.size()]);
+					newOrder.setOrderLines(l);
+					
+					if(linesToDelete==null){
+						linesToDelete= new ArrayList<OrderLineWS>();
+					}
+					linesToDelete.add(ol);
+					
+				}
+			}
+			
+			
+		}
+		if(!linesToDelete.isEmpty()){
+			ArrayList<OrderLineWS> olines = new ArrayList<OrderLineWS>(Arrays.asList(order.getOrderLines()));
+			for(OrderLineWS oline: linesToDelete){
+				olines.remove(oline);
+			}
+			OrderLineWS[] x = olines.toArray(new OrderLineWS[olines.size()]);
+			order.setOrderLines(x);
+		}
+		if(newOrder!=null){
+			createOrder(newOrder);
+		}
+
+		return order;
+	}
+	
+	/**
+	 * It adds to the order the double linked items for the given order lines. 
+	 * Instead of using this method, the double linked items are going to be added in the orderBuilderController.
+	 * @param order
+	 * @return
+	 */
+	public OrderWS addDoubleLinkedItems(OrderWS order){
+		List<Integer> doubleLinkedChildren=new ArrayList<Integer>();
+		ArrayList<OrderLineWS> linesToAdd=new ArrayList<OrderLineWS>();
+		OrderLineWS[] newOrderLines = order.getOrderLines();
+		for(OrderLineWS nol: newOrderLines){
+			doubleLinkedChildren=(ArrayList<Integer>)getDoubleLinkedChildren(nol.getItemId());
+			if(!doubleLinkedChildren.isEmpty()){
+				for(Integer itemId: doubleLinkedChildren){
+					// build line
+					OrderLineWS line = new OrderLineWS();
+					line.setTypeId(Constants.ORDER_LINE_TYPE_ITEM); 
+					line.setQuantity(nol.getQuantityAsDecimal());
+					line.setItemId(itemId);
+					line.setUseItem(true);
+					
+					linesToAdd.add(line);
+				}
+			}
+		}
+		if(!linesToAdd.isEmpty()){
+			ArrayList<OrderLineWS> olines = new ArrayList<OrderLineWS>(Arrays.asList(order.getOrderLines()));
+			for(OrderLineWS oline: linesToAdd){
+				olines.add(oline);
+			}
+			OrderLineWS[] x = olines.toArray(new OrderLineWS[olines.size()]);
+			order.setOrderLines(x);
+		}
+		
+		return order;
 	}
 }
