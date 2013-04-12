@@ -446,10 +446,13 @@ class OrderBuilderController {
 			action{
 				def order=conversation.order
 				def dependencyMap=new HashMap<Integer,Integer>();
+				//def minItemsMap=new HashMap<Integer,Integer>();
 				//Check dependencies just when creating, not when editing. 
 				if (!order.id || order.id == 0) {
                         if (SpringSecurityUtils.ifAllGranted("ORDER_20"))  {
 							dependencyMap=webServicesSession.checkDependencies(order)
+							//minItemsMap=webServicesSession.getMinItemsMap(order)
+							//dependencyMap=webServicesSession.mergeMapsWithMaxValue(dependencyMap,minItemsMap)
 						} 
 						else{
 							redirect controller: 'login', action: 'denied'
@@ -464,7 +467,7 @@ class OrderBuilderController {
 							//order=webServicesSession.addDoubleLinkedItems(order)
 							order=webServicesSession.moveOneTimersToNewOrder(order)
 							conversation.order=order
-							println "dependency map not empty, masterOrder=null and isMaster=1 "+order
+							println "dependency map empty, masterOrder=null and isMaster=1 "+order
 							save()
 						}
 						else if(order.addToMaster==1){
@@ -506,7 +509,7 @@ class OrderBuilderController {
 							//order=webServicesSession.addDoubleLinkedItems(order)
 							order=webServicesSession.moveOneTimersToNewOrder(order)
 							conversation.order=order
-							println "dependency map not empty, masterOrder exists and addToMaster=1 "+order
+							println "dependency map empty, masterOrder exists and addToMaster=1 "+order
 							save()
 						}
 						else{

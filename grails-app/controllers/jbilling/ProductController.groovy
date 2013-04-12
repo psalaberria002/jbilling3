@@ -377,11 +377,15 @@ class ProductController {
 		def dependencies
 		def doubleLinkedDependencies
 		def period
+		def hasToBeQuantityOne
+		def minItems
 		if(params.int('id')!=null){
 			println "!null"
 			dependencies=webServicesSession.getParentDependencies(params.int('id'))
 			doubleLinkedDependencies=webServicesSession.getDoubleLinkedParents(params.int('id'))
 			period=webServicesSession.getItemPeriod(params.int('id'))
+			hasToBeQuantityOne=webServicesSession.hasToBeQuantityOne(params.int('id'))
+			minItems=webServicesSession.getMinItems(params.int('id'))
 		}
 		def products =  ItemDTO.createCriteria().list(){
 			eq("deleted", 0)
@@ -405,7 +409,7 @@ class ProductController {
 
         breadcrumbService.addBreadcrumb(controllerName, actionName, params.id ? 'update' : 'create', params.int('id'), product?.number)
 
-        [ product: product, currencies: currencies, categories: getProductCategories(), categoryId: params.category, products: products ,dependencies: dependencies, doubleLinkedDependencies:doubleLinkedDependencies, period:period]
+        [ product: product, currencies: currencies, categories: getProductCategories(), categoryId: params.category, products: products ,dependencies: dependencies, doubleLinkedDependencies:doubleLinkedDependencies, period:period, hasToBeQuantityOne:hasToBeQuantityOne, minItems:minItems]
     }
 
     /**
@@ -415,6 +419,9 @@ class ProductController {
     def saveProduct = {
         def product = new ItemDTOEx()
         bindProduct(product, params)
+		Integer hasToBeQuantityOne=params.hasToBeQuantityOne ? 1:0
+		String s=params.period.yearly ? 'Yearly' : 'One time'
+		Integer minItems=params.minItems.equals('') ? new Integer(0): params.minItems as Integer 
 		
         try{
             // save or update
@@ -426,10 +433,14 @@ class ProductController {
 
                     product.id = webServicesSession.createItem(product)
 					
-					String s=params.period.yearly ? 'Yearly' : 'One time'
 					this.setParentDependencies(params,product.id)
-					//setting period to item_period
-					this.setItemPeriod(s,product.id)
+					//setting period to item_period and quantityOneToInvoice for API for example
+					webServicesSession.setItemPeriod(product.id,s,hasToBeQuantityOne)
+					
+					webServicesSession.setMinItems(product.id,minItems);
+					
+					
+					
 
                     flash.message = 'product.created'
                     flash.args = [ product.id ]
@@ -455,10 +466,11 @@ class ProductController {
 
                     webServicesSession.updateItem(product)
 					
-					String s=params.period.yearly ? 'Yearly' : 'One time'
 					this.setParentDependencies(params,product.id)
-					//setting period to item_period
-					this.setItemPeriod(s,product.id,)
+					//setting period to item_period and quantityOneToInvoice for API for example
+					webServicesSession.setItemPeriod(product.id,s,hasToBeQuantityOne)
+					
+					webServicesSession.setMinItems(product.id,minItems);
 
                     flash.message = 'product.updated'
                     flash.args = [ product.id ]
@@ -562,11 +574,5 @@ class ProductController {
 		
 	}
 	
-	def void setItemPeriod(String s,Integer itemId){
-		
-		//String s=params.period.yearly ? 'Yearly' : 'One time'
-		println s
-		webServicesSession.setItemPeriod(itemId,s)
-	}
 
 }

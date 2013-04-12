@@ -3341,24 +3341,41 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 			if(nol.getDeleted()==0){
 				Map<Integer,Integer> dep=checkDependencies(order, nol);
 				//Merging to Maps
-				if(!dep.isEmpty()){
-					Set<Map.Entry<Integer, Integer>> entries = dep.entrySet();
-					for ( Map.Entry<Integer,Integer> entry : entries ) {
-						//System.out.println(entry+" entry "+nol.getItemId());
-					  Integer neededProductsAndQuantitiesMapValue = neededProductsAndQuantities.get( entry.getKey() );
-					  if ( neededProductsAndQuantitiesMapValue == null ) {
-						  neededProductsAndQuantities.put( entry.getKey(), entry.getValue() );
-					  }
-					  else if(entry.getValue()>neededProductsAndQuantitiesMapValue){
-							  neededProductsAndQuantities.put( entry.getKey(), entry.getValue() );
-					  }
-					}
-				}
+				neededProductsAndQuantities=mergeMapsWithMaxValue(neededProductsAndQuantities,dep);
 			}
 			
 		}
 		
 		return neededProductsAndQuantities;
+	}
+	
+	public Map<Integer,Integer> mergeMapsWithMaxValue(Map<Integer,Integer> rootMap, Map<Integer,Integer> addedMap){
+		if(rootMap.isEmpty() && addedMap.isEmpty()){
+			return new HashMap<Integer,Integer>();
+		}
+		else if(rootMap.isEmpty() && !addedMap.isEmpty()){
+			return addedMap;
+		}
+		else if(!rootMap.isEmpty() && addedMap.isEmpty()){
+			return rootMap;
+		}
+		else{
+			if(!addedMap.isEmpty()){
+				Set<Map.Entry<Integer,Integer>> entries = addedMap.entrySet();
+				for ( Map.Entry<Integer,Integer> entry : entries ) {
+					//System.out.println(entry+" entry "+nol.getItemId());
+				  Integer rootMapValue = rootMap.get( entry.getKey() );
+				  if ( rootMapValue == null ) {
+					  rootMap.put( entry.getKey(), entry.getValue() );
+				  }
+				  else if(entry.getValue()>rootMapValue){
+						  rootMap.put( entry.getKey(), entry.getValue() );
+				  }
+				}
+			}
+			return rootMap;
+		}
+		
 	}
 	/**
 	 * Giving an order and an order line, the method checks the dependencies of the order line looking into the order and into the database. 
@@ -3378,14 +3395,32 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 			Integer childQuantity=null;
 			Integer parentQuantity=null;
 			for(Integer parentId: parents){
-				parentQuantity=orderDas.findNumberUsers(parentId, userId)+this.findItemQuantityInOrder(order,parentId);//total:order + database
 				childQuantity=orderLine.getQuantityAsDecimal().intValueExact()+orderDas.findNumberUsers(orderLine.getItemId(), userId);//total: order + database
-				if( parentQuantity < childQuantity){
-					difference=childQuantity-parentQuantity;
-					if( (needed.containsKey(parentId)&&(needed.get(parentId)<difference)) || !needed.containsKey(parentId)){
-						needed.put(parentId, difference);
+				//If the items are equals, the parentQuantity will be minItems
+				if(parentId.equals(itemId)){
+					System.out.println("equals");
+					parentQuantity=getMinItems(itemId);
+					//Min items dependencies
+					if(parentQuantity>childQuantity){
+						System.out.println(">");
+						difference=parentQuantity-childQuantity;
+						if( (needed.containsKey(parentId)&&(needed.get(parentId)<difference)) || !needed.containsKey(parentId)){
+							System.out.println("put");
+							needed.put(parentId, difference);
+						}
 					}
 				}
+				else{
+					parentQuantity=orderDas.findNumberUsers(parentId, userId)+this.findItemQuantityInOrder(order,parentId);//total:order + database
+					//Normal dependencies
+					if( parentQuantity < childQuantity){
+						difference=childQuantity-parentQuantity;
+						if( (needed.containsKey(parentId)&&(needed.get(parentId)<difference)) || !needed.containsKey(parentId)){
+							needed.put(parentId, difference);
+						}
+					}
+				}
+				
 				
 			}
 			
@@ -3417,10 +3452,10 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
     	String p=itemDas.getItemPeriod(itemId);
     	return p;
 	}
-	public void setItemPeriod(Integer itemId,String period){
+	public void setItemPeriod(Integer itemId,String period,Integer quantityToOne){
 		
 		ItemDAS itemDas=new ItemDAS();
-    	itemDas.setItemPeriod(itemId,period);
+    	itemDas.setItemPeriod(itemId,period,quantityToOne);
 	}
 	public void deleteItemDependenciesAndPeriod(Integer itemId){
 		ItemDAS itemDas=new ItemDAS();
@@ -3649,5 +3684,51 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 		}
 		
 		return order;
+	}
+	/**
+	 * 
+	 * @param itemId
+	 * @return 1 if the product has to be invoiced with 1 as quantity, esle return 0
+	 */
+	public Integer hasToBeQuantityOne(Integer itemId){
+		ItemDAS itemDas=new ItemDAS();
+		
+		return itemDas.hasToBeQuantityOne(itemId);
+	}
+	
+	public Integer getMinItems(Integer itemId){
+		ItemDAS itemDas=new ItemDAS();
+		
+		return itemDas.getMinItems(itemId);
+	}
+	
+	public void setMinItems(Integer itemId, Integer minItems){
+		ItemDAS itemDas=new ItemDAS();
+		
+		itemDas.setMinItems(itemId,minItems);
+	}
+	
+	public Map<Integer,Integer> getMinItemsMap(OrderWS order){
+		ItemDAS itemDas=new ItemDAS();
+		Map<Integer,Integer> minItemsMap=new HashMap<Integer,Integer>();
+		OrderLineWS[] newOrderLines=order.getOrderLines();
+		Integer nolId;
+		Integer min;
+    	for(int i=0;i< newOrderLines.length;i++) { 
+    		OrderLineWS nol=newOrderLines[i];
+    		if(nol.getDeleted()==0){
+    			nolId=nol.getItemId();
+    			min=itemDas.getMinItems(nolId);
+    			//Add entry to the map if value > 0
+    			if(min>0){
+    				minItemsMap.put(nolId, min); 
+    			}
+    			 
+    		}
+    			
+    	}
+    		
+    	return minItemsMap;
+
 	}
 }

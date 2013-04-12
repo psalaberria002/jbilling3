@@ -79,6 +79,18 @@
                             <content tag="label.for">period.yearly</content>
                             <g:checkBox class="cb checkbox" name="period.yearly" checked="${period.equals('Yearly')}"/>
                         </g:applyLayout>
+                        
+                        <g:applyLayout name="form/checkbox">
+                            <content tag="label"><g:message code="quantityToOne"/></content>
+                            <content tag="label.for">hasToBeQuantityOne</content>
+                            <g:checkBox class="cb checkbox" name="hasToBeQuantityOne" checked="${hasToBeQuantityOne.equals(1)}"/>
+                        </g:applyLayout>
+                        
+                        <g:applyLayout name="form/input">
+                            <content tag="label"><g:message code="minItems"/></content>
+                            <content tag="label.for">minItems</content>
+                            <g:textField class="field" name="minItems" value="${minItems}" size="2"/>
+                        </g:applyLayout>
 
                         <g:applyLayout name="form/input">
                             <content tag="label"><g:message code="product.percentage"/></content>
