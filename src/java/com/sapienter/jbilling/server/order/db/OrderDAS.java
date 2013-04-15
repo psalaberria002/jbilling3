@@ -28,6 +28,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 
 import com.sapienter.jbilling.common.Util;
+import com.sapienter.jbilling.server.item.db.ItemDAS;
 import com.sapienter.jbilling.server.util.Constants;
 import com.sapienter.jbilling.server.util.db.AbstractDAS;
 
@@ -335,6 +336,19 @@ public class OrderDAS extends AbstractDAS<OrderDTO> {
      * @return
      */
     public int updateOrInsertItemUsers(Integer itemId,Integer userId,Integer n){
+    	
+    	ItemDAS itemDas=new ItemDAS();
+    	//If the item is an installation fee values will be 0 or 1 into item_users
+		if(itemDas.hasToBeQuantityOne(itemId).equals(1)&&(itemDas.getItemPeriod(itemId).equals("One time")||itemDas.getItemPeriod(itemId).equals(null)||itemDas.getItemPeriod(itemId).equals(""))){
+			if(n>0){
+				n=new Integer(1);
+			}
+			else{
+				n=new Integer(0);
+			}
+		}
+		
+		
     			
     	 Object result = (Object) getSession()
                  .createSQLQuery("select users from item_users where item_id=:itemId AND user_id=:userId")

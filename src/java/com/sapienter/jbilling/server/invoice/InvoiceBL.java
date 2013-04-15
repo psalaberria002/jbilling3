@@ -256,7 +256,7 @@ public class InvoiceBL extends ResultList implements Serializable, InvoiceSQL {
     }
 
     public void createLines(NewInvoiceDTO newInvoice) {
-        Collection invoiceLines = invoice.getInvoiceLines();
+        Collection<InvoiceLineDTO> invoiceLines = invoice.getInvoiceLines();
 
         // Now create all the invoice lines, from the lines in the DTO
         // put there by the invoice composition pluggable tasks
@@ -303,13 +303,48 @@ public class InvoiceBL extends ResultList implements Serializable, InvoiceSQL {
             }
             //#2196
             
-            // create the database row
-            InvoiceLineDTO newLine = invoiceLineDas.create(lineToAdd.getDescription(), lineToAdd.getAmount(), lineToAdd.getQuantity(), lineToAdd.getPrice(),
-                    lineToAdd.getTypeId(), lineToAdd.getItem(), lineToAdd.getSourceUserId(), lineToAdd.getIsPercentage());
+            //Check if an invoice line with the same description already exists.
+            boolean exists=false;
+            Integer existingLineId=0;
+            Iterator<InvoiceLineDTO> it = invoiceLines.iterator();
+            while(it.hasNext()&& !exists){
+            	InvoiceLineDTO existingLine=it.next();
+            	if(existingLine.getDescription().equals(lineToAdd.getDescription())){
+            		//Is a tax line
+            		if(Integer.valueOf(existingLine.getTypeId()).equals(Constants.INVOICE_LINE_TYPE_TAX)){
+            			exists=true;
+                		existingLineId=Integer.valueOf(existingLine.getId());
+            		}
+            		
+            	}
+            }
+            //Create a new line
+            if(!exists){
+            	// create the database row
+                InvoiceLineDTO newLine = invoiceLineDas.create(lineToAdd.getDescription(), lineToAdd.getAmount(), lineToAdd.getQuantity(), lineToAdd.getPrice(),
+                        lineToAdd.getTypeId(), lineToAdd.getItem(), lineToAdd.getSourceUserId(), lineToAdd.getIsPercentage());
 
-            // update the invoice-lines relationship
-            newLine.setInvoice(invoice);
-            invoiceLines.add(newLine);
+                // update the invoice-lines relationship
+                newLine.setInvoice(invoice);
+                invoiceLines.add(newLine);
+            }
+            //Edit existingLine. Merge lines.
+            else{
+            	System.out.println("Merging lines");
+            	InvoiceLineDAS iLineDas=new InvoiceLineDAS();
+            	InvoiceLineDTO l=iLineDas.find(existingLineId);
+            	//Edit existing tax line
+            	if(Integer.valueOf(l.getTypeId()).equals(Constants.INVOICE_LINE_TYPE_TAX)){
+                	l.setAmount(l.getAmount().add(lineToAdd.getAmount()));
+                	l.setPrice(l.getAmount().divide(l.getQuantity()));
+            	}
+            	//Edit normal item existing line
+            	else{
+            		
+            	}
+            	iLineDas.save(l);
+            }
+            
         }
         getHome().save(invoice);
         EventManager.process(new NewInvoiceEvent(invoice));

@@ -17,6 +17,7 @@
 package com.sapienter.jbilling.server.process.task;
 
 import com.sapienter.jbilling.server.invoice.NewInvoiceDTO;
+import com.sapienter.jbilling.server.invoice.db.InvoiceDTO;
 import com.sapienter.jbilling.server.invoice.db.InvoiceLineDTO;
 import com.sapienter.jbilling.server.item.ItemBL;
 import com.sapienter.jbilling.server.item.db.ItemDAS;
@@ -34,6 +35,7 @@ import com.sapienter.jbilling.server.util.Constants;
 import org.apache.log4j.Logger;
 
 import java.math.BigDecimal;
+import java.util.Iterator;
 import java.util.Set;
 
 /**

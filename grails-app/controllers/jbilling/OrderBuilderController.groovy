@@ -42,6 +42,7 @@ import com.sapienter.jbilling.server.user.contact.db.ContactDTO
 import com.sapienter.jbilling.server.user.db.CompanyDTO
 import com.sapienter.jbilling.server.user.db.UserDTO
 import com.sapienter.jbilling.server.util.Constants
+import com.sapienter.jbilling.server.item.db.ItemDTO
 
 
 
@@ -507,8 +508,8 @@ class OrderBuilderController {
 						}
 						else if(order.addToMaster==1){
 							//order=webServicesSession.addDoubleLinkedItems(order)
-							order=webServicesSession.moveOneTimersToNewOrder(order)
-							conversation.order=order
+							//order=webServicesSession.moveOneTimersToNewOrder(order)
+							//conversation.order=order
 							println "dependency map empty, masterOrder exists and addToMaster=1 "+order
 							save()
 						}
@@ -524,7 +525,8 @@ class OrderBuilderController {
 						String message;
 						for (Map.Entry<Integer, Integer> entry : dependencyMap.entrySet())
 						{
-							message="You have to buy "+entry.getValue()+" more "+entry.getKey();
+							def neededItem = ItemDTO.findById(entry.getKey())
+							message="You have to buy "+entry.getValue()+" more "+neededItem.getDescription();
 							messages.add(message);
 						}
 						//When the arraylist contains just one message, create an empty message to interpret it as arraylist in the view

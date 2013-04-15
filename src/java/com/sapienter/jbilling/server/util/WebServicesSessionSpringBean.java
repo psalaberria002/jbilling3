@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -3017,190 +3018,194 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 		String prevDayNextWithZero;
 		for(int i=0;i<newOrderLines.length;i++) { 
 			OrderLineWS nol= newOrderLines[i];
-			newOrderActiveSinceYear= calActive.get(Calendar.YEAR);
-			monthStartPrint = calActive.get(Calendar.MONTH);
-			dayStart = calActive.get(Calendar.DAY_OF_MONTH);
-			prevDayNext = cal.get(Calendar.DAY_OF_MONTH);
-			prevMonthNext = cal.get(Calendar.MONTH);
-			prevYearNext = cal.get(Calendar.YEAR);
-			totalQuantity=new BigDecimal(0);
-			boolean found=false;
-			nolQuantity=nol.getQuantityAsDecimal();
-			for(int j=0;j<masterOrderLines.length;j++) {
-				OrderLineWS mol= masterOrderLines[j];
+			//Select just the non one timers to add or edit into the master order
+			if(!isOneTimer(nol.getItemId())){
 				newOrderActiveSinceYear= calActive.get(Calendar.YEAR);
 				monthStartPrint = calActive.get(Calendar.MONTH);
 				dayStart = calActive.get(Calendar.DAY_OF_MONTH);
 				prevDayNext = cal.get(Calendar.DAY_OF_MONTH);
 				prevMonthNext = cal.get(Calendar.MONTH);
 				prevYearNext = cal.get(Calendar.YEAR);
+				totalQuantity=new BigDecimal(0);
+				boolean found=false;
+				nolQuantity=nol.getQuantityAsDecimal();
+				for(int j=0;j<masterOrderLines.length;j++) {
+					OrderLineWS mol= masterOrderLines[j];
+					newOrderActiveSinceYear= calActive.get(Calendar.YEAR);
+					monthStartPrint = calActive.get(Calendar.MONTH);
+					dayStart = calActive.get(Calendar.DAY_OF_MONTH);
+					prevDayNext = cal.get(Calendar.DAY_OF_MONTH);
+					prevMonthNext = cal.get(Calendar.MONTH);
+					prevYearNext = cal.get(Calendar.YEAR);
+					if(found==false){
+						if (nol.getItemId().equals(mol.getItemId())){
+							found=true;
+							if((nol.getTypeId()!=(Constants.ORDER_LINE_TYPE_TAX))){
+								molQuantity=mol.getQuantityAsDecimal();
+								totalQuantity=molQuantity.add(nolQuantity);
+								BigDecimal molOldAvgPrice;
+								//println "BERDINTZA "+BigDecimal.ZERO.compareTo(totalQuantity)
+								if((BigDecimal.ZERO.compareTo(totalQuantity) != 0)){
+									String payPlan=masterOrder.getPayPlan();
+									molOldAvgPrice = mol.getPriceAsDecimal();
+									//println molOldAvgPrice+" masterOrderLineAvgPrice"
+									//println molQuantity+" molQuantity"
+									back=molOldAvgPrice.multiply(molQuantity).multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),2,RoundingMode.HALF_UP);
+									//println back
+									//println "resources/pay_plans/${payPlan}${mol.description}.ods"
+									File file = new File("resources/pay_plans/"+payPlan+"_"+mol.getDescription()+".ods");
+									//println file.toPath()
+									Sheet sheet = SpreadSheet.createFromFile(file).getSheet(""+masterYear);
+									//Negative number change to positive
+									boolean negative=false;
+									if(totalQuantity.intValue()<0){
+										negative=true;
+										totalQuantity=totalQuantity.negate();
+									}
+									BigDecimal value=(BigDecimal) sheet.getCellAt("B"+totalQuantity.intValue()).getValue();
+									BigDecimal amount=(BigDecimal) sheet.getCellAt("C"+totalQuantity.intValue()).getValue();
+									
+									
+									if(negative==true){
+										amount=amount.negate();
+									}
+									//println value+" "+totalQuantity+" "+amount
+									BigDecimal avgPrice=(BigDecimal)(amount.divide(totalQuantity,2,RoundingMode.HALF_UP));
+									//println avgPrice+" avgPrice"
+									
+									//Edit master order line
+									mol.setPrice(avgPrice);
+									mol.setQuantityAsDecimal(totalQuantity);
+									mol.setAmount(amount);
+									mol.setUseItem(true);
+									
+									//webServicesSession.updateOrderLine(mol) //update Master Order Line
+									//println mol.getPrice()+" "+mol.getAmount()
+									
+									//Edit new order line
+									//println "Order before"+order
+									nol.setQuantity(totalQuantity);
+									nol.setAmount(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),2,RoundingMode.HALF_UP));
+									nol.setPrice(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),2,RoundingMode.HALF_UP).divide(totalQuantity,2,RoundingMode.HALF_UP));
+									//println monthStartPrint
+									monthStartPrintWithZero= (monthStartPrint < 10 ? "0" : "") + monthStartPrint;
+									dayStartWithZero = (dayStart < 10 ? "0" : "") + dayStart;
+									prevMonthNextWithZero= (prevMonthNext < 10 ? "0" : "") + prevMonthNext;
+									prevDayNextWithZero= (prevDayNext < 10 ? "0" : "") + prevDayNext;
+									nol.setDescription(mol.getDescription()+" Period from "+monthStartPrintWithZero+"/" +
+											""+dayStartWithZero+"/"+newOrderActiveSinceYear+" to "+prevMonthNextWithZero+"/"+prevDayNextWithZero+"/"+prevYearNext);
+									nol.setUseItem(false);
+									
+									// build line
+									OrderLineWS line = new OrderLineWS();
+									line.setTypeId(Constants.ORDER_LINE_TYPE_ITEM);
+									line.setQuantity(molQuantity.negate());
+									line.setPrice(molOldAvgPrice.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),2,RoundingMode.HALF_UP));
+									line.setAmount(back.negate());
+									line.setItemId(mol.getItemId());
+									line.setUseItem(false);
+									line.setDescription(mol.getDescription()+" Period from "+monthStartPrintWithZero+"/"+dayStartWithZero+"/" +
+											""+newOrderActiveSinceYear+" to "+prevMonthNextWithZero+"/"+prevDayNextWithZero+"/"+prevYearNext);
+									
+					
+									// add line to order
+									ArrayList<OrderLineWS> lines = new ArrayList<OrderLineWS>(Arrays.asList(order.getOrderLines()));
+									lines.add(line);
+									OrderLineWS[] x = lines.toArray(new OrderLineWS[lines.size()]);
+									order.setOrderLines(x);
+								}
+								//When quantity == 0 just add back order line and delete from master.
+								else{
+									
+									molOldAvgPrice = mol.getPriceAsDecimal();
+									//println molOldAvgPrice+" masterOrderLineAvgPrice"
+									//println molQuantity+" molQuantity"
+									back=molOldAvgPrice.multiply(molQuantity).multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),2,RoundingMode.HALF_UP);
+									//println back+" back"
+									
+									//Edit master order line
+									mol.setQuantityAsDecimal(totalQuantity);
+									mol.setAmount(new BigDecimal(0));
+									mol.setUseItem(false);
+									mol.setDeleted(1);
+									
+									//println nol+" nol"
+									
+									//Edit new order line
+									nol.setDeleted(1);
+									
+									//println nol+" nol"
+									
+									// build line
+									OrderLineWS line = new OrderLineWS();
+									line.setTypeId(Constants.ORDER_LINE_TYPE_ITEM);
+									line.setQuantity(molQuantity.negate());
+									line.setPrice(molOldAvgPrice.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),2,RoundingMode.HALF_UP));
+									line.setAmount(back.negate());
+									line.setItemId(mol.getItemId());
+									line.setUseItem(false);
+									monthStartPrintWithZero = (monthStartPrint < 10 ? "0" : "") + monthStartPrint;
+									dayStartWithZero = (dayStart < 10 ? "0" : "") + dayStart;
+									prevMonthNextWithZero= (prevMonthNext < 10 ? "0" : "") + prevMonthNext;
+									prevDayNextWithZero= (prevDayNext < 10 ? "0" : "") + prevDayNext;
+									line.setDescription(mol.getDescription()+" Period from "+monthStartPrintWithZero+"/"+dayStartWithZero+"/" +
+											""+newOrderActiveSinceYear+" to "+prevMonthNextWithZero+"/"+prevDayNextWithZero+"/"+prevYearNext);
+					
+									// add line to order
+									ArrayList<OrderLineWS> lines = new ArrayList<OrderLineWS>(Arrays.asList(order.getOrderLines()));
+									lines.remove(nol);
+									lines.add(line);
+									OrderLineWS[] x = lines.toArray(new OrderLineWS[lines.size()]);
+									order.setOrderLines(x);
+									
+								}		
+							}	
+						}
+					}	
+				}
 				if(found==false){
-					if (nol.getItemId().equals(mol.getItemId())){
-						found=true;
-						if((nol.getTypeId()!=(Constants.ORDER_LINE_TYPE_TAX))){
-							molQuantity=mol.getQuantityAsDecimal();
-							totalQuantity=molQuantity.add(nolQuantity);
-							BigDecimal molOldAvgPrice;
-							//println "BERDINTZA "+BigDecimal.ZERO.compareTo(totalQuantity)
-							if((BigDecimal.ZERO.compareTo(totalQuantity) != 0)){
-								String payPlan=masterOrder.getPayPlan();
-								molOldAvgPrice = mol.getPriceAsDecimal();
-								//println molOldAvgPrice+" masterOrderLineAvgPrice"
-								//println molQuantity+" molQuantity"
-								back=molOldAvgPrice.multiply(molQuantity).multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12));
-								//println back
-								//println "resources/pay_plans/${payPlan}${mol.description}.ods"
-								File file = new File("resources/pay_plans/"+payPlan+"_"+mol.getDescription()+".ods");
-								//println file.toPath()
-								Sheet sheet = SpreadSheet.createFromFile(file).getSheet(""+masterYear);
-								//Negative number change to positive
-								boolean negative=false;
-								if(totalQuantity.intValue()<0){
-									negative=true;
-									totalQuantity=totalQuantity.negate();
-								}
-								BigDecimal value=(BigDecimal) sheet.getCellAt("B"+totalQuantity.intValue()).getValue();
-								BigDecimal amount=(BigDecimal) sheet.getCellAt("C"+totalQuantity.intValue()).getValue();
-								
-								
-								if(negative==true){
-									amount=amount.negate();
-								}
-								//println value+" "+totalQuantity+" "+amount
-								BigDecimal avgPrice=(BigDecimal)(amount.divide(totalQuantity));
-								//println avgPrice+" avgPrice"
-								
-								//Edit master order line
-								mol.setPrice(avgPrice);
-								mol.setQuantityAsDecimal(totalQuantity);
-								mol.setAmount(amount);
-								mol.setUseItem(true);
-								
-								//webServicesSession.updateOrderLine(mol) //update Master Order Line
-								//println mol.getPrice()+" "+mol.getAmount()
-								
-								//Edit new order line
-								//println "Order before"+order
-								nol.setQuantity(totalQuantity);
-								nol.setAmount(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12)));
-								nol.setPrice(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12)).divide(totalQuantity));
-								//println monthStartPrint
-								monthStartPrintWithZero= (monthStartPrint < 10 ? "0" : "") + monthStartPrint;
-								dayStartWithZero = (dayStart < 10 ? "0" : "") + dayStart;
-								prevMonthNextWithZero= (prevMonthNext < 10 ? "0" : "") + prevMonthNext;
-								prevDayNextWithZero= (prevDayNext < 10 ? "0" : "") + prevDayNext;
-								nol.setDescription(mol.getDescription()+" Period from "+monthStartPrintWithZero+"/" +
-										""+dayStartWithZero+"/"+newOrderActiveSinceYear+" to "+prevMonthNextWithZero+"/"+prevDayNextWithZero+"/"+prevYearNext);
-								nol.setUseItem(false);
-								
-								// build line
-								OrderLineWS line = new OrderLineWS();
-								line.setTypeId(Constants.ORDER_LINE_TYPE_ITEM);
-								line.setQuantity(molQuantity.negate());
-								line.setPrice(molOldAvgPrice.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12)));
-								line.setAmount(back.negate());
-								line.setItemId(mol.getItemId());
-								line.setUseItem(false);
-								line.setDescription(mol.getDescription()+" Period from "+monthStartPrintWithZero+"/"+dayStartWithZero+"/" +
-										""+newOrderActiveSinceYear+" to "+prevMonthNextWithZero+"/"+prevDayNextWithZero+"/"+prevYearNext);
-								
-				
-								// add line to order
-								ArrayList<OrderLineWS> lines = new ArrayList<OrderLineWS>(Arrays.asList(order.getOrderLines()));
-								lines.add(line);
-								OrderLineWS[] x = lines.toArray(new OrderLineWS[lines.size()]);
-								order.setOrderLines(x);
-							}
-							//When quantity == 0 just add back order line and delete from master.
-							else{
-								
-								molOldAvgPrice = mol.getPriceAsDecimal();
-								//println molOldAvgPrice+" masterOrderLineAvgPrice"
-								//println molQuantity+" molQuantity"
-								back=molOldAvgPrice.multiply(molQuantity).multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12));
-								//println back+" back"
-								
-								//Edit master order line
-								mol.setQuantityAsDecimal(totalQuantity);
-								mol.setAmount(new BigDecimal(0));
-								mol.setUseItem(false);
-								mol.setDeleted(1);
-								
-								//println nol+" nol"
-								
-								//Edit new order line
-								nol.setDeleted(1);
-								
-								//println nol+" nol"
-								
-								// build line
-								OrderLineWS line = new OrderLineWS();
-								line.setTypeId(Constants.ORDER_LINE_TYPE_ITEM);
-								line.setQuantity(molQuantity.negate());
-								line.setPrice(molOldAvgPrice.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12)));
-								line.setAmount(back.negate());
-								line.setItemId(mol.getItemId());
-								line.setUseItem(false);
-								monthStartPrintWithZero = (monthStartPrint < 10 ? "0" : "") + monthStartPrint;
-								dayStartWithZero = (dayStart < 10 ? "0" : "") + dayStart;
-								prevMonthNextWithZero= (prevMonthNext < 10 ? "0" : "") + prevMonthNext;
-								prevDayNextWithZero= (prevDayNext < 10 ? "0" : "") + prevDayNext;
-								line.setDescription(mol.getDescription()+" Period from "+monthStartPrintWithZero+"/"+dayStartWithZero+"/" +
-										""+newOrderActiveSinceYear+" to "+prevMonthNextWithZero+"/"+prevDayNextWithZero+"/"+prevYearNext);
-				
-								// add line to order
-								ArrayList<OrderLineWS> lines = new ArrayList<OrderLineWS>(Arrays.asList(order.getOrderLines()));
-								lines.remove(nol);
-								lines.add(line);
-								OrderLineWS[] x = lines.toArray(new OrderLineWS[lines.size()]);
-								order.setOrderLines(x);
-								
-							}		
-						}	
-					}
-				}	
+					
+					
+					// build line
+					OrderLineWS nolclone = new OrderLineWS();
+					nolclone.setTypeId(Constants.ORDER_LINE_TYPE_ITEM);
+					nolclone.setQuantity(nol.getQuantityAsDecimal());
+					nolclone.setPrice(nol.getPriceAsDecimal());
+					nolclone.setAmount(nol.getAmountAsDecimal());
+					nolclone.setItemId(nol.getItemId());
+					nolclone.setUseItem(true);
+					nolclone.setDescription(nol.getDescription());
+					//println line.toString()
+					
+					ArrayList<OrderLineWS> linesm = new ArrayList<OrderLineWS>(Arrays.asList(masterOrder.getOrderLines()));
+					linesm.add(nolclone);
+					OrderLineWS[] x = linesm.toArray(new OrderLineWS[linesm.size()]);
+					masterOrder.setOrderLines(x);
+					
+					String payPlan=masterOrder.getPayPlan();
+					File file = new File("resources/pay_plans/"+payPlan+"_"+nol.getDescription()+".ods");
+					Sheet sheet = SpreadSheet.createFromFile(file).getSheet(""+masterYear);
+					BigDecimal q=nol.getQuantityAsDecimal();
+					//println q+" q"
+					BigDecimal value=(BigDecimal) sheet.getCellAt("B"+q.intValue()).getValue();
+					BigDecimal amount=(BigDecimal) sheet.getCellAt("C"+q.intValue()).getValue();
+					//println value+" value "+q+" q"+amount+" amount"
+					
+					
+					//Edit new order line
+					nol.setAmount(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),2,RoundingMode.HALF_UP));
+					nol.setPrice(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),2,RoundingMode.HALF_UP).divide(q,2,RoundingMode.HALF_UP));
+					monthStartPrintWithZero = (monthStartPrint < 10 ? "0" : "")+ monthStartPrint;
+					dayStartWithZero = (dayStart < 10 ? "0" : "") + dayStart;
+					prevMonthNextWithZero= (prevMonthNext < 10 ? "0" : "") + prevMonthNext;
+					prevDayNextWithZero= (prevDayNext < 10 ? "0" : "") + prevDayNext;
+					nol.setDescription(nol.getDescription()+" Period from "+monthStartPrintWithZero+"/"+dayStartWithZero+"/" +
+							""+newOrderActiveSinceYear+" to "+prevMonthNextWithZero+"/"+prevDayNextWithZero+"/"+prevYearNext);
+					nol.setUseItem(false);
+					
+				}
 			}
-			if(found==false){
-				
-				
-				// build line
-				OrderLineWS nolclone = new OrderLineWS();
-				nolclone.setTypeId(Constants.ORDER_LINE_TYPE_ITEM);
-				nolclone.setQuantity(nol.getQuantityAsDecimal());
-				nolclone.setPrice(nol.getPriceAsDecimal());
-				nolclone.setAmount(nol.getAmountAsDecimal());
-				nolclone.setItemId(nol.getItemId());
-				nolclone.setUseItem(true);
-				nolclone.setDescription(nol.getDescription());
-				//println line.toString()
-				
-				ArrayList<OrderLineWS> linesm = new ArrayList<OrderLineWS>(Arrays.asList(masterOrder.getOrderLines()));
-				linesm.add(nolclone);
-				OrderLineWS[] x = linesm.toArray(new OrderLineWS[linesm.size()]);
-				masterOrder.setOrderLines(x);
-				
-				String payPlan=masterOrder.getPayPlan();
-				File file = new File("resources/pay_plans/"+payPlan+"_"+nol.getDescription()+".ods");
-				Sheet sheet = SpreadSheet.createFromFile(file).getSheet(""+masterYear);
-				BigDecimal q=nol.getQuantityAsDecimal();
-				//println q+" q"
-				BigDecimal value=(BigDecimal) sheet.getCellAt("B"+q.intValue()).getValue();
-				BigDecimal amount=(BigDecimal) sheet.getCellAt("C"+q.intValue()).getValue();
-				//println value+" value "+q+" q"+amount+" amount"
-				
-				
-				//Edit new order line
-				nol.setAmount(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12)));
-				nol.setPrice(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12)).divide(q));
-				monthStartPrintWithZero = (monthStartPrint < 10 ? "0" : "")+ monthStartPrint;
-				dayStartWithZero = (dayStart < 10 ? "0" : "") + dayStart;
-				prevMonthNextWithZero= (prevMonthNext < 10 ? "0" : "") + prevMonthNext;
-				prevDayNextWithZero= (prevDayNext < 10 ? "0" : "") + prevDayNext;
-				nol.setDescription(nol.getDescription()+" Period from "+monthStartPrintWithZero+"/"+dayStartWithZero+"/" +
-						""+newOrderActiveSinceYear+" to "+prevMonthNextWithZero+"/"+prevDayNextWithZero+"/"+prevYearNext);
-				nol.setUseItem(false);
-				
-			}
+			
 			
 			
 		}
@@ -3411,7 +3416,25 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 					}
 				}
 				else{
-					parentQuantity=orderDas.findNumberUsers(parentId, userId)+this.findItemQuantityInOrder(order,parentId);//total:order + database
+					Integer pQDb=orderDas.findNumberUsers(parentId, userId);
+					Integer pQOrder=findItemQuantityInOrder(order,parentId);
+					//Installation fees. 
+					if(hasToBeQuantityOne(parentId).equals(1) && isOneTimer(parentId)){
+						//If already in the database, then not more needed.
+						if(pQDb>0){
+							parentQuantity=childQuantity;//dependencies 0
+						}
+						//Installation fee not payed yet
+						else {
+							parentQuantity=pQOrder;//total:order
+						}
+					}
+					//Licenses, and yearly payable items.
+					else {
+						parentQuantity=pQDb+pQOrder;//total:order + database
+					}
+					
+					
 					//Normal dependencies
 					if( parentQuantity < childQuantity){
 						difference=childQuantity-parentQuantity;
@@ -3585,7 +3608,7 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 	 */
 	public OrderWS moveOneTimersToNewOrder(OrderWS order){
 		OrderWS newOrder=null;
-		ArrayList<OrderLineWS> linesToDelete=null;
+		ArrayList<OrderLineWS> linesToDelete=new ArrayList<OrderLineWS>();;
 		OrderLineWS[] orderLines = order.getOrderLines();
 		for(OrderLineWS ol: orderLines){
 			if(ol.getDeleted()==0){
@@ -3624,9 +3647,6 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 					OrderLineWS[] l = lines.toArray(new OrderLineWS[lines.size()]);
 					newOrder.setOrderLines(l);
 					
-					if(linesToDelete==null){
-						linesToDelete= new ArrayList<OrderLineWS>();
-					}
 					linesToDelete.add(ol);
 					
 				}
