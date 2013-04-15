@@ -3269,6 +3269,11 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
     	return mapList;
     }
     
+    public List<Integer> getItemUsersItems(Integer userId){
+    	OrderDAS orderDas=new OrderDAS();
+    	return orderDas.getItemUsersItems(userId);
+    }
+    
     public List getAllDependencies(){
     	ItemDAS itemDas=new ItemDAS();
     	List<Object[]> list=itemDas.getAllDependencies();

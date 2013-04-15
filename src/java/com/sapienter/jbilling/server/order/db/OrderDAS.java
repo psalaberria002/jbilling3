@@ -16,6 +16,7 @@
 package com.sapienter.jbilling.server.order.db;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -415,6 +416,18 @@ public class OrderDAS extends AbstractDAS<OrderDTO> {
       	 	
        	return query.list();
        }
+	
+	public List<Integer> getItemUsersItems(Integer userId){
+		Query query = getSession()
+                .createSQLQuery("select a.item_id from item_users a " +
+                		"where a.user_id=:userId ORDER BY a.item_id ASC")
+                .setParameter("userId", userId);
+		List<Integer> list=(ArrayList<Integer>)query.list();
+   	 	if(list==null){
+   	 		return new ArrayList<Integer>();
+   	 	}
+    	return list;
+	}
     
     
 }

@@ -208,16 +208,89 @@ class OrderBuilderController {
 						}
 					}
 					
-				// add line to order
+					
+					
+				// add line to order if not already added. preventing double items
 				def order = conversation.order
 				def lines = order.orderLines as List
-				lines.add(line)
-				//add double linked item lines to order
+				boolean has=false;
+				println lines.size()
+				for(int i=0;i<lines.size();i++){
+					OrderLineWS ol=lines.get(i);
+					println "adding line "+ol.getItemId().equals(line.itemId)
+					if(ol.getItemId().equals(line.itemId)){
+						has=true;
+					}
+					
+				}
+				if(!has){
+					lines.add(line);
+				}
+			
+				//When addToMaster==1 automatically add already bought items to the order
+				if(order.addToMaster==1 && !has){
+					//Add already bought items to the linesToAdd ArrayList
+					def itemUsersItems=new ArrayList<Integer>();
+					itemUsersItems=webServicesSession.getItemUsersItems(order.userId)
+						if(!itemUsersItems.isEmpty()){
+							for(Integer itemId: itemUsersItems){
+								//Non installation fees
+								if(!(webServicesSession.isOneTimer(itemId)&&webServicesSession.hasToBeQuantityOne(itemId).equals(1))){
+									boolean contains=false;
+									Iterator<OrderLineWS> ite=linesToAdd.iterator();
+									while(ite.hasNext()&& !contains){
+										OrderLineWS ol=ite.next();
+										if(ol.getItemId().equals(itemId)){
+											contains=true;
+										}
+									}
+									lines.each{
+										if(it.getItemId().equals(itemId)){
+											contains=true;
+										}
+									}
+									if(!contains && !line.itemId.equals(itemId)){
+										println "contains"
+										// build line
+										def l = new OrderLineWS()
+										l.typeId = Constants.ORDER_LINE_TYPE_ITEM
+										l.quantity = line.getQuantityAsDecimal()
+										l.itemId = itemId
+										l.useItem = true
+										linesToAdd.add(l)
+									}
+								}
+								
+								
+							}
+						}
+				}
+				
+				
+				//add double linked items and already bought items to order
+				
 				if(!linesToAdd.isEmpty()){
-					for(OrderLineWS oline: linesToAdd){
-						lines.add(oline)
+					println linesToAdd.size()
+					for(int i=0;i<linesToAdd.size();i++){
+						println lines.size()
+						has=false;
+						OrderLineWS oline=linesToAdd.get(i);
+						for(int j=0;j<lines.size();j++){
+							OrderLineWS ol=lines.get(j);
+							if(ol.getItemId().equals(oline.getItemId())){
+								has=true;
+								break;
+							}
+						}
+						if(!has){
+							lines.add(oline);
+						}
 					}
 				}
+				
+				
+					
+					
                 order.orderLines = lines.toArray()
 
                 // rate order
@@ -232,7 +305,7 @@ class OrderBuilderController {
 				
                 conversation.order = order
 
-                params.newLineIndex = lines.size() - (doubleLinkedChildren.size()+1)
+                params.newLineIndex = lines.size() - linesToAdd.size() -1
                 params.template = 'review'
             }
             on("success").to("build")
@@ -280,7 +353,60 @@ class OrderBuilderController {
                 // add line to order
                 order.orderLines[index] = line
 				
+				// add line to order
 				def lines = order.orderLines as List
+				def linesToAdd=new ArrayList<OrderLineWS>();
+				//When addToMaster==1 automatically add already bought items to the order
+				if(order.addToMaster==1){
+					//Add already bought items to the linesToAdd ArrayList
+					def itemUsersItems=new ArrayList<Integer>();
+					itemUsersItems=webServicesSession.getItemUsersItems(order.userId)
+						if(!itemUsersItems.isEmpty()){
+							for(Integer itemId: itemUsersItems){
+								//Non installation fees
+								if(!(webServicesSession.isOneTimer(itemId)&&webServicesSession.hasToBeQuantityOne(itemId).equals(1))){
+									boolean contains=false;
+									Iterator<OrderLineWS> ite=linesToAdd.iterator();
+									while(ite.hasNext()&& !contains){
+										OrderLineWS ol=ite.next();
+										if(ol.getItemId().equals(itemId)){
+											contains=true;
+										}
+									}
+									lines.each{
+										if(it.getItemId().equals(itemId)){
+											contains=true;
+										}
+									}
+									if(!contains && !line.itemId.equals(itemId)){
+										println "contains"
+										// build line
+										def l = new OrderLineWS()
+										l.typeId = Constants.ORDER_LINE_TYPE_ITEM
+										l.quantity = line.getQuantityAsDecimal()
+										l.itemId = itemId
+										l.useItem = true
+										linesToAdd.add(l)
+									}
+								}
+								
+								
+							}
+						}
+				}
+				
+				
+					//add double linked items and already bought items to order
+					if(!linesToAdd.isEmpty()){
+						for(OrderLineWS oline: linesToAdd){
+							println oline.getDescription()
+							lines.add(oline)
+						}
+					}
+					
+				order.orderLines = lines.toArray()
+				
+				lines = order.orderLines as List
 				def checked=new ArrayList<Integer>();
 				def visited=webServicesSession.bfsRelatedItemsInOrder(line,lines)
 				lines=webServicesSession.updateQuantityInOrderLines(lines,visited,line.getQuantityAsDecimal())
