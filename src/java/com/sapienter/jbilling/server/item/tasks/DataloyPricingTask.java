@@ -78,11 +78,12 @@ public class DataloyPricingTask extends PluggableTask implements IPricing {
         	
             OrderDAS das=new OrderDAS();
             masterOrder = das.findMasterByUser(userId);
-            
+            System.out.println(masterOrder.getId());
             Date masterOrderNextBillableDay = masterOrder.getNextBillableDay();
             //If invoice never generated for the master-> masterOrderNextBillable=null
             cal.setTime(masterOrderNextBillableDay);
             year=cal.get(Calendar.YEAR)-1;
+            System.out.println(year+" "+masterOrderNextBillableDay);
         }
         else if(pricingOrder.getIsMaster()==1){
         	masterOrder=pricingOrder;

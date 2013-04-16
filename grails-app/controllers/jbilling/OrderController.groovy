@@ -228,14 +228,16 @@ class OrderController {
             }
             flash.message = 'order.succcessfully.applied.to.invoice'
             flash.args = [params.id, invoice]
+			redirect controller: 'invoice', action: 'list', params: [id: invoiceID]
         } catch (SessionInternalError e){
             flash.error ='order.error.apply.invoice'
             viewUtils.resolveException(flash, session.locale, e);
         } catch (Exception e) {
             log.error e
             flash.error= e.getMessage()
+			redirect action: 'list', params: [ id: params.id ]
         }
-        redirect action: 'list', params: [ id: params.id ]
+        
     }
 
     def getApplicableInvoices(Integer userId) {

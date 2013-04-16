@@ -97,13 +97,14 @@ hr {
 }
 #header h1 {
 	margin:0;
-	width:107px;
-	height:60px;
+	width:150px;
+	height:50px;
 	text-indent:-9999px;
 	overflow:hidden;
-	background:url(../images/logo.gif) no-repeat;
+	background:url(../images/dataloy_logo.png) no-repeat;
 	position:absolute;
-	top:6px;
+	background-size:100% 100%;
+	top:15px;
 	left:0;
 }
 #header h1 a {
