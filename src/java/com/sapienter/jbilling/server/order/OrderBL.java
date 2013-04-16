@@ -398,6 +398,27 @@ public class OrderBL extends ResultList implements OrderSQL {
 
 				}
 			}
+			else{
+				ItemDAS itemDas=new ItemDAS();
+				for (Iterator i = order.getLines().iterator(); i.hasNext();) {
+					OrderLineDTO temp = (OrderLineDTO) i.next();
+					//Not deleted and One timer (License or setup fee)
+					if ((temp.getDeleted() == 0) && (itemDas.getItemPeriod(temp.getItemId()).equals("One time")||itemDas.getItemPeriod(temp.getItemId()).equals(null)||itemDas.getItemPeriod(temp.getItemId()).equals("")) ) {
+						Integer oldQuantity = orderDas.findNumberUsers(
+								temp.getItemId(), order.getUserId());
+
+						if (oldQuantity == null) {
+							oldQuantity = new Integer(0);
+						}
+						//System.out.println(oldQuantity+" oldQuantity");
+						Integer newQuantity = oldQuantity
+								+ (temp.getQuantityInt());
+						orderDas.updateOrInsertItemUsers(temp.getItemId(),
+								order.getUserId(), newQuantity);
+					}
+
+				}
+			}
 
 			// link the lines to the new order
 			for (OrderLineDTO line : order.getLines()) {

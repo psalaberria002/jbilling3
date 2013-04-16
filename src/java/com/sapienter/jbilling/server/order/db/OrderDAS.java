@@ -420,7 +420,7 @@ public class OrderDAS extends AbstractDAS<OrderDTO> {
 	public List<Integer> getItemUsersItems(Integer userId){
 		Query query = getSession()
                 .createSQLQuery("select a.item_id from item_users a " +
-                		"where a.user_id=:userId ORDER BY a.item_id ASC")
+                		"where a.user_id=:userId AND a.users>0 ORDER BY a.item_id ASC")
                 .setParameter("userId", userId);
 		List<Integer> list=(ArrayList<Integer>)query.list();
    	 	if(list==null){

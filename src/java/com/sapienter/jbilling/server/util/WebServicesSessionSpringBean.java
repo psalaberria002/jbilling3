@@ -3441,11 +3441,20 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 					
 					
 					//Normal dependencies
-					if( parentQuantity < childQuantity){
-						difference=childQuantity-parentQuantity;
-						if( (needed.containsKey(parentId)&&(needed.get(parentId)<difference)) || !needed.containsKey(parentId)){
-							needed.put(parentId, difference);
+					if( parentQuantity != childQuantity){
+						if(parentQuantity < childQuantity){
+							difference=childQuantity-parentQuantity;
+							if( (needed.containsKey(parentId)&&(needed.get(parentId)<difference)) || !needed.containsKey(parentId)){
+								needed.put(parentId, difference);
+							}
 						}
+						else{
+							difference=parentQuantity-childQuantity;
+							if( (needed.containsKey(orderLine.getItemId())&&(needed.get(orderLine.getItemId())<difference)) || !needed.containsKey(orderLine.getItemId())){
+								needed.put(orderLine.getItemId(), difference);
+							}
+						}
+						
 					}
 				}
 				
