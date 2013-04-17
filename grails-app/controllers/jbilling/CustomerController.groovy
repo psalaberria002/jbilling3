@@ -214,7 +214,7 @@ class CustomerController {
         recentItemService.addRecentItem(user.userId, RecentItemType.CUSTOMER)
         breadcrumbService.addBreadcrumb(controllerName, 'list', params.template ?: null, user.userId, UserHelper.getDisplayName(user, contact))
 
-        render template: params.template ?: 'show', model: [ selected: user, contact: contact, revenue: revenue, latestOrder: latestOrder, latestPayment: latestPayment, latestInvoice: latestInvoice , item_users: item_users,maintenanceAndSupport:maintenanceAndSupport, licensesAndSetup:licensesAndSetup]
+        render template: params.template ?: 'show', model: [ selected: user, contact: contact, revenue: revenue, latestOrder: latestOrder, latestPayment: latestPayment, latestInvoice: latestInvoice ,maintenanceAndSupport:maintenanceAndSupport, licensesAndSetup:licensesAndSetup]
     }
 
     /**

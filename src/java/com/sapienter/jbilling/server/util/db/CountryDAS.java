@@ -16,6 +16,11 @@
 
 package com.sapienter.jbilling.server.util.db;
 
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
+
+import com.sapienter.jbilling.server.order.db.OrderDTO;
+
 /**
  * CountryDas
  *
@@ -23,5 +28,12 @@ package com.sapienter.jbilling.server.util.db;
  * @since 15/02/11
  */
 public class CountryDAS extends AbstractDAS<CountryDTO> {
+	
+	public CountryDTO getByCode(String code){
+		Criteria criteria = getSession().createCriteria(CountryDTO.class)
+                .add(Restrictions.eq("code", code));
+
+        return findFirst(criteria);
+	}
 
 }

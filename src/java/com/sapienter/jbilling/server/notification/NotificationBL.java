@@ -92,6 +92,9 @@ import com.sapienter.jbilling.server.util.Constants;
 import com.sapienter.jbilling.server.util.Context;
 import com.sapienter.jbilling.server.util.PreferenceBL;
 import com.sapienter.jbilling.server.util.Util;
+import com.sapienter.jbilling.server.util.db.CountryDAS;
+import com.sapienter.jbilling.server.util.db.CountryDTO;
+
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Map;
@@ -711,6 +714,7 @@ public class NotificationBL extends ResultList implements NotificationSQL {
                                 + "designs/" + design + ".jasper";
 
             File compiledDesign = new File(designFile);
+            System.out.println(compiledDesign.toPath());
             LOG.debug("Generating paper invoice with design file : " + designFile);
             FileInputStream stream = new FileInputStream(compiledDesign);
             Locale locale = (new UserBL(invoice.getUserId())).getLocale();
@@ -720,6 +724,9 @@ public class NotificationBL extends ResultList implements NotificationSQL {
             parameters.put("invoiceNumber", invoice.getPublicNumber());
             parameters.put("invoiceId", invoice.getId());
             parameters.put("entityName", printable(from.getOrganizationName()));
+            CountryDAS cDas=new CountryDAS();
+            CountryDTO dto=cDas.getByCode(from.getCountryCode());
+            parameters.put("entityCountry", printable(dto.getDescription()));
             parameters.put("entityAddress", printable(from.getAddress1()));
             parameters.put("entityAddress2", printable(from.getAddress2()));
             parameters.put("entityPostalCode", printable(from.getPostalCode()));
@@ -797,6 +804,7 @@ public class NotificationBL extends ResultList implements NotificationSQL {
             File logo = new File(com.sapienter.jbilling.common.Util
                     .getSysProp("base_dir")
                     + "logos/entity-" + entityId + ".jpg");
+            System.out.println(logo.toPath());
             parameters.put("entityLogo", logo);
 
             // the invoice lines go as the data source for the report
@@ -864,7 +872,8 @@ public class NotificationBL extends ResultList implements NotificationSQL {
             String subreportDir = com.sapienter.jbilling.common.Util
                 .getSysProp("base_dir") + "designs/";
             parameters.put("SUBREPORT_DIR", subreportDir);
-
+            
+            System.out.println(parameters);
             // at last, generate the report
             JasperPrint report = null;
             if (useSqlQuery) {
