@@ -59,11 +59,26 @@
     <div class="heading">
         <strong><g:message code="customer.detail.items.title"/></strong>
     </div>
-    <div class="box">
+    <div id="table-container" class="box" >
 
         <table class="dataTable" cellspacing="0" cellpadding="0">
+            <tbody>	
+            <g:if test="${!maintenanceAndSupport.isEmpty()}"><th>Maintenance & Support</th></g:if>
+            	<g:each in="${maintenanceAndSupport}">
+            	<g:if test="${!it.users.equals('0') }">
+            		<tr>
+                    	<td>${it.content}</td>
+                    	<td class="value">${it.users}</td>
+                	</tr>
+                </g:if>
+				</g:each>
+                
+            </tbody>
+        </table>
+        <table class="dataTable" cellspacing="0" cellpadding="0">
             <tbody>
-            	<g:each in="${item_users}">
+            	<g:if test="${!licensesAndSetup.isEmpty()}"><th>License and setup fee</th></g:if>
+            	<g:each in="${licensesAndSetup}">
             	<g:if test="${!it.users.equals('0') }">
             		<tr>
                     	<td>${it.content}</td>

@@ -356,8 +356,8 @@ class OrderBuilderController {
 				// add line to order
 				def lines = order.orderLines as List
 				def linesToAdd=new ArrayList<OrderLineWS>();
-				//When addToMaster==1 automatically add already bought items to the order
-				if(order.addToMaster==1){
+				//When addToMaster==1 and quantity positive -> automatically add already bought items to the order
+				if(order.addToMaster==1 && line.quantityAsDecimal > 0){
 					//Add already bought items to the linesToAdd ArrayList
 					def itemUsersItems=new ArrayList<Integer>();
 					itemUsersItems=webServicesSession.getItemUsersItems(order.userId)

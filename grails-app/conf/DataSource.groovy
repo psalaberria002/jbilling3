@@ -30,9 +30,6 @@ dataSource {
     
 	dialect = "org.hibernate.dialect.PostgreSQLDialect"
     driverClassName = "org.postgresql.Driver"
-    username = "jbilling"
-    password = "jbilling"
-    url = "jdbc:postgresql://localhost:5432/jbilling_test"
 	
 	
 
@@ -51,3 +48,27 @@ hibernate {
     cache.use_query_cache = true
     cache.provider_class = 'net.sf.ehcache.hibernate.EhCacheProvider'
 }
+
+environments {
+	development {
+		dataSource {
+			username = "jbilling"
+			password = "jbilling"
+			url = "jdbc:postgresql://localhost:5432/jbilling_dev"
+		}
+	}
+	test {
+		dataSource {
+			username = "jbilling"
+			password = "jbilling"
+			url = "jdbc:postgresql://localhost:5432/jbilling_test"
+		}
+	}
+	production {
+		dataSource {
+			username = "jbilling"
+			password = "jbilling"
+			url = "jdbc:postgresql://localhost:5432/jbilling"
+		}
+	}
+	}

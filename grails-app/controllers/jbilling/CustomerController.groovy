@@ -204,13 +204,17 @@ class CustomerController {
         def latestOrder = webServicesSession.getLatestOrder(user.userId)
         def latestPayment = webServicesSession.getLatestPayment(user.userId)
         def latestInvoice = webServicesSession.getLatestInvoice(user.userId)
-		def item_users = webServicesSession.getItemUsersWithDescription(user.userId)
+		def x=webServicesSession.getOneTimersAndMANDSWithDescription(user.userId)
+		def maintenanceAndSupport=x.getAt(0)
+		def licensesAndSetup=x.getAt(1)
+		println x.size()
+		println licensesAndSetup
 		
 
         recentItemService.addRecentItem(user.userId, RecentItemType.CUSTOMER)
         breadcrumbService.addBreadcrumb(controllerName, 'list', params.template ?: null, user.userId, UserHelper.getDisplayName(user, contact))
 
-        render template: params.template ?: 'show', model: [ selected: user, contact: contact, revenue: revenue, latestOrder: latestOrder, latestPayment: latestPayment, latestInvoice: latestInvoice , item_users: item_users]
+        render template: params.template ?: 'show', model: [ selected: user, contact: contact, revenue: revenue, latestOrder: latestOrder, latestPayment: latestPayment, latestInvoice: latestInvoice , item_users: item_users,maintenanceAndSupport:maintenanceAndSupport, licensesAndSetup:licensesAndSetup]
     }
 
     /**

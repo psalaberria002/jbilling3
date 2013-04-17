@@ -3252,19 +3252,31 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 		return order;	
 	}
     
-    public List<Map<String,String>> getItemUsersWithDescription(Integer userId){
+    public List<List<Map<String,String>>> getOneTimersAndMANDSWithDescription(Integer userId){
     	OrderDAS orderDas=new OrderDAS();
     	List<Object[]> list=orderDas.findItemUsersWithDescription(userId);
     	Iterator it=list.iterator();
+    	List<List<Map<String,String>>> mapList=new ArrayList<List<Map<String,String>>>();
     	
-    	List<Map<String,String>> mapList=new ArrayList<Map<String,String>>();
+    	List<Map<String,String>> oneTimers=new ArrayList<Map<String,String>>();
+    	List<Map<String,String>> mAndS=new ArrayList<Map<String,String>>();
     	while(it.hasNext()){
     		Map<String,String> map=new HashMap<String, String>();
     		Object[] o=(Object[])it.next();
-    		map.put("content",(String)o[0]);
-    		map.put("users", String.valueOf((Integer)o[2]));
-    		mapList.add(map);
+    		if(isOneTimer((Integer)o[1])){
+        		map.put("content",(String)o[0]);
+        		map.put("users", String.valueOf((Integer)o[2]));
+        		oneTimers.add(map);
+    		}
+    		else{
+        		map.put("content",(String)o[0]);
+        		map.put("users", String.valueOf((Integer)o[2]));
+        		mAndS.add(map);
+    		}
+    		
     	}
+    	mapList.add(mAndS);
+    	mapList.add(oneTimers);
     	
     	return mapList;
     }
@@ -3404,14 +3416,19 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 			Integer difference=null;
 			Integer childQuantity=null;
 			Integer parentQuantity=null;
+			if(orderLine.getQuantityAsDecimal().signum()==-1){
+				System.out.println("isNegative");
+				return needed;
+			}
 			for(Integer parentId: parents){
 				childQuantity=orderLine.getQuantityAsDecimal().intValueExact()+orderDas.findNumberUsers(orderLine.getItemId(), userId);//total: order + database
 				//If the items are equals, the parentQuantity will be minItems
 				if(parentId.equals(itemId)){
 					System.out.println("equals");
 					parentQuantity=getMinItems(itemId);
+					System.out.println(parentQuantity+" "+childQuantity);
 					//Min items dependencies
-					if(parentQuantity>childQuantity){
+					if(parentQuantity>childQuantity ){
 						System.out.println(">");
 						difference=parentQuantity-childQuantity;
 						if( (needed.containsKey(parentId)&&(needed.get(parentId)<difference)) || !needed.containsKey(parentId)){
@@ -3441,7 +3458,7 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 					
 					
 					//Normal dependencies
-					if( parentQuantity != childQuantity){
+					if( parentQuantity != childQuantity ){
 						if(parentQuantity < childQuantity){
 							difference=childQuantity-parentQuantity;
 							if( (needed.containsKey(parentId)&&(needed.get(parentId)<difference)) || !needed.containsKey(parentId)){

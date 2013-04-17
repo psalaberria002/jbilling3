@@ -411,7 +411,7 @@ public class OrderDAS extends AbstractDAS<OrderDTO> {
 		
       	 Query query = getSession()
                    .createSQLQuery("select b.content,a.item_id,a.users from international_description b, item_users a " +
-                   		"where b.table_id=14 AND b.foreign_id=a.item_id AND b.language_id=1 AND a.user_id=:userId ORDER BY b.content ASC")
+                   		"where b.table_id=14 AND b.foreign_id=a.item_id AND b.language_id=1 AND a.user_id=:userId AND a.users>0 ORDER BY a.item_id ASC")
                    .setParameter("userId", userId);
       	 	
        	return query.list();
