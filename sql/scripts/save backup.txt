@@ -1,5 +1,5 @@
-WINDOWS pg_dump -U jbilling -c jbilling_dev > %date%_jbilling_test.backup
+WINDOWS pg_dump --clean -U jbilling -c jbilling_dev > %date%_jbilling_dev.backup
 
-MAC pg_dump -U jbilling -d jbilling_dev > $(date '+%d.%m.%Y-%H%M') --clean
+MAC pg_dump -U jbilling -d jbilling_dev > $(date '+%d.%m.%Y-%H%M')_jbilling_dev.backup --clean
 
 RESTORE psql -U jbilling -d jbilling_dev -f ...

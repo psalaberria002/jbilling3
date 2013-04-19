@@ -319,14 +319,16 @@
     </div>
 
     <!-- Invoice Notes -->
-    <g:if test="${selected.customerNotes}">
         <div class="heading">
-            <strong><g:message code="invoice.label.note"/></strong>
+           <strong><g:message code="invoice.label.note"/></strong>
         </div>
         <div class="box">
-            <p>${selected.customerNotes}</p>
+                 <g:form controller="invoice" action="saveNotes">
+                 <g:hiddenField name="id" value="${selected?.id}"/>
+                <g:textArea name="notes" rows="5" cols="60" value="${selected.customerNotes}"/>
+                <g:submitButton class="submit save" name="saveNotes" value="Save Notes" />
+                </g:form>
         </div>
-    </g:if>
 
     <div class="btn-box">
         <sec:ifAllGranted roles="INVOICE_70">
@@ -339,7 +341,9 @@
             </g:preferenceEquals>
         </sec:ifAllGranted>
     </div>
+    
 </div>
+
 
 <script type="text/javascript">
     function setUnlinkPaymentId(invId, pymId) {

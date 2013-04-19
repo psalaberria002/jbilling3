@@ -289,7 +289,6 @@ public class NotificationBL extends ResultList implements NotificationSQL {
             sectionContent = new MessageSection(new Integer(2), null);
             retValue.addSection(sectionContent);
         }
-
         return retValue;
     }
 
@@ -710,15 +709,8 @@ public class NotificationBL extends ResultList implements NotificationSQL {
         try {
             // This is needed for JasperRerpots to work, for some twisted XWindows issue
             System.setProperty("java.awt.headless", "true");
-            String designFile = com.sapienter.jbilling.common.Util.getSysProp("base_dir")
-                                + "designs/" + design + ".jasper";
-
-            File compiledDesign = new File(designFile);
-            System.out.println(compiledDesign.toPath());
-            LOG.debug("Generating paper invoice with design file : " + designFile);
-            FileInputStream stream = new FileInputStream(compiledDesign);
+            
             Locale locale = (new UserBL(invoice.getUserId())).getLocale();
-
             // add all the invoice data
             HashMap<String, Object> parameters = new HashMap<String, Object>();
             parameters.put("invoiceNumber", invoice.getPublicNumber());
@@ -727,6 +719,8 @@ public class NotificationBL extends ResultList implements NotificationSQL {
             CountryDAS cDas=new CountryDAS();
             CountryDTO dto=cDas.getByCode(from.getCountryCode());
             parameters.put("entityCountry", printable(dto.getDescription()));
+            dto=cDas.getByCode(to.getCountryCode());
+            parameters.put("customerCountry", printable(dto.getDescription()));
             parameters.put("entityAddress", printable(from.getAddress1()));
             parameters.put("entityAddress2", printable(from.getAddress2()));
             parameters.put("entityPostalCode", printable(from.getPostalCode()));
@@ -847,6 +841,19 @@ public class NotificationBL extends ResultList implements NotificationSQL {
                     return Integer.valueOf(a.getId()).compareTo(Integer.valueOf(b.getId())); 
                 } 
             });
+            
+            //Different design file for companies exempt of taxes
+            if(taxTotal.equals(new BigDecimal(0))){
+            	design=design.replace("_tax", "_notax");
+            }
+            String designFile = com.sapienter.jbilling.common.Util.getSysProp("base_dir")
+                    + "designs/" + design + ".jasper";
+
+            File compiledDesign = new File(designFile);
+            System.out.println(compiledDesign.toPath());
+            LOG.debug("Generating paper invoice with design file : " + designFile);
+            FileInputStream stream = new FileInputStream(compiledDesign);
+            
             
             // now add the tax
             parameters.put("tax", Util.formatMoney(taxTotal, invoice.getUserId(), invoice

@@ -21,6 +21,7 @@ import com.sapienter.jbilling.client.util.SortableCriteria
 import com.sapienter.jbilling.common.SessionInternalError
 import com.sapienter.jbilling.server.invoice.InvoiceWS
 import com.sapienter.jbilling.server.invoice.db.InvoiceDTO
+import com.sapienter.jbilling.server.invoice.db.InvoiceDAS
 import com.sapienter.jbilling.server.invoice.db.InvoiceStatusDAS
 import com.sapienter.jbilling.server.item.CurrencyBL
 import com.sapienter.jbilling.server.user.db.CompanyDTO
@@ -266,4 +267,29 @@ class InvoiceController {
         def currencies = new CurrencyBL().getCurrencies(session['language_id'].toInteger(), session['company_id'].toInteger())
         return currencies.findAll { it.inUse }
     }
+	
+	def saveNotes={
+		if (!params.id) {
+			flash.error = 'error.invoice.saveNotes.missing.id'
+			redirect action: 'list'
+			return
+		}
+		
+		Integer invoiceId = params.int('id') as Integer
+		InvoiceDAS das=new InvoiceDAS();
+		println params
+		println params.customerNotes
+		InvoiceDTO dto=das.find(invoiceId)
+		if(params.notes){
+			dto.setCustomerNotes(params.notes);
+			das.save(dto);
+		}
+		else{
+			params.notes="";
+			dto.setCustomerNotes(params.notes);
+			das.save(dto);
+		}
+		session.message = 'Customer notes have been saved for invoice '+invoiceId
+		redirect action: list
+	}
 }
