@@ -73,6 +73,7 @@ import com.sapienter.jbilling.server.item.ItemTypeWS;
 import com.sapienter.jbilling.server.item.PricingField;
 import com.sapienter.jbilling.server.item.db.ItemDAS;
 import com.sapienter.jbilling.server.item.db.ItemDTO;
+import com.sapienter.jbilling.server.item.db.ItemPriceDTO;
 import com.sapienter.jbilling.server.item.db.ItemTypeDTO;
 import com.sapienter.jbilling.server.mediation.IMediationSessionBean;
 import com.sapienter.jbilling.server.mediation.MediationConfigurationBL;
@@ -3064,6 +3065,29 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 									}
 									BigDecimal value=(BigDecimal) sheet.getCellAt("B"+totalQuantity.intValue()).getValue();
 									BigDecimal amount=(BigDecimal) sheet.getCellAt("C"+totalQuantity.intValue()).getValue();
+									
+									//If the currency is NOT Norwegian Krone
+									CurrencyDAS cdas=new CurrencyDAS();
+									CurrencyDTO cdto=cdas.find(order.getCurrencyId());
+									if(!cdto.getCode().equals("NOK")){
+										CurrencyBL cbl=new CurrencyBL();
+										ItemDAS idas=new ItemDAS();
+										ItemDTO idto=idas.find(nol.getItemId());
+										Iterator<ItemPriceDTO> it=idto.getItemPrices().iterator();
+										boolean go=false;
+										Integer fromCurrency=0;
+										while(it.hasNext() && go==false){
+											ItemPriceDTO ip=it.next();
+											//CurrencyId for NOK
+											if(ip.getCurrency().getCode().equals("NOK")){
+												go=true;
+												fromCurrency=ip.getCurrencyId();
+											}
+										}
+										UserDAS udas=new UserDAS();
+										UserDTO udto=udas.find(order.getUserId());
+										amount=cbl.convert(fromCurrency, order.getCurrencyId(), amount, udto.getEntity().getId() );
+									}
 									
 									
 									if(negative==true){

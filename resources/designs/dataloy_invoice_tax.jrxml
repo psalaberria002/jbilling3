@@ -37,12 +37,12 @@
 	<field name="item.id" class="java.lang.Integer"/>
 	<group name="invoice_total">
 		<groupFooter>
-			<band height="308">
+			<band height="118">
 				<rectangle>
-					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="342" y="0" width="213" height="42"/>
+					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="363" y="0" width="192" height="42"/>
 				</rectangle>
 				<staticText>
-					<reportElement positionType="Float" x="342" y="0" width="56" height="14"/>
+					<reportElement positionType="Float" x="363" y="0" width="58" height="14"/>
 					<textElement textAlignment="Left" verticalAlignment="Bottom">
 						<font size="10" isBold="false" isItalic="false"/>
 					</textElement>
@@ -56,7 +56,7 @@
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{totalWithoutTax}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement positionType="Float" isPrintRepeatedValues="false" x="342" y="14" width="57" height="14" isRemoveLineWhenBlank="true">
+					<reportElement positionType="Float" isPrintRepeatedValues="false" x="363" y="14" width="58" height="14" isRemoveLineWhenBlank="true">
 						<printWhenExpression><![CDATA[($P{tax}!=null) && !$P{tax}.equals("NOK 0.00")]]></printWhenExpression>
 					</reportElement>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
@@ -74,7 +74,7 @@
 					<textFieldExpression class="java.lang.String"><![CDATA[$P{tax}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement positionType="Float" x="342" y="28" width="39" height="14"/>
+					<reportElement positionType="Float" x="363" y="28" width="36" height="14"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="10" isBold="true" isItalic="false"/>
 					</textElement>
@@ -260,14 +260,14 @@
 				<reportElement positionType="Float" x="0" y="5" width="555" height="19" backcolor="#333333"/>
 			</rectangle>
 			<staticText>
-				<reportElement positionType="Float" x="388" y="8" width="25" height="16" forecolor="#FFFFFF"/>
+				<reportElement positionType="Float" x="396" y="8" width="25" height="16" forecolor="#FFFFFF"/>
 				<textElement textAlignment="Right">
 					<font size="10"/>
 				</textElement>
 				<text><![CDATA[Qty]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="48" y="8" width="294" height="16" forecolor="#FFFFFF"/>
+				<reportElement positionType="Float" x="48" y="8" width="315" height="16" forecolor="#FFFFFF"/>
 				<textElement textAlignment="Center">
 					<font size="10"/>
 				</textElement>
@@ -295,7 +295,7 @@
 				<text><![CDATA[Product]]></text>
 			</staticText>
 			<staticText>
-				<reportElement positionType="Float" x="342" y="8" width="33" height="16" forecolor="#FFFFFF"/>
+				<reportElement positionType="Float" x="365" y="8" width="20" height="16" forecolor="#FFFFFF"/>
 				<textElement textAlignment="Left">
 					<font size="10"/>
 				</textElement>
@@ -311,17 +311,17 @@
 				</reportElement>
 			</rectangle>
 			<rectangle>
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="388" y="0" width="28" height="19">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="388" y="0" width="38" height="19">
 					<printWhenExpression><![CDATA[new Boolean($F{amount} != null)]]></printWhenExpression>
 				</reportElement>
 			</rectangle>
 			<rectangle>
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="416" y="0" width="70" height="19">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="426" y="0" width="60" height="19">
 					<printWhenExpression><![CDATA[new Boolean($F{amount} != null)]]></printWhenExpression>
 				</reportElement>
 			</rectangle>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" mode="Transparent" x="388" y="3" width="25" height="16" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement positionType="Float" mode="Transparent" x="396" y="3" width="25" height="16" forecolor="#000000" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[new Boolean($F{quantity} != null)]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right">
@@ -330,14 +330,14 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[(new DecimalFormat("#,##0.##")).format($F{quantity})]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement positionType="Float" x="48" y="3" width="294" height="16"/>
+				<reportElement positionType="Float" x="48" y="3" width="315" height="16"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement positionType="Float" x="438" y="3" width="45" height="16" backcolor="#000000">
+				<reportElement positionType="Float" x="428" y="3" width="55" height="16" backcolor="#000000">
 					<printWhenExpression><![CDATA[new Boolean($F{price} != null)]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Right">
@@ -364,12 +364,12 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[new java.lang.String(""+$F{item.id})]]></textFieldExpression>
 			</textField>
 			<rectangle>
-				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="342" y="0" width="46" height="19">
+				<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="363" y="0" width="25" height="19">
 					<printWhenExpression><![CDATA[new Boolean($F{amount} != null)]]></printWhenExpression>
 				</reportElement>
 			</rectangle>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" mode="Transparent" x="345" y="3" width="25" height="16" forecolor="#000000" backcolor="#FFFFFF">
+				<reportElement positionType="Float" mode="Transparent" x="370" y="3" width="18" height="16" forecolor="#000000" backcolor="#FFFFFF">
 					<printWhenExpression><![CDATA[new Boolean($F{quantity} != null)]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Left">

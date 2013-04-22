@@ -214,10 +214,10 @@ class OrderBuilderController {
 				def order = conversation.order
 				def lines = order.orderLines as List
 				boolean has=false;
-				println lines.size()
+				//println lines.size()
 				for(int i=0;i<lines.size();i++){
 					OrderLineWS ol=lines.get(i);
-					println "adding line "+ol.getItemId().equals(line.itemId)
+					//println "adding line "+ol.getItemId().equals(line.itemId)
 					if(ol.getItemId().equals(line.itemId)){
 						has=true;
 					}
@@ -250,7 +250,7 @@ class OrderBuilderController {
 										}
 									}
 									if(!contains && !line.itemId.equals(itemId)){
-										println "contains"
+										//println "contains"
 										// build line
 										def l = new OrderLineWS()
 										l.typeId = Constants.ORDER_LINE_TYPE_ITEM
@@ -270,9 +270,9 @@ class OrderBuilderController {
 				//add double linked items and already bought items to order
 				
 				if(!linesToAdd.isEmpty()){
-					println linesToAdd.size()
+					//println linesToAdd.size()
 					for(int i=0;i<linesToAdd.size();i++){
-						println lines.size()
+						//println lines.size()
 						has=false;
 						OrderLineWS oline=linesToAdd.get(i);
 						for(int j=0;j<lines.size();j++){
@@ -379,7 +379,7 @@ class OrderBuilderController {
 										}
 									}
 									if(!contains && !line.itemId.equals(itemId)){
-										println "contains"
+										//println "contains"
 										// build line
 										def l = new OrderLineWS()
 										l.typeId = Constants.ORDER_LINE_TYPE_ITEM
@@ -399,7 +399,7 @@ class OrderBuilderController {
 					//add double linked items and already bought items to order
 					if(!linesToAdd.isEmpty()){
 						for(OrderLineWS oline: linesToAdd){
-							println oline.getDescription()
+							//println oline.getDescription()
 							lines.add(oline)
 						}
 					}
@@ -594,7 +594,7 @@ class OrderBuilderController {
 							//order=webServicesSession.addDoubleLinkedItems(order)
 							order=webServicesSession.moveOneTimersToNewOrder(order)
 							conversation.order=order
-							println "dependency map empty, masterOrder=null and isMaster=1 "+order
+							//println "dependency map empty, masterOrder=null and isMaster=1 "+order
 							save()
 						}
 						else if(order.addToMaster==1){
@@ -636,7 +636,7 @@ class OrderBuilderController {
 							//order=webServicesSession.addDoubleLinkedItems(order)
 							//order=webServicesSession.moveOneTimersToNewOrder(order)
 							//conversation.order=order
-							println "dependency map empty, masterOrder exists and addToMaster=1 "+order
+							//println "dependency map empty, masterOrder exists and addToMaster=1 "+order
 							save()
 						}
 						else{
@@ -676,7 +676,7 @@ class OrderBuilderController {
             action {
                 try {
                     def order = conversation.order
-					println "Save order"
+					//println "Save order"
                     if (!order.id || order.id == 0) {
                         if (SpringSecurityUtils.ifAllGranted("ORDER_20"))  {
 							//Creating a new order. Not adding to the master order

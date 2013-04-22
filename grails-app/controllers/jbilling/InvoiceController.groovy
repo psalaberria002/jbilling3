@@ -277,8 +277,6 @@ class InvoiceController {
 		
 		Integer invoiceId = params.int('id') as Integer
 		InvoiceDAS das=new InvoiceDAS();
-		println params
-		println params.customerNotes
 		InvoiceDTO dto=das.find(invoiceId)
 		if(params.notes){
 			dto.setCustomerNotes(params.notes);
