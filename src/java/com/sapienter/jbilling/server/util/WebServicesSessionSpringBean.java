@@ -30,6 +30,7 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -2975,7 +2976,6 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 		calActive.setTime(orderActiveDay);
 		int newOrderActiveSinceYear= calActive.get(Calendar.YEAR);
 		int monthStart = calActive.get(Calendar.MONTH);
-		int dayStart = calActive.get(Calendar.DAY_OF_MONTH);
 		// getting next billable day of the master order
 		Date masterOrderNextBillableDay = masterOrder.getNextBillableDay();
 		Calendar cal=Calendar.getInstance();
@@ -2986,15 +2986,6 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 		
 		// getting previous day of the master order next billable day
 		cal.add(Calendar.DAY_OF_MONTH, -1);
-		cal.add(Calendar.MONTH, 1);
-		int prevDayNext = cal.get(Calendar.DAY_OF_MONTH);
-		int prevMonthNext = cal.get(Calendar.MONTH);
-		int prevYearNext = cal.get(Calendar.YEAR);
-		
-		// getting the next month of the activeSince for the new order (January is 0, but we want January to be 1 instead)
-		// it is just for creating the description (Period from mm/dd/yyyy to mm/dd/yyyy)
-		calActive.add(Calendar.MONTH, 1);
-		int monthStartPrint = calActive.get(Calendar.MONTH);
 		
 		// update the difference of months if the years are different
 		if(newOrderActiveSinceYear!=masterOrderNextBillableYear){
@@ -3011,22 +3002,12 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 		BigDecimal nolQuantity=new BigDecimal(0);
 		BigDecimal molQuantity=new BigDecimal(0);
 		BigDecimal totalQuantity=new BigDecimal(0);
-		String monthStartPrintWithZero;
-		String dayStartWithZero;
-		String prevMonthNextWithZero;
-		String prevDayNextWithZero;
 		
 		// each new order line
 		for(int i=0;i<newOrderLines.length;i++) { 
 			OrderLineWS nol= newOrderLines[i];
 			// exclude the installation fees
 			if(!(isOneTimer(nol.getItemId()) && (hasToBeQuantityOne(nol.getItemId()).equals(new Integer(1))))){
-				newOrderActiveSinceYear= calActive.get(Calendar.YEAR);
-				monthStartPrint = calActive.get(Calendar.MONTH);
-				dayStart = calActive.get(Calendar.DAY_OF_MONTH);
-				prevDayNext = cal.get(Calendar.DAY_OF_MONTH);
-				prevMonthNext = cal.get(Calendar.MONTH);
-				prevYearNext = cal.get(Calendar.YEAR);
 				totalQuantity=new BigDecimal(0);
 				boolean found=false;
 				nolQuantity=nol.getQuantityAsDecimal();
@@ -3036,12 +3017,6 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 					for(int j=0;j<masterOrderLines.length;j++) {
 						OrderLineWS mol= masterOrderLines[j];
 						if(mol.getDeleted()!=1){
-							newOrderActiveSinceYear= calActive.get(Calendar.YEAR);
-							monthStartPrint = calActive.get(Calendar.MONTH);
-							dayStart = calActive.get(Calendar.DAY_OF_MONTH);
-							prevDayNext = cal.get(Calendar.DAY_OF_MONTH);
-							prevMonthNext = cal.get(Calendar.MONTH);
-							prevYearNext = cal.get(Calendar.YEAR);
 							if(found==false){
 								// find the item of the new order line into the master order
 								if (nol.getItemId().equals(mol.getItemId())){
@@ -3087,12 +3062,9 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 											nol.setQuantity(totalQuantity);
 											nol.setAmount(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),2,RoundingMode.HALF_EVEN));
 											nol.setPrice(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),2,RoundingMode.HALF_EVEN).divide(totalQuantity,2,RoundingMode.HALF_EVEN));
-											monthStartPrintWithZero= (monthStartPrint < 10 ? "0" : "") + monthStartPrint;
-											dayStartWithZero = (dayStart < 10 ? "0" : "") + dayStart;
-											prevMonthNextWithZero= (prevMonthNext < 10 ? "0" : "") + prevMonthNext;
-											prevDayNextWithZero= (prevDayNext < 10 ? "0" : "") + prevDayNext;
-											nol.setDescription(mol.getDescription()+" Period from "+monthStartPrintWithZero+"/" +
-													""+dayStartWithZero+"/"+newOrderActiveSinceYear+" to "+prevMonthNextWithZero+"/"+prevDayNextWithZero+"/"+prevYearNext);
+											String newstring = new SimpleDateFormat("dd/MM/yyyy").format(orderActiveDay);
+											String newstring2 = new SimpleDateFormat("dd/MM/yyyy").format(cal.getTime());
+											nol.setDescription(mol.getDescription()+" Period from "+newstring+" to "+newstring2);
 											nol.setUseItem(false);
 											
 											// build line
@@ -3103,9 +3075,10 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 											line.setAmount(back.negate());
 											line.setItemId(mol.getItemId());
 											line.setUseItem(false);
-											line.setDescription(mol.getDescription()+" Period from "+monthStartPrintWithZero+"/"+dayStartWithZero+"/" +
+											line.setDescription(nol.getDescription());
+											/*line.setDescription(mol.getDescription()+" Period from "+monthStartPrintWithZero+"/"+dayStartWithZero+"/" +
 													""+newOrderActiveSinceYear+" to "+prevMonthNextWithZero+"/"+prevDayNextWithZero+"/"+prevYearNext);
-											
+											*/
 							
 											// add line to new order
 											ArrayList<OrderLineWS> lines = new ArrayList<OrderLineWS>(Arrays.asList(order.getOrderLines()));
@@ -3136,13 +3109,9 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 											line.setAmount(back.negate());
 											line.setItemId(mol.getItemId());
 											line.setUseItem(false);
-											monthStartPrintWithZero = (monthStartPrint < 10 ? "0" : "") + monthStartPrint;
-											dayStartWithZero = (dayStart < 10 ? "0" : "") + dayStart;
-											prevMonthNextWithZero= (prevMonthNext < 10 ? "0" : "") + prevMonthNext;
-											prevDayNextWithZero= (prevDayNext < 10 ? "0" : "") + prevDayNext;
-											line.setDescription(mol.getDescription()+" Period from "+monthStartPrintWithZero+"/"+dayStartWithZero+"/" +
-													""+newOrderActiveSinceYear+" to "+prevMonthNextWithZero+"/"+prevDayNextWithZero+"/"+prevYearNext);
-							
+											String newstring = new SimpleDateFormat("dd/MM/yyyy").format(orderActiveDay);
+											String newstring2 = new SimpleDateFormat("dd/MM/yyyy").format(cal.getTime());
+											line.setDescription(mol.getDescription()+" Period from "+newstring+" to "+newstring2);
 											// add line to new order
 											ArrayList<OrderLineWS> lines = new ArrayList<OrderLineWS>(Arrays.asList(order.getOrderLines()));
 											lines.remove(nol);
@@ -3181,8 +3150,6 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 						amount=updateWhenNotNOK(masterOrder, nol, amount);
 						nol.setAmount(amount);
 						nol.setPrice(nol.getAmountAsDecimal().divide(nol.getQuantityAsDecimal(),2,RoundingMode.HALF_EVEN));
-						
-						
 						
 						amount=(BigDecimal) sheet.getCellAt("C"+backq.intValue()).getValue();
 						
@@ -3238,12 +3205,9 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 					// edit new order line
 					nol.setAmount(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),2,RoundingMode.HALF_EVEN));
 					nol.setPrice(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),2,RoundingMode.HALF_EVEN).divide(q,2,RoundingMode.HALF_EVEN));
-					monthStartPrintWithZero = (monthStartPrint < 10 ? "0" : "")+ monthStartPrint;
-					dayStartWithZero = (dayStart < 10 ? "0" : "") + dayStart;
-					prevMonthNextWithZero= (prevMonthNext < 10 ? "0" : "") + prevMonthNext;
-					prevDayNextWithZero= (prevDayNext < 10 ? "0" : "") + prevDayNext;
-					nol.setDescription(nol.getDescription()+" Period from "+monthStartPrintWithZero+"/"+dayStartWithZero+"/" +
-							""+newOrderActiveSinceYear+" to "+prevMonthNextWithZero+"/"+prevDayNextWithZero+"/"+prevYearNext);
+					String newstring = new SimpleDateFormat("dd/MM/yyyy").format(orderActiveDay);
+					String newstring2 = new SimpleDateFormat("dd/MM/yyyy").format(cal.getTime());
+					nol.setDescription(nol.getDescription()+" Period from "+newstring+" to "+newstring2);
 					nol.setUseItem(false);
 				}
 			}
