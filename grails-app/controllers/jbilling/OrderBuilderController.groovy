@@ -190,7 +190,7 @@ class OrderBuilderController {
                 line.itemId = params.int('id')
                 line.useItem = true
 				
-				//Add double linked items to the linesToAdd ArrayList
+				// add double linked items to the linesToAdd ArrayList
 				def doubleLinkedChildren=new ArrayList<Integer>();
 				def linesToAdd=new ArrayList<OrderLineWS>();
 				
@@ -214,27 +214,24 @@ class OrderBuilderController {
 				def order = conversation.order
 				def lines = order.orderLines as List
 				boolean has=false;
-				//println lines.size()
 				for(int i=0;i<lines.size();i++){
 					OrderLineWS ol=lines.get(i);
-					//println "adding line "+ol.getItemId().equals(line.itemId)
 					if(ol.getItemId().equals(line.itemId)){
 						has=true;
 					}
-					
 				}
 				if(!has){
 					lines.add(line);
 				}
 			
-				//When addToMaster==1 automatically add already bought items to the order
+				// when addToMaster==1 automatically add already bought items to the order
 				if(order.addToMaster==1 && !has){
-					//Add already bought items to the linesToAdd ArrayList
+					// add already bought items to the linesToAdd ArrayList
 					def itemUsersItems=new ArrayList<Integer>();
 					itemUsersItems=webServicesSession.getItemUsersItems(order.userId)
 						if(!itemUsersItems.isEmpty()){
 							for(Integer itemId: itemUsersItems){
-								//Non installation fees
+								// non installation fees
 								if(!(webServicesSession.isOneTimer(itemId)&&webServicesSession.hasToBeQuantityOne(itemId).equals(1))){
 									boolean contains=false;
 									Iterator<OrderLineWS> ite=linesToAdd.iterator();
@@ -250,7 +247,6 @@ class OrderBuilderController {
 										}
 									}
 									if(!contains && !line.itemId.equals(itemId)){
-										//println "contains"
 										// build line
 										def l = new OrderLineWS()
 										l.typeId = Constants.ORDER_LINE_TYPE_ITEM
@@ -260,19 +256,14 @@ class OrderBuilderController {
 										linesToAdd.add(l)
 									}
 								}
-								
-								
 							}
 						}
 				}
 				
 				
-				//add double linked items and already bought items to order
-				
+				// add double linked items and already bought items to order
 				if(!linesToAdd.isEmpty()){
-					//println linesToAdd.size()
 					for(int i=0;i<linesToAdd.size();i++){
-						//println lines.size()
 						has=false;
 						OrderLineWS oline=linesToAdd.get(i);
 						for(int j=0;j<lines.size();j++){
@@ -288,9 +279,6 @@ class OrderBuilderController {
 					}
 				}
 				
-				
-					
-					
                 order.orderLines = lines.toArray()
 
                 // rate order
@@ -301,7 +289,6 @@ class OrderBuilderController {
                         viewUtils.resolveException(flow, session.locale, e)
                     }
                 }
-				
 				
                 conversation.order = order
 
@@ -338,7 +325,6 @@ class OrderBuilderController {
                 }
 
                 // existing line that's stored in the database will be deleted when quantity == 0
-
                 if (line.quantityAsDecimal == BigDecimal.ZERO) {
                     log.debug("zero quantity, marking line to be deleted.")
                     line.deleted = 1
@@ -353,17 +339,17 @@ class OrderBuilderController {
                 // add line to order
                 order.orderLines[index] = line
 				
-				// add line to order
+				
 				def lines = order.orderLines as List
 				def linesToAdd=new ArrayList<OrderLineWS>();
-				//When addToMaster==1 and quantity positive -> automatically add already bought items to the order
+				// when addToMaster==1 and quantity positive -> automatically add already bought items to the order
 				if(order.addToMaster==1 && line.quantityAsDecimal > 0){
-					//Add already bought items to the linesToAdd ArrayList
+					// add already bought items to the linesToAdd ArrayList
 					def itemUsersItems=new ArrayList<Integer>();
 					itemUsersItems=webServicesSession.getItemUsersItems(order.userId)
 						if(!itemUsersItems.isEmpty()){
 							for(Integer itemId: itemUsersItems){
-								//Non installation fees
+								// non installation fees
 								if(!(webServicesSession.isOneTimer(itemId)&&webServicesSession.hasToBeQuantityOne(itemId).equals(1))){
 									boolean contains=false;
 									Iterator<OrderLineWS> ite=linesToAdd.iterator();
@@ -379,7 +365,6 @@ class OrderBuilderController {
 										}
 									}
 									if(!contains && !line.itemId.equals(itemId)){
-										//println "contains"
 										// build line
 										def l = new OrderLineWS()
 										l.typeId = Constants.ORDER_LINE_TYPE_ITEM
@@ -394,19 +379,16 @@ class OrderBuilderController {
 							}
 						}
 				}
-				
-				
-					//add double linked items and already bought items to order
-					if(!linesToAdd.isEmpty()){
-						for(OrderLineWS oline: linesToAdd){
-							//println oline.getDescription()
-							lines.add(oline)
-						}
+				// add double linked items and already bought items to order
+				if(!linesToAdd.isEmpty()){
+					for(OrderLineWS oline: linesToAdd){
+						lines.add(oline)
 					}
+				}
 					
 				order.orderLines = lines.toArray()
-				
 				lines = order.orderLines as List
+				// update quantity of related items in order
 				def checked=new ArrayList<Integer>();
 				def visited=webServicesSession.bfsRelatedItemsInOrder(line,lines)
 				lines=webServicesSession.updateQuantityInOrderLines(lines,visited,line.getQuantityAsDecimal())
@@ -414,7 +396,6 @@ class OrderBuilderController {
 				order.orderLines=lines;
                 // rate order
                 if (order.orderLines) {
-					//println order+" order"
                     try {
                         order = webServicesSession.rateOrder(order)
                     } catch (SessionInternalError e) {
@@ -422,7 +403,7 @@ class OrderBuilderController {
                     }
                 }
 
-                // In case of a single order line having quantity set to zero, total of the order should be zero
+                // in case of a single order line having quantity set to zero, total of the order should be zero
                 if(order.orderLines.size()==1 && order.orderLines[0].quantity=='0'){
                     order.total = BigDecimal.ZERO
                 }
@@ -574,7 +555,7 @@ class OrderBuilderController {
 				def order=conversation.order
 				def dependencyMap=new HashMap<Integer,Integer>();
 				//def minItemsMap=new HashMap<Integer,Integer>();
-				//Check dependencies just when creating, not when editing. 
+				// check dependencies just when creating, not when editing. 
 				if (!order.id || order.id == 0) {
                         if (SpringSecurityUtils.ifAllGranted("ORDER_20"))  {
 							dependencyMap=webServicesSession.checkDependencies(order)
@@ -587,6 +568,7 @@ class OrderBuilderController {
 				}
 				
 				if(dependencyMap.isEmpty()){
+					log.debug("The order doesn't have more dependencies")
 					def masterOrder = webServicesSession.getMasterOrder(order.userId)
 					if(masterOrder==null){
 						
@@ -594,7 +576,6 @@ class OrderBuilderController {
 							//order=webServicesSession.addDoubleLinkedItems(order)
 							order=webServicesSession.moveOneTimersToNewOrder(order)
 							conversation.order=order
-							//println "dependency map empty, masterOrder=null and isMaster=1 "+order
 							save()
 						}
 						else if(order.addToMaster==1){
@@ -602,14 +583,14 @@ class OrderBuilderController {
 							String message;
 							message="Not able to add this order to the master order. Create a master order first!";
 							messages.add(message);
-							//When the arraylist contains just one message, create an empty message to interpret it as arraylist in the view
+							// when the arraylist contains just one message, create an empty message to interpret it as arraylist in the view
 							if(messages.size()==1){
 								messages.add(0,"");
 							}
 							params.dependencies=messages
 							cancel()
 						}
-						//Normal order
+						// normal order
 						else{
 							save()
 						}
@@ -621,7 +602,7 @@ class OrderBuilderController {
 								String message;
 								message="You cannot create more than one master order for this user. The master order for "+order.getUserId()+" is already created!";
 								messages.add(message);
-								//When the arraylist contains just one message, create an empty message to interpret it as arraylist in the view
+								// when the arraylist contains just one message, create an empty message to interpret it as arraylist in the view
 								if(messages.size()==1){
 									messages.add(0,"");
 								}
@@ -636,7 +617,6 @@ class OrderBuilderController {
 							//order=webServicesSession.addDoubleLinkedItems(order)
 							//order=webServicesSession.moveOneTimersToNewOrder(order)
 							//conversation.order=order
-							//println "dependency map empty, masterOrder exists and addToMaster=1 "+order
 							save()
 						}
 						else{
@@ -645,23 +625,24 @@ class OrderBuilderController {
 					}
 				
 				}
-				//Some dependencies yet.
+				// some dependencies yet
 				else{
-						ArrayList<String> messages=new ArrayList<String>();
-						String message;
-						for (Map.Entry<Integer, Integer> entry : dependencyMap.entrySet())
-						{
-							def neededItem = ItemDTO.findById(entry.getKey())
-							message="You have to buy "+entry.getValue()+" more "+neededItem.getDescription();
-							messages.add(message);
-						}
-						//When the arraylist contains just one message, create an empty message to interpret it as arraylist in the view
-						if(messages.size()==1){
-							messages.add(0,"");
-						}
-						params.dependencies=messages//Add dependencies to the params.
+					log.debug("The order has some dependencies yet")
+					ArrayList<String> messages=new ArrayList<String>();
+					String message;
+					for (Map.Entry<Integer, Integer> entry : dependencyMap.entrySet())
+					{
+						def neededItem = ItemDTO.findById(entry.getKey())
+						message="You have to buy "+entry.getValue()+" more "+neededItem.getDescription();
+						messages.add(message);
+					}
+					// when the arraylist contains just one message, create an empty message to interpret it as arraylist in the view
+					if(messages.size()==1){
+						messages.add(0,"");
+					}
+					params.dependencies=messages// add dependencies to the params.
 						
-						cancel();//Go to build. Review template will show the dependencies.
+					cancel();// go to build. Review template will show the dependencies.
 				}
 				
 			}
@@ -676,44 +657,35 @@ class OrderBuilderController {
             action {
                 try {
                     def order = conversation.order
-					//println "Save order"
                     if (!order.id || order.id == 0) {
                         if (SpringSecurityUtils.ifAllGranted("ORDER_20"))  {
-							//Creating a new order. Not adding to the master order
+								// creating a new order. Not adding to the master order
 								if(order.addToMaster != 1 ){
-								
-								//Save the order. Not more dependencies.
-								
-									//println "create new order, not to master"
 									log.debug("creating order ${order}")
 									order.id = webServicesSession.createOrder(order)
-									
-									//webServicesSession.updateOrder(order) //updates the order, adding a row into purchase_order_master
 									
 									// set success message in session, contents of the flash scope doesn't survive
 									// the redirect to the order list when the web-flow finishes
 									session.message = 'order.created'
 									session.args = [ order.id, order.userId ]
 								}
-								//Creating and adding a new order to the master order
+								// creating and adding a new order to the master order
 								else {
-									//println "editOrders!!!"
-									log.debug("creating edited order ${order}")
+									log.debug("adding to master and editing order ${order}")
 									def masterOrder = webServicesSession.getMasterOrder(order.userId)
-									//println "before"
-									//Edit master order and new order
-									order=webServicesSession.editOrders(order,masterOrder);
 									
-									//println "pasa"
+									// edit master order and new order
+									order=webServicesSession.editOrders(order,masterOrder);
 	
 									order.orderLines = order.orderLines.sort { it.itemId }
-								
+									
+									log.debug("creating edited order ${order}")
+									// create new order
 									order.id = webServicesSession.createUpdateOrder(order)
 									
 									
 									OrderBL obl = new OrderBL(order.id);
 									order=obl.getWS(session['language_id']);
-									//webServicesSession.updateOrder(order) //updates the order, adding a row into purchase_order_master
 	
 									// set success message in session, contents of the flash scope doesn't survive
 									// the redirect to the order list when the web-flow finishes
@@ -729,7 +701,6 @@ class OrderBuilderController {
 
                     } else {
                         if (SpringSecurityUtils.ifAllGranted("ORDER_21")) {
-							//println "Editing"
                             // add deleted lines to our order so that updateOrder() can save them
                             def deletedLines = conversation.deletedLines
                             def lines = order.orderLines as List

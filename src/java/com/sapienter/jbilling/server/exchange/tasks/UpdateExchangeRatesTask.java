@@ -47,11 +47,10 @@ public class UpdateExchangeRatesTask extends AbstractCronTask {
 		CurrencyExchangeDAS cedas=new CurrencyExchangeDAS();
 		while (it.hasNext()) {
 			Map.Entry e = (Map.Entry)it.next();
-			System.out.println(e.getKey() + " " + e.getValue());
+			LOG.debug(e.getKey() + " " + e.getValue());
 			Integer cid=cDas.findIdByCode((String)e.getKey());
 			if(cid!=null){
 				Integer ceid=cedas.findExchangeId(0,cid);
-				System.out.println(ceid+" ceid");
 				cedas.updateExchangeRateById(ceid, (BigDecimal)e.getValue());
 			}
 			

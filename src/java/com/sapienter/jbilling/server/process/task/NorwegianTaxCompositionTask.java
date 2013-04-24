@@ -169,6 +169,7 @@ public class NorwegianTaxCompositionTask extends PluggableTask
     }
 
     private boolean isTaxCalculationNeeded(Integer userId, Integer customContactFieldId) {
+    	LOG.debug("Checking if tax calculation is needed");
         if (customContactFieldId == null) {
             return true;
         }

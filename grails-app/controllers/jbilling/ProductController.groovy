@@ -380,7 +380,6 @@ class ProductController {
 		def hasToBeQuantityOne
 		def minItems
 		if(params.int('id')!=null){
-			println "!null"
 			dependencies=webServicesSession.getParentDependencies(params.int('id'))
 			doubleLinkedDependencies=webServicesSession.getDoubleLinkedParents(params.int('id'))
 			period=webServicesSession.getItemPeriod(params.int('id'))
@@ -389,10 +388,6 @@ class ProductController {
 		}
 		def products =  ItemDTO.createCriteria().list(){
 			eq("deleted", 0)
-		}
-		
-		products.each{
-			println it.getDescription()
 		}
 		
         try {
@@ -527,19 +522,16 @@ class ProductController {
     }
 	
 	def setParentDependencies(GrailsParameterMap params, itemId){
-		println itemId+" "+itemId.getClass()
 		List<Integer> parents=new ArrayList<Integer>();
-		println params
 		params.parent.collect { parentId, checked ->
 			
 			def i
 			try{
 				i = parentId as Integer
-				println i+" i"
 				parents.add(i)
 			}
 			catch(NumberFormatException e){
-				println e
+				log.debug(e)
 				i=null
 			}
 			
@@ -552,12 +544,10 @@ class ProductController {
 			def d
 			try{
 				d = parentId as Integer
-				println d+" d"
-				println d
 				doubleLinked.add(d)
 			}
 			catch(NumberFormatException e){
-				println e
+				log.debug(e)
 				d=null
 			}
 			
@@ -566,7 +556,6 @@ class ProductController {
 		}
 		def childId=null;
 		itemId.collect{it ->
-			println it
 			childId=it as Integer
 			
 		}

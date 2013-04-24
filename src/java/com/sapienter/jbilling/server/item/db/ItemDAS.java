@@ -56,7 +56,7 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
 
         return criteria.list();
     }    
-
+    
     public List<ItemDTO> findItemsByInternalNumber(String internalNumber) {
         Criteria criteria = getSession().createCriteria(getPersistentClass())
                 .add(Restrictions.eq("internalNumber", internalNumber));
@@ -64,6 +64,10 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
         return criteria.list();
     }
     
+    /**
+     * Get all dependencies from item_dependency table
+     * @return A list containing all the rows of the table with columns item_i and child_item_id.
+     */
     @SuppressWarnings("unchecked")
 	public List<Object[]> getAllDependencies(){
 		
@@ -73,6 +77,12 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
       	 	
        	return query.list();
        }
+	
+	/**
+	 * Get parent itemIds for the given child from item_dependency table
+	 * @param childId
+	 * @return List of Integer containing itemId of parent products
+	 */
 	@SuppressWarnings("unchecked")
 	public List<Integer> getParents(Integer childId){
       	 Query query = getSession()
@@ -83,17 +93,25 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
        	return query.list();
        }
 	
+	/**
+	 * Get child itemIds for the given parent from item_dependency table
+	 * @param parentdId
+	 * @return List of Integer containing itemId of child products
+	 */
 	@SuppressWarnings("unchecked")
 	public List<Integer> getChildren(Integer parentId){
       	 Query query = getSession()
                    .createSQLQuery("select a.child_item_id from item_dependency a " +
                    		"WHERE a.item_id=:parentId ORDER BY a.item_id ASC")
                    		.setParameter("parentId", parentId);
-      	 
-      	 System.out.println(query);	
        	return query.list();
        }
 	
+	/**
+	 * Returns the double linked children for the given parent
+	 * @param parentId
+	 * @return List of Integer containing child_item_id s
+	 */
 	@SuppressWarnings("unchecked")
 	public List<Integer> getDoubleLinkedChildren(Integer parentId) {
 		Query query = getSession()
@@ -104,6 +122,11 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
     	return query.list();
 	}
 	
+	/**
+	 * Returns the double linked parents for the given child
+	 * @param childId
+	 * @return List of Integer containing parent item_id s
+	 */
 	@SuppressWarnings("unchecked")
 	public List<Integer> getDoubleLinkedParents(Integer childId) {
 		Query query = getSession()
@@ -114,17 +137,44 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
     	return query.list();
 	}
 	
+	/**
+	 * Insert a row into item_dependency containing parentId, childId and doubleLinked
+	 * @param childId
+	 * @param parentId
+	 * @param isDoubleLinked
+	 */
 	@SuppressWarnings("unchecked")
 	public void setParent(Integer childId, Integer parentId,Integer isDoubleLinked){
 		
-      	 Query query = getSession()
-                   .createSQLQuery("insert into item_dependency values (:parentId,:childId,:doubleLinked)")
-                   	.setParameter("parentId", parentId)
-                   		.setParameter("childId", childId)
-                   		.setParameter("doubleLinked",isDoubleLinked);
-      	 	query.executeUpdate();
-       	
+			Object result = (Object) getSession()
+                    .createSQLQuery("select * from item_dependency where item_id=:parentId AND child_item_id=:childId")
+                    .setParameter("parentId", parentId)
+                    .setParameter("childId", childId)
+                    .uniqueResult();
+			
+       	 	Query query=null; 
+       	 	if(result!=null){
+       	 		query = getSession().createSQLQuery(
+     	    			"UPDATE item_dependency SET item_id=:parentId, child_item_id=:childId, double_linked=:doubleLinked  where item_id=:parentId AND child_item_id=:childId")
+     	    			.setParameter("parentId", parentId)
+                		.setParameter("childId", childId)
+                		.setParameter("doubleLinked",isDoubleLinked);
+       	 	}
+       	 	else{
+       	 			query = getSession()
+       	 					.createSQLQuery("insert into item_dependency values (:parentId,:childId,:doubleLinked)")
+       	 					.setParameter("parentId", parentId)
+                    		.setParameter("childId", childId)
+                    		.setParameter("doubleLinked",isDoubleLinked);
+       	 	
+       	 	}
+       	 query.executeUpdate();
        }
+	
+	/**
+	 * Removes all parents for the given child
+	 * @param childId
+	 */
 	@SuppressWarnings("unchecked")
 	public void removeAllParents(Integer childId){
 		
@@ -135,6 +185,11 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
        	
        }
 	
+	/**
+	 * Returns the item period
+	 * @param itemId
+	 * @return A string containing the period of an item. E.g: "One time" or "Yearly"
+	 */
 	@SuppressWarnings("unchecked")
 	public String getItemPeriod(Integer itemId) {
 		Query query = getSession()
@@ -145,15 +200,19 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
     	return (String)query.uniqueResult();
 	}
 
+	/**
+	 * Sets a row into item_period containing parentId, childId and doubleLinked
+	 * @param itemId
+	 * @param period
+	 * @param quantityToOne
+	 */
 	public void setItemPeriod(Integer itemId, String period, Integer quantityToOne) {
 		Object result = (Object) getSession()
                 .createSQLQuery("select * from item_period where item_id=:itemId")
                 .setParameter("itemId", itemId)
                 .uniqueResult();
-   	 	//System.out.println(result);
    	 	Query query=null; 
    	 	if(result!=null){
-   	 		//System.out.println("notnull");
    	 		query = getSession().createSQLQuery(
  	    			"UPDATE item_period SET period=:period, quantity_invoice_one=:quantityToOne WHERE item_id=:itemId")
  	    			.setParameter("itemId", itemId)
@@ -161,7 +220,6 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
  	    			.setParameter("quantityToOne", quantityToOne);
    	 	}
    	 	else{
-   	 		//System.out.println("yesnull");
    	 		query = getSession()
                 .createSQLQuery("insert into item_period values (:itemId,:period,:quantityToOne)")
                 	.setParameter("itemId", itemId)
@@ -174,6 +232,10 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
    	 	query.executeUpdate();
 	}
 
+	/**
+	 * Deletes the rows containing the given itemId from item_dependency
+	 * @param itemId
+	 */
 	public void deleteItemDependencies(Integer itemId) {
 		Query query = getSession()
                 .createSQLQuery("delete from item_dependency where item_id=:itemId OR child_item_id=:itemId")
@@ -182,6 +244,10 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
 		
 	}
 
+	/**
+	 * Deletes the row containing the given itemId from item_period
+	 * @param itemId
+	 */
 	public void deleteItemPeriod(Integer itemId) {
 		Query query = getSession()
                 .createSQLQuery("delete from item_period where item_id=:itemId")
@@ -190,6 +256,11 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
 		
 	}
 
+	/**
+	 * Some products must have 1 as quantity when invoicing. API and Installation fees for example.
+	 * @param itemId
+	 * @return 1 if has to be quantity one, else 0.
+	 */
 	public Integer hasToBeQuantityOne(int itemId) {
 		Query query = getSession()
                 .createSQLQuery("select quantity_invoice_one from item_period where item_id=:itemId")
@@ -205,6 +276,12 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
 		
 	}
 	
+	/**
+	 * Returns the number of minimum items for a product,
+	 * when the item requires a minumum quantity. OLAP needs 5 for example.
+	 * @param itemId
+	 * @return Integer. Number of minimum items for a product itself.
+	 */
 	@SuppressWarnings("unchecked")
 	public Integer getMinItems(Integer itemId){
       	 Query query = getSession()
@@ -221,22 +298,24 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
 		}
        }
 
+	/**
+	 * Sets the number of minimum items for a product.
+	 * @param itemId
+	 * @param minItems
+	 */
 	public void setMinItems(Integer itemId, Integer minItems) {
 		Object result = (Object) getSession()
                 .createSQLQuery("select * from item_dependency where item_id=:itemId AND child_item_id=:itemId")
                 .setParameter("itemId", itemId)
                 .uniqueResult();
-   	 	//System.out.println(result);
    	 	Query query=null; 
    	 	if(result!=null){
-   	 		//System.out.println("notnull");
    	 		query = getSession().createSQLQuery(
  	    			"UPDATE item_dependency SET min_items=:minItems WHERE item_id=:itemId AND child_item_id=:itemId")
  	    			.setParameter("itemId", itemId)
  	    			.setParameter("minItems", minItems);
    	 	}
    	 	else{
-   	 		//System.out.println("yesnull");
    	 		query = getSession()
                 .createSQLQuery("insert into item_dependency values (:itemId,:itemId,0,:minItems)")
                 	.setParameter("itemId", itemId)

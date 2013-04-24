@@ -798,7 +798,6 @@ public class NotificationBL extends ResultList implements NotificationSQL {
             File logo = new File(com.sapienter.jbilling.common.Util
                     .getSysProp("base_dir")
                     + "logos/entity-" + entityId + ".jpg");
-            System.out.println(logo.toPath());
             parameters.put("entityLogo", logo);
 
             // the invoice lines go as the data source for the report
@@ -850,7 +849,6 @@ public class NotificationBL extends ResultList implements NotificationSQL {
                     + "designs/" + design + ".jasper";
 
             File compiledDesign = new File(designFile);
-            System.out.println(compiledDesign.toPath());
             LOG.debug("Generating paper invoice with design file : " + designFile);
             FileInputStream stream = new FileInputStream(compiledDesign);
             
@@ -880,7 +878,6 @@ public class NotificationBL extends ResultList implements NotificationSQL {
                 .getSysProp("base_dir") + "designs/";
             parameters.put("SUBREPORT_DIR", subreportDir);
             
-            System.out.println(parameters);
             // at last, generate the report
             JasperPrint report = null;
             if (useSqlQuery) {

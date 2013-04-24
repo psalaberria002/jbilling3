@@ -389,7 +389,6 @@ public class OrderBL extends ResultList implements OrderSQL {
 						if (oldQuantity == null) {
 							oldQuantity = new Integer(0);
 						}
-						//System.out.println(oldQuantity+" oldQuantity");
 						Integer newQuantity = oldQuantity
 								+ (temp.getQuantityInt());
 						orderDas.updateOrInsertItemUsers(temp.getItemId(),
@@ -410,7 +409,6 @@ public class OrderBL extends ResultList implements OrderSQL {
 						if (oldQuantity == null) {
 							oldQuantity = new Integer(0);
 						}
-						//System.out.println(oldQuantity+" oldQuantity");
 						Integer newQuantity = oldQuantity
 								+ (temp.getQuantityInt());
 						orderDas.updateOrInsertItemUsers(temp.getItemId(),
@@ -660,20 +658,7 @@ public class OrderBL extends ResultList implements OrderSQL {
 		// get new quantity events as necessary
 		List<NewQuantityEvent> events = checkOrderLineQuantities(
 				order.getLines(), dto.getLines(), order.getBaseUserByUserId()
-						.getCompany().getId(), order.getId(), false); // do not
-																		// send
-																		// them
-																		// now,
-																		// it
-																		// will
-																		// be
-																		// done
-																		// later
-																		// when
-																		// the
-																		// order
-																		// is
-																		// saved
+						.getCompany().getId(), order.getId(), false); // do not send them now, it will be done later when the order is saved
 
 		// Determine if the item of the order changes and, if it is,
 		// LOG a subscription change event.
@@ -764,14 +749,18 @@ public class OrderBL extends ResultList implements OrderSQL {
 
 	}
 
+	/**
+	 * Updates the number of users into the database.
+	 * @param order
+	 * @param orderDas
+	 */
 	private void updateNumberUsersWhenEditing(OrderDTO order, OrderDAS orderDas) {
 		if (order.getIsMaster() == 1) {
 			List<OrderLineDTO> recentlyDeletedLines=new ArrayList<OrderLineDTO>();
-			// Update each line of the master order with the new quantity
+			// update each line of the master order with the new quantity
 			for (Iterator i = order.getLines().iterator(); i.hasNext();) {
 				OrderLineDTO temp = (OrderLineDTO) i.next();
 				if(temp.getDeleted()==0){
-					//System.out.println(temp.getDescription());
 					orderDas.updateOrInsertItemUsers(temp.getItemId(),
 							order.getUserId(), temp.getQuantityInt());
 				}
@@ -788,7 +777,7 @@ public class OrderBL extends ResultList implements OrderSQL {
 			List<OrderLineDTO> deletedLines = orderLineDas
 					.findDeletedLines(order.getId());
 			if (deletedLines != null || !recentlyDeletedLines.isEmpty()) {
-				//Checking deleted lines from database and currently deleted lines (not yet in the db).
+				// checking deleted lines from database and currently deleted lines (not yet in the db).
 				deletedLines.addAll(recentlyDeletedLines);
 				for (Iterator it = deletedLines.iterator(); it.hasNext();) {
 					OrderLineDTO tempDel = (OrderLineDTO) it.next();
@@ -796,38 +785,31 @@ public class OrderBL extends ResultList implements OrderSQL {
 					for (Iterator it2 = order.getLines().iterator(); it2
 							.hasNext();) {
 						OrderLineDTO temp = (OrderLineDTO) it2.next();
-						//System.out.println(tempDel.getItemId()+" "+ temp.getItemId()+" "+temp.getDeleted());
 						if((temp.getDeleted()==0) && (tempDel.getItemId().equals(temp.getItemId()))){
-							//System.out.println("deleted 0");
 							found=true;
 						}
 						
 					}
 					if (found == false) {
-						//System.out.println("updating to 0 "+tempDel.getItemId());
 						orderDas.updateOrInsertItemUsers(tempDel.getItemId(),
 								order.getUserId(), 0);
 					}
 					else{
-						//System.out.println("not updating "+tempDel.getItemId());
 					}
-
 				}
-				
 			}
-
-		} else if (order.getAddToMaster() == 1) {
+		} 
+		else if (order.getAddToMaster() == 1) {
 			return;
-		} else {
+		} 
+		else {
 			List<OrderDTO> results = orderDas.findNormalByUser(order
 					.getUserId());
-			// For each line in the editable order
+			// for each line in the editable order
 			for (Iterator i = order.getLines().iterator(); i.hasNext();) {
 				OrderLineDTO temp = (OrderLineDTO) i.next();
 				Integer finalQuantity = new Integer(0);
-				//System.out.println(temp+" temp");
-					
-					// Iterating orders
+					// iterating orders
 					for (Iterator oit = results.iterator(); oit.hasNext();) {
 						
 						Object row = oit.next();
@@ -836,7 +818,6 @@ public class OrderBL extends ResultList implements OrderSQL {
 							OrderLineDTO tempo = (OrderLineDTO) it.next();
 							if((tempo.getDeleted()==0) && (temp.getItemId().equals(tempo.getItemId()))){
 								finalQuantity += tempo.getQuantityInt();
-								//System.out.println(finalQuantity+" fQ");
 							}
 							
 						}

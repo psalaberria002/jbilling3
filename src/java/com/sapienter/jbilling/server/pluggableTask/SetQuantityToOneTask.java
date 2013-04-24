@@ -17,13 +17,13 @@ implements InvoiceCompositionTask {
 	public void apply(NewInvoiceDTO invoice, Integer userId)
 			throws TaskException {
 		ItemDAS itemDas=new ItemDAS();
-		//Find items in invoice that need to be invoiced with 1 as quantity
+		// find items in invoice that need to be invoiced with 1 as quantity
 		for (int i = 0; i < invoice.getResultLines().size(); i++) {
             InvoiceLineDTO invoiceLine = (InvoiceLineDTO) invoice.getResultLines().get(i);
             ItemDTO item = invoiceLine.getItem();
             
             if (item != null) {
-            	//Change the quantity and price to the products that have to be invoiced with 1 as quantity 
+            	// change the quantity and price to the products that have to be invoiced with 1 as quantity 
                 if(itemDas.hasToBeQuantityOne(item.getId()).equals(1)){
                 	invoiceLine.setQuantity(1); 	
                 	invoiceLine.setPrice(invoiceLine.getAmount().divide(invoiceLine.getQuantity()));// price=amount/quantity

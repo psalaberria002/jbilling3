@@ -328,12 +328,11 @@ public class OrderDAS extends AbstractDAS<OrderDTO> {
     	 return query.executeUpdate();
     }
     
-    /**Changes the value of master, setting an order as Master or not. 
-     * UPDATE OR INSERT
-     * table purchase_order_master
-     * 
-     * @param orderId
-     * @param b
+    /**
+     * Update or insert a row into item_users. 
+     * @param itemId If itemId is an installation fee, then save 0 or 1.
+     * @param userId
+     * @param n
      * @return
      */
     public int updateOrInsertItemUsers(Integer itemId,Integer userId,Integer n){
@@ -356,10 +355,8 @@ public class OrderDAS extends AbstractDAS<OrderDTO> {
                  .setParameter("itemId", itemId)
                  .setParameter("userId", userId)
                  .uniqueResult();
-    	 //System.out.println(result);
     	 Query query=null; 
     	 if(result!=null){
-    		 //System.out.println("notnull");
     		 query = getSession().createSQLQuery(
   	    			"UPDATE item_users SET users=:n WHERE item_id=:itemId AND user_id=:userId")
   	    			.setParameter("itemId", itemId)
@@ -367,7 +364,6 @@ public class OrderDAS extends AbstractDAS<OrderDTO> {
   	    			.setParameter("n", n);
     	 }
     	 else{
-    		 //System.out.println("yesnull");
     		 query = getSession().createSQLQuery(
     	    			"INSERT INTO item_users VALUES ( :itemId, :userId , :n)")
     	    			.setParameter("itemId", itemId)
@@ -378,6 +374,13 @@ public class OrderDAS extends AbstractDAS<OrderDTO> {
     	 
     	 return query.executeUpdate();
     }
+    
+    /**
+     * Returns the number of users for a given product and customer.
+     * @param itemId
+     * @param userId
+     * @return Integer. Number of users.
+     */
     public Integer findNumberUsers(Integer itemId, Integer userId){
 		
    	 Object result = (Object) getSession()
@@ -403,8 +406,11 @@ public class OrderDAS extends AbstractDAS<OrderDTO> {
         
         return criteria.list();
     }
+    
     /**
      * Returns the description of the items with the number of users for the given customer
+     * @param userId
+     * @return List<Object[]>. Object[0]=description, Object[1]=number of users
      */
 	@SuppressWarnings("unchecked")
 	public List<Object[]> findItemUsersWithDescription(Integer userId){
@@ -417,6 +423,11 @@ public class OrderDAS extends AbstractDAS<OrderDTO> {
        	return query.list();
        }
 	
+	/**
+     * Returns a list of Integer, containing the itemIds of the products that the given customer has already bought.
+     * @param userId
+     * @return List<Integer>. itemIds
+     */
 	public List<Integer> getItemUsersItems(Integer userId){
 		Query query = getSession()
                 .createSQLQuery("select a.item_id from item_users a " +

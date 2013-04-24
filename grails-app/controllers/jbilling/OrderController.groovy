@@ -295,11 +295,9 @@ class OrderController {
     def deleteOrder = {
         try {
             webServicesSession.deleteOrder(params.int('id'))
-			println params
 			if(params.int('addToMaster')==1){
 				
 				def masterOrder = webServicesSession.getMasterOrder(params.int('userId'))
-				println masterOrder
 				if(masterOrder!=null){
 					webServicesSession.updateOrder(masterOrder)
 				}

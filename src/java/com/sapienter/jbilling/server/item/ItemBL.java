@@ -373,18 +373,14 @@ public class ItemBL extends ResultList{
 
         // default "simple" price
         BigDecimal price = getPriceByCurrency(item, entityId, currencyId);
-        System.out.println(price.toString()+" before task");
         // run a plug-in with external logic (rules), if available
         if(order!=null){
         	try {
                 PluggableTaskManager<IPricing> taskManager
                         = new PluggableTaskManager<IPricing>(entityId, Constants.PLUGGABLE_TASK_ITEM_PRICING);
                 IPricing myTask = taskManager.getNextClass();
-                System.out.println(myTask);
-                System.out.println(userId+" useriD "+currencyId+" CURRENCYiD "+quantity.toString()+" Q "+entityId+" ENTITYiD ");
                 while(myTask != null) {
                     price = myTask.getPrice(item.getId(), quantity, userId, currencyId, pricingFields, price, order, singlePurchase);
-                	System.out.println(price.toString()+" after task");
                     myTask = taskManager.getNextClass();
                 }
             } catch (Exception e) {

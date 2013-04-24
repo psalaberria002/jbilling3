@@ -1089,7 +1089,6 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 
     private void processLines(OrderDTO order, Integer languageId, Integer entityId, Integer userId, Integer currencyId,
                               String pricingFields) throws SessionInternalError {
-    	//System.out.println("processLines");
         OrderHelper.synchronizeOrderLines(order);
 
         for (OrderLineDTO line : order.getLines()) {
@@ -1910,7 +1909,6 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
         // the lines
         for (int f = 0; f < order.getOrderLines().length; f++) {
             OrderLineWS line = order.getOrderLines()[f];
-            //System.out.println(line.toString());
             if (line.getUseItem() == null) {
             line.setUseItem(false);
             }
@@ -2970,16 +2968,15 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
      * @throws IOException 
 	 */
 	public OrderWS editOrders(OrderWS order, OrderWS masterOrder) throws IOException{
-		//monthsLeft
-		//Getting the starting day of the new order
+		// monthsLeft
+		// getting the starting day of the new order
 		Date orderActiveDay = order.getActiveSince();
 		Calendar calActive = Calendar.getInstance();
 		calActive.setTime(orderActiveDay);
 		int newOrderActiveSinceYear= calActive.get(Calendar.YEAR);
 		int monthStart = calActive.get(Calendar.MONTH);
 		int dayStart = calActive.get(Calendar.DAY_OF_MONTH);
-		//System.out.println(newOrderActiveSinceYear+" "+monthStart+" "+dayStart);
-		//Getting next billable day of the master order
+		// getting next billable day of the master order
 		Date masterOrderNextBillableDay = masterOrder.getNextBillableDay();
 		Calendar cal=Calendar.getInstance();
 		cal.setTime(masterOrderNextBillableDay);
@@ -2987,26 +2984,27 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 		int masterYear= masterOrderNextBillableYear-1;
 		int monthNext = cal.get(Calendar.MONTH);
 		
-		//Getting previous day of the master order next billable day
+		// getting previous day of the master order next billable day
 		cal.add(Calendar.DAY_OF_MONTH, -1);
 		cal.add(Calendar.MONTH, 1);
-		//System.out.println(cal.getTime());
 		int prevDayNext = cal.get(Calendar.DAY_OF_MONTH);
 		int prevMonthNext = cal.get(Calendar.MONTH);
 		int prevYearNext = cal.get(Calendar.YEAR);
-		//System.out.println(prevDayNext+" "+prevMonthNext+" "+prevYearNext);
-		//Getting the next month of the activeSince for the new order (Since January is 0, it will take the value 1 instead)
-		//It is just for creating the description (Period from mm/dd/yyyy to mm/dd/yyyy)
+		
+		// getting the next month of the activeSince for the new order (January is 0, but we want January to be 1 instead)
+		// it is just for creating the description (Period from mm/dd/yyyy to mm/dd/yyyy)
 		calActive.add(Calendar.MONTH, 1);
 		int monthStartPrint = calActive.get(Calendar.MONTH);
-		//System.out.println(monthStartPrint);
-		//If the years are different
+		
+		// update the difference of months if the years are different
 		if(newOrderActiveSinceYear!=masterOrderNextBillableYear){
 			monthNext+=12;
 		}
-		//Months for the new order
+		
+		// months to the new order
 		int monthsLeft=monthNext-monthStart;
 		
+		// initialize variables
 		BigDecimal back=new BigDecimal(0);
 		OrderLineWS[] masterOrderLines = masterOrder.getOrderLines();
 		OrderLineWS[] newOrderLines = order.getOrderLines();
@@ -3017,11 +3015,12 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 		String dayStartWithZero;
 		String prevMonthNextWithZero;
 		String prevDayNextWithZero;
+		
+		// each new order line
 		for(int i=0;i<newOrderLines.length;i++) { 
 			OrderLineWS nol= newOrderLines[i];
-			//Exclude the installation fees
+			// exclude the installation fees
 			if(!(isOneTimer(nol.getItemId()) && (hasToBeQuantityOne(nol.getItemId()).equals(new Integer(1))))){
-				System.out.println("license or yearly");
 				newOrderActiveSinceYear= calActive.get(Calendar.YEAR);
 				monthStartPrint = calActive.get(Calendar.MONTH);
 				dayStart = calActive.get(Calendar.DAY_OF_MONTH);
@@ -3031,8 +3030,9 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 				totalQuantity=new BigDecimal(0);
 				boolean found=false;
 				nolQuantity=nol.getQuantityAsDecimal();
-				//Select just the non one timers to add or edit into the master order
+				// select just the non one timers to add or edit into the master order
 				if(!isOneTimer(nol.getItemId())){
+					// each master order line
 					for(int j=0;j<masterOrderLines.length;j++) {
 						OrderLineWS mol= masterOrderLines[j];
 						if(mol.getDeleted()!=1){
@@ -3043,60 +3043,50 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 							prevMonthNext = cal.get(Calendar.MONTH);
 							prevYearNext = cal.get(Calendar.YEAR);
 							if(found==false){
+								// find the item of the new order line into the master order
 								if (nol.getItemId().equals(mol.getItemId())){
 									found=true;
 									if((nol.getTypeId()!=(Constants.ORDER_LINE_TYPE_TAX))){
 										molQuantity=mol.getQuantityAsDecimal();
 										totalQuantity=molQuantity.add(nolQuantity);
 										BigDecimal molOldAvgPrice;
-										//println "BERDINTZA "+BigDecimal.ZERO.compareTo(totalQuantity)
 										if((BigDecimal.ZERO.compareTo(totalQuantity) != 0)){
 											String payPlan=masterOrder.getPayPlan();
 											molOldAvgPrice = mol.getPriceAsDecimal();
-											//println molOldAvgPrice+" masterOrderLineAvgPrice"
-											//println molQuantity+" molQuantity"
 											back=molOldAvgPrice.multiply(molQuantity).multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),2,RoundingMode.HALF_EVEN);
-											//println back
-											//println "resources/pay_plans/${payPlan}${mol.description}.ods"
 											File file = new File("resources/pay_plans/"+payPlan+"_"+mol.getDescription()+".ods");
-											//println file.toPath()
 											Sheet sheet = SpreadSheet.createFromFile(file).getSheet(""+masterYear);
-											//Negative number change to positive
+											
+											// negative number change to positive
 											boolean negative=false;
 											if(totalQuantity.intValue()<0){
 												negative=true;
 												totalQuantity=totalQuantity.negate();
 											}
-											BigDecimal value=(BigDecimal) sheet.getCellAt("B"+totalQuantity.intValue()).getValue();
+											
+											//BigDecimal value=(BigDecimal) sheet.getCellAt("B"+totalQuantity.intValue()).getValue();
 											BigDecimal amount=(BigDecimal) sheet.getCellAt("C"+totalQuantity.intValue()).getValue();
 											
-											//If the currency is NOT Norwegian Krone change prices
-											System.out.println(amount+" amount 1");
+											// convert price from NOK to currency if the currency is NOT Norwegian Krone
 											amount=updateWhenNotNOK(order, nol,amount);
-											System.out.println(amount+" amount 2");
 											
+											// back to negative
 											if(negative==true){
 												amount=amount.negate();
 											}
-											//println value+" "+totalQuantity+" "+amount
-											BigDecimal avgPrice=(BigDecimal)(amount.divide(totalQuantity,2,RoundingMode.HALF_EVEN));
-											//println avgPrice+" avgPrice"
 											
-											//Edit master order line
+											BigDecimal avgPrice=(BigDecimal)(amount.divide(totalQuantity,2,RoundingMode.HALF_EVEN));
+											
+											// edit master order line
 											mol.setPrice(avgPrice);
 											mol.setQuantityAsDecimal(totalQuantity);
 											mol.setAmount(amount);
 											mol.setUseItem(true);
 											
-											//webServicesSession.updateOrderLine(mol) //update Master Order Line
-											//println mol.getPrice()+" "+mol.getAmount()
-											
-											//Edit new order line
-											//println "Order before"+order
+											// edit new order line
 											nol.setQuantity(totalQuantity);
 											nol.setAmount(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),2,RoundingMode.HALF_EVEN));
 											nol.setPrice(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),2,RoundingMode.HALF_EVEN).divide(totalQuantity,2,RoundingMode.HALF_EVEN));
-											//println monthStartPrint
 											monthStartPrintWithZero= (monthStartPrint < 10 ? "0" : "") + monthStartPrint;
 											dayStartWithZero = (dayStart < 10 ? "0" : "") + dayStart;
 											prevMonthNextWithZero= (prevMonthNext < 10 ? "0" : "") + prevMonthNext;
@@ -3117,33 +3107,26 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 													""+newOrderActiveSinceYear+" to "+prevMonthNextWithZero+"/"+prevDayNextWithZero+"/"+prevYearNext);
 											
 							
-											// add line to order
+											// add line to new order
 											ArrayList<OrderLineWS> lines = new ArrayList<OrderLineWS>(Arrays.asList(order.getOrderLines()));
 											lines.add(line);
 											OrderLineWS[] x = lines.toArray(new OrderLineWS[lines.size()]);
 											order.setOrderLines(x);
 										}
-										//When quantity == 0 just add back order line and delete from master.
+										// when quantity == 0 just add the back order line and delete line from master.
 										else{
 											
 											molOldAvgPrice = mol.getPriceAsDecimal();
-											//println molOldAvgPrice+" masterOrderLineAvgPrice"
-											//println molQuantity+" molQuantity"
 											back=molOldAvgPrice.multiply(molQuantity).multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),2,RoundingMode.HALF_EVEN);
-											//println back+" back"
 											
-											//Edit master order line
+											// edit master order line
 											mol.setQuantityAsDecimal(totalQuantity);
 											mol.setAmount(new BigDecimal(0));
 											mol.setUseItem(false);
 											mol.setDeleted(1);
 											
-											//println nol+" nol"
-											
-											//Edit new order line
+											// edit new order line
 											nol.setDeleted(1);
-											
-											//println nol+" nol"
 											
 											// build line
 											OrderLineWS line = new OrderLineWS();
@@ -3160,7 +3143,7 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 											line.setDescription(mol.getDescription()+" Period from "+monthStartPrintWithZero+"/"+dayStartWithZero+"/" +
 													""+newOrderActiveSinceYear+" to "+prevMonthNextWithZero+"/"+prevDayNextWithZero+"/"+prevYearNext);
 							
-											// add line to order
+											// add line to new order
 											ArrayList<OrderLineWS> lines = new ArrayList<OrderLineWS>(Arrays.asList(order.getOrderLines()));
 											lines.remove(nol);
 											lines.add(line);
@@ -3176,14 +3159,12 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 							
 					}
 				}
-				//Licenses
+				// licenses
 				else{
 					OrderDAS orderDas=new OrderDAS();
 					Integer licenses=orderDas.findNumberUsers(nol.getItemId(), order.getUserId());
-					//Already bought some licenses
+					// already bought some licenses
 					if(!licenses.equals(0)){
-						
-						
 						String payPlan=masterOrder.getPayPlan();
 						File file = new File("resources/pay_plans/"+payPlan+"_"+nol.getDescription()+".ods");
 						Sheet sheet = SpreadSheet.createFromFile(file).getSheet(""+masterYear);
@@ -3192,15 +3173,12 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 						BigDecimal q=nol.getQuantityAsDecimal().add(backq);
 						nol.setQuantity(q);
 						
-						
-						BigDecimal value=(BigDecimal) sheet.getCellAt("B"+q.intValue()).getValue();
+						//BigDecimal value=(BigDecimal) sheet.getCellAt("B"+q.intValue()).getValue();
 						BigDecimal amount=(BigDecimal) sheet.getCellAt("C"+q.intValue()).getValue();
 						nol.setUseItem(false);
 						
-						System.out.println(amount+" amount 1");
-						//Changes the price and amount from NOK to the current currency
+						// convert price from NOK to currency if the currency is NOT Norwegian Krone
 						amount=updateWhenNotNOK(masterOrder, nol, amount);
-						System.out.println(amount+" amount 2");
 						nol.setAmount(amount);
 						nol.setPrice(nol.getAmountAsDecimal().divide(nol.getQuantityAsDecimal(),2,RoundingMode.HALF_EVEN));
 						
@@ -3213,16 +3191,14 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 						line.setTypeId(Constants.ORDER_LINE_TYPE_ITEM);
 						line.setQuantity((new BigDecimal(licenses)).negate());
 						line.setItemId(nol.getItemId());
-						System.out.println(amount+" amount 1");
-						//Changes the price and amount from NOK to the current currency
+						// convert price from NOK to currency if the currency is NOT Norwegian Krone
 						amount=updateWhenNotNOK(masterOrder, line, amount);
-						System.out.println(amount+" amount 2");
 						line.setAmount(amount.negate());
 						line.setPrice(line.getAmountAsDecimal().divide(line.getQuantityAsDecimal(),2,RoundingMode.HALF_EVEN));
-						
 						line.setDescription(nol.getDescription());
 						line.setUseItem(false);
-						// add line to order
+						
+						// add line to new order
 						ArrayList<OrderLineWS> lines = new ArrayList<OrderLineWS>(Arrays.asList(order.getOrderLines()));
 						lines.add(line);
 						OrderLineWS[] x = lines.toArray(new OrderLineWS[lines.size()]);
@@ -3234,8 +3210,6 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 				}
 				
 				if(found==false){
-					
-					
 					// build line
 					OrderLineWS nolclone = new OrderLineWS();
 					nolclone.setTypeId(Constants.ORDER_LINE_TYPE_ITEM);
@@ -3245,8 +3219,8 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 					nolclone.setItemId(nol.getItemId());
 					nolclone.setUseItem(true);
 					nolclone.setDescription(nol.getDescription());
-					//println line.toString()
 					
+					// add line to master order
 					ArrayList<OrderLineWS> linesm = new ArrayList<OrderLineWS>(Arrays.asList(masterOrder.getOrderLines()));
 					linesm.add(nolclone);
 					OrderLineWS[] x = linesm.toArray(new OrderLineWS[linesm.size()]);
@@ -3256,14 +3230,12 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 					File file = new File("resources/pay_plans/"+payPlan+"_"+nol.getDescription()+".ods");
 					Sheet sheet = SpreadSheet.createFromFile(file).getSheet(""+masterYear);
 					BigDecimal q=nol.getQuantityAsDecimal();
-					//println q+" q"
-					BigDecimal value=(BigDecimal) sheet.getCellAt("B"+q.intValue()).getValue();
+					//BigDecimal value=(BigDecimal) sheet.getCellAt("B"+q.intValue()).getValue();
 					BigDecimal amount=(BigDecimal) sheet.getCellAt("C"+q.intValue()).getValue();
-					//println value+" value "+q+" q"+amount+" amount"
-					
+					// convert price from NOK to currency if the currency is NOT Norwegian Krone
 					amount=updateWhenNotNOK(masterOrder, nolclone, amount);
 					
-					//Edit new order line
+					// edit new order line
 					nol.setAmount(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),2,RoundingMode.HALF_EVEN));
 					nol.setPrice(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),2,RoundingMode.HALF_EVEN).divide(q,2,RoundingMode.HALF_EVEN));
 					monthStartPrintWithZero = (monthStartPrint < 10 ? "0" : "")+ monthStartPrint;
@@ -3273,19 +3245,16 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 					nol.setDescription(nol.getDescription()+" Period from "+monthStartPrintWithZero+"/"+dayStartWithZero+"/" +
 							""+newOrderActiveSinceYear+" to "+prevMonthNextWithZero+"/"+prevDayNextWithZero+"/"+prevYearNext);
 					nol.setUseItem(false);
-					
 				}
 			}
 		}
-		//println order+" order"
-		//println masterOrder+" masterOrder"
-		//Check if there is a non deleted master order line. In that case update the order
+		
+		// check if there is a non deleted master order line. In that case update the order
 		ArrayList<OrderLineWS> molines = new ArrayList<OrderLineWS>(Arrays.asList(masterOrder.getOrderLines()));
 		boolean hasNotDeleted=false;
 		Iterator<OrderLineWS> it=molines.iterator();
 		while(it.hasNext()) { 
 			OrderLineWS finalMol= it.next();
-			//println finalMol.deleted+" deleted"
 			if(finalMol.getDeleted()==0 && hasNotDeleted==false){
 				hasNotDeleted=true;
 				Collections.sort(molines, new Comparator<OrderLineWS>() {
@@ -3297,29 +3266,33 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 				});
 				OrderLineWS[] x = molines.toArray(new OrderLineWS[molines.size()]);
 				masterOrder.setOrderLines(x);
-				System.out.println("Updating master order in editOrders");
+				LOG.debug("Updating master order in editOrders");
 				updateOrder(masterOrder);
 			}
 			
 		}
 		if(hasNotDeleted==false){
-			//println "MASTER with deleted lines"
-			//Set the lines to not deleted for updating the table item_users
+			// set the lines to not deleted for updating the table item_users
 			it=molines.iterator();
 			while(it.hasNext()) {
 				OrderLineWS finalMol =it.next();
 				finalMol.setDeleted(0);
 			}
-			System.out.println("Updating master order 2 in editOrders");
 			updateOrder(masterOrder);
 			//If all the lines are deleted, delete the master order
-			System.out.println("Deleting master order in editOrders");
+			LOG.debug("Deleting master order in editOrders");
 			deleteOrder(masterOrder.getId());	
 		}
-		System.out.println("returning "+order);
+		LOG.debug("Returning order "+order);
 		return order;	
 	}
-    
+    /**
+     * Convert price from NOK to other currency if the currency is NOT Norwegian Krone.
+     * @param order
+     * @param nol
+     * @param amount
+     * @return amount updated to the new currency
+     */
     private BigDecimal updateWhenNotNOK(OrderWS order, OrderLineWS nol,
 			BigDecimal amount) {
     	CurrencyDAS cdas=new CurrencyDAS();
@@ -3333,21 +3306,23 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 			Integer fromCurrency=0;
 			while(it.hasNext() && go==false){
 				ItemPriceDTO ip=it.next();
-				//CurrencyId for NOK
 				if(ip.getCurrency().getCode().equals("NOK")){
 					go=true;
-					fromCurrency=ip.getCurrencyId();
+					fromCurrency=ip.getCurrencyId();//CurrencyId for NOK
 				}
 			}
 			UserDAS udas=new UserDAS();
 			UserDTO udto=udas.find(order.getUserId());
 			amount=cbl.convert(fromCurrency, order.getCurrencyId(), amount, udto.getEntity().getId() );
-			System.out.println(amount+" dentro");
 		}
 		return amount;
 		
 	}
-
+    /**
+     * Returns the products from the database that the given user has already bought from before. 
+     * @param userId
+     * @return Description and number of users
+     */
 	public List<List<Map<String,String>>> getOneTimersAndMANDSWithDescription(Integer userId){
     	OrderDAS orderDas=new OrderDAS();
     	List<Object[]> list=orderDas.findItemUsersWithDescription(userId);
@@ -3376,12 +3351,21 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
     	
     	return mapList;
     }
-    
+	
+    /**
+     * Returns a list of Integer, containing the itemIds of the products that the given customer has already bought.
+     * @param userId
+     * @return List<Integer>
+     */
     public List<Integer> getItemUsersItems(Integer userId){
     	OrderDAS orderDas=new OrderDAS();
     	return orderDas.getItemUsersItems(userId);
     }
     
+    /**
+     * Get all dependencies from item_dependency table
+     * @return A list containing all the rows of the table with columns item_i and child_item_id. Empty arraylist if null.
+     */
     public List getAllDependencies(){
     	ItemDAS itemDas=new ItemDAS();
     	List<Object[]> list=itemDas.getAllDependencies();
@@ -3391,6 +3375,11 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
     	return list;
     }
     
+    /**
+	 * Get parent itemIds from item_dependency table
+	 * @param childId
+	 * @return List of Integer containing itemId of parent products. Empty arraylist if null.
+	 */
     public List<Integer> getParentDependencies(Integer childId){
     	ItemDAS itemDas=new ItemDAS();
     	List<Integer> list=itemDas.getParents(childId);
@@ -3400,6 +3389,12 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
     	return list;
     }
     
+    /**
+     * Set parent dependencies
+     * @param childId
+     * @param parents
+     * @param doubleLinked
+     */
     public void setParentDependencies(Integer childId, List<Integer> parents, List<Integer> doubleLinked){
     	ItemDAS itemDas=new ItemDAS();
     	itemDas.removeAllParents(childId);
@@ -3416,6 +3411,11 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
     	}	
     }
     
+    /**
+	 * Get child itemIds for the given parent from item_dependency table
+	 * @param parentdId
+	 * @return List of Integer containing itemId of child products. Empty arraylist if null.
+	 */
     public List<Integer> getChildrenDependencies(Integer parentId){
     	ItemDAS itemDas=new ItemDAS();
     	List<Integer> list=itemDas.getChildren(parentId);
@@ -3426,6 +3426,11 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
     	return list;
     }
     
+    /**
+	 * Returns the double linked parents for the given child
+	 * @param childId
+	 * @return List of Integer containing parent item_id s. Empty arraylist if null.
+	 */
     public List<Integer> getDoubleLinkedParents(Integer childId){
     	ItemDAS itemDas=new ItemDAS();
     	List<Integer> list=itemDas.getDoubleLinkedParents(childId);
@@ -3435,6 +3440,11 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
     	return list;
     }
     
+    /**
+	 * Returns the double linked children for the given parent
+	 * @param parentId
+	 * @return List of Integer containing child_item_id s. Empty arraylist if null.
+	 */
     public List<Integer> getDoubleLinkedChildren(Integer parentId){
     	ItemDAS itemDas=new ItemDAS();
     	List<Integer> list=itemDas.getDoubleLinkedChildren(parentId);
@@ -3453,12 +3463,12 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 		LOG.debug("CheckDependencies(OrderWS order)");
 		Map<Integer,Integer> neededProductsAndQuantities=new HashMap<Integer,Integer>();
 		OrderLineWS[] newOrderLines=order.getOrderLines();
-		//Each line in order
+		// each line in order
 		for(int i=0;i< newOrderLines.length;i++) { 
 			OrderLineWS nol=newOrderLines[i];
 			if(nol.getDeleted()==0){
 				Map<Integer,Integer> dep=checkDependencies(order, nol);
-				//Merging to Maps
+				// merging to Maps
 				neededProductsAndQuantities=mergeMapsWithMaxValue(neededProductsAndQuantities,dep);
 			}
 			
@@ -3467,6 +3477,12 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 		return neededProductsAndQuantities;
 	}
 	
+	/**
+	 * Merges two maps saving just the max values
+	 * @param rootMap
+	 * @param addedMap
+	 * @return A map containing max values
+	 */
 	public Map<Integer,Integer> mergeMapsWithMaxValue(Map<Integer,Integer> rootMap, Map<Integer,Integer> addedMap){
 		if(rootMap.isEmpty() && addedMap.isEmpty()){
 			return new HashMap<Integer,Integer>();
@@ -3481,7 +3497,6 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 			if(!addedMap.isEmpty()){
 				Set<Map.Entry<Integer,Integer>> entries = addedMap.entrySet();
 				for ( Map.Entry<Integer,Integer> entry : entries ) {
-					//System.out.println(entry+" entry "+nol.getItemId());
 				  Integer rootMapValue = rootMap.get( entry.getKey() );
 				  if ( rootMapValue == null ) {
 					  rootMap.put( entry.getKey(), entry.getValue() );
@@ -3495,6 +3510,7 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 		}
 		
 	}
+	
 	/**
 	 * Giving an order and an order line, the method checks the dependencies of the order line looking into the order and into the database. 
 	 * @param order
@@ -3513,22 +3529,17 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 			Integer childQuantity=null;
 			Integer parentQuantity=null;
 			if(orderLine.getQuantityAsDecimal().signum()==-1){
-				System.out.println("isNegative");
 				return needed;
 			}
 			for(Integer parentId: parents){
 				childQuantity=orderLine.getQuantityAsDecimal().intValueExact()+orderDas.findNumberUsers(orderLine.getItemId(), userId);//total: order + database
-				//If the items are equals, the parentQuantity will be minItems
+				// if the items are equals, the parentQuantity will be minItems
 				if(parentId.equals(itemId)){
-					System.out.println("equals");
 					parentQuantity=getMinItems(itemId);
-					System.out.println(parentQuantity+" "+childQuantity);
-					//Min items dependencies
+					// min items dependencies
 					if(parentQuantity>childQuantity ){
-						System.out.println(">");
 						difference=parentQuantity-childQuantity;
 						if( (needed.containsKey(parentId)&&(needed.get(parentId)<difference)) || !needed.containsKey(parentId)){
-							System.out.println("put");
 							needed.put(parentId, difference);
 						}
 					}
@@ -3536,24 +3547,24 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 				else{
 					Integer pQDb=orderDas.findNumberUsers(parentId, userId);
 					Integer pQOrder=findItemQuantityInOrder(order,parentId);
-					//Installation fees. 
+					// installation fees. 
 					if(hasToBeQuantityOne(parentId).equals(1) && isOneTimer(parentId)){
-						//If already in the database, then not more needed.
+						// if already in the database, then not more needed.
 						if(pQDb>0){
 							parentQuantity=childQuantity;//dependencies 0
 						}
-						//Installation fee not payed yet
+						// installation fee not payed yet
 						else {
 							parentQuantity=pQOrder;//total:order
 						}
 					}
-					//Licenses, and yearly payable items.
+					// licenses, and yearly payable items.
 					else {
 						parentQuantity=pQDb+pQOrder;//total:order + database
 					}
 					
 					
-					//Normal dependencies
+					// normal dependencies
 					if( parentQuantity != childQuantity ){
 						if(parentQuantity < childQuantity){
 							difference=childQuantity-parentQuantity;
@@ -3578,6 +3589,7 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 		}
 		return needed;
 	}
+	
 	/**
 	 * Given an itemId and an order, it returns the total quantity for an item into the order
 	 * @param order
@@ -3597,25 +3609,43 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 		return cont;
 	}
     
+	/**
+	 * Returns the item period
+	 * @param itemId
+	 * @return A string containing the period of an item. E.g: "One time" or "Yearly"
+	 */
 	public String getItemPeriod(Integer itemId){
 		ItemDAS itemDas=new ItemDAS();
     	String p=itemDas.getItemPeriod(itemId);
     	return p;
 	}
+	
+	/**
+	 * Sets a row into item_period containing parentId, childId and doubleLinked
+	 * @param itemId
+	 * @param period
+	 * @param quantityToOne
+	 */
 	public void setItemPeriod(Integer itemId,String period,Integer quantityToOne){
 		
 		ItemDAS itemDas=new ItemDAS();
     	itemDas.setItemPeriod(itemId,period,quantityToOne);
 	}
+	
+	/**
+	 * Deletes item dependencies and period for the given item.
+	 * @param itemId
+	 */
 	public void deleteItemDependenciesAndPeriod(Integer itemId){
 		ItemDAS itemDas=new ItemDAS();
 		itemDas.deleteItemDependencies(itemId);
 		itemDas.deleteItemPeriod(itemId);
 	}
+	
 	/**Returns true if the order with the given itemId has "One time" as period, else returns false
 	 * 
 	 * @param itemId
-	 * @return boolean
+	 * @return boolean. True if one timer. False if not.
 	 */
 	public boolean isOneTimer(Integer itemId){
 		ItemDAS itemDas=new ItemDAS();
@@ -3627,13 +3657,12 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 		}
 	}
 	
-	
 	/**
 	 * Updates the given quantity to the visited order lines
 	 * @param lines Order lines
 	 * @param visited Visited order lines
 	 * @param q Quantity
-	 * @return
+	 * @return ArrayList<OrderLineWS> updated order lines
 	 */
 	public ArrayList<OrderLineWS> updateQuantityInOrderLines(ArrayList<OrderLineWS> lines, ArrayList<OrderLineWS> visited,BigDecimal q){
 		for(OrderLineWS oline: lines){
@@ -3647,12 +3676,13 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 		}
 		return lines;
 	}
+	
 	/**
 	 * A breath first search to visit and collect all the dependent items. 
 	 * Double linked parent and children, and childrenDependencies.
 	 * @param line
 	 * @param lines
-	 * @return
+	 * @return visited order lines
 	 */
 	public ArrayList<OrderLineWS> bfsRelatedItemsInOrder(OrderLineWS line,ArrayList<OrderLineWS> lines){
 		Queue<OrderLineWS> queue = new LinkedList<OrderLineWS>();
@@ -3678,12 +3708,13 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 		
 		return visited;
 	}
+	
 	/**
 	 * This method return a list of unvisited lines that have to be visited. These are dependent lines.
 	 * @param line
 	 * @param lines
 	 * @param visited
-	 * @return
+	 * @return a list of unvisited lines that have to be visited. Dependent lines.
 	 */
 	public ArrayList<OrderLineWS> getUnvisitedChildNodes(OrderLineWS line, ArrayList<OrderLineWS> lines, ArrayList<OrderLineWS> visited){
 		ArrayList<OrderLineWS> unvisited=new ArrayList<OrderLineWS>();
@@ -3731,7 +3762,7 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 	/**
 	 * It will remove one timer items from the given order, and it will create a new one time order with these. 
 	 * @param order
-	 * @return
+	 * @return OrderWS. A new order containing lines with one timer products
 	 */
 	public OrderWS moveOneTimersToNewOrder(OrderWS order){
 		OrderWS newOrder=null;
@@ -3760,7 +3791,6 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 						
 					}
 					List<OrderLineWS> lines=new ArrayList<OrderLineWS>(Arrays.asList(newOrder.getOrderLines()));
-					System.out.println(lines+" lines");
 					// build line
 					OrderLineWS olclone = new OrderLineWS();
 					olclone.setTypeId(Constants.ORDER_LINE_TYPE_ITEM);
@@ -3797,8 +3827,8 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 	}
 	
 	/**
-	 * It adds to the order the double linked items for the given order lines. 
-	 * Instead of using this method, the double linked items are going to be added in the orderBuilderController.
+	 * It adds the double linked items of the items in the given order. 
+	 * (Instead of using this method, the double linked items are going to be added in the orderBuilderController.)
 	 * @param order
 	 * @return
 	 */
@@ -3832,10 +3862,11 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 		
 		return order;
 	}
+	
 	/**
-	 * 
+	 * Some products must have 1 as quantity when invoicing. API and Installation fees for example.
 	 * @param itemId
-	 * @return 1 if the product has to be invoiced with 1 as quantity, esle return 0
+	 * @return 1 if the product has to be invoiced with 1 as quantity, else return 0
 	 */
 	public Integer hasToBeQuantityOne(Integer itemId){
 		ItemDAS itemDas=new ItemDAS();
@@ -3843,18 +3874,34 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 		return itemDas.hasToBeQuantityOne(itemId);
 	}
 	
+	/**
+	 * Returns the number of minimum items for a product,
+	 * when the item requires a minumum quantity. OLAP needs 5 for example.
+	 * @param itemId
+	 * @return Integer. Number of minimum items for a product itself.
+	 */
 	public Integer getMinItems(Integer itemId){
 		ItemDAS itemDas=new ItemDAS();
 		
 		return itemDas.getMinItems(itemId);
 	}
 	
+	/**
+	 * Sets the number of minimum items for a product.
+	 * @param itemId
+	 * @param minItems
+	 */
 	public void setMinItems(Integer itemId, Integer minItems){
 		ItemDAS itemDas=new ItemDAS();
 		
 		itemDas.setMinItems(itemId,minItems);
 	}
 	
+	/**
+	 * Returns a map containing itemIds and minumum quantity required
+	 * @param order
+	 * @return Map<Integer,Integer>.  Map<itemId,minQuantity>
+	 */
 	public Map<Integer,Integer> getMinItemsMap(OrderWS order){
 		ItemDAS itemDas=new ItemDAS();
 		Map<Integer,Integer> minItemsMap=new HashMap<Integer,Integer>();
@@ -3866,7 +3913,7 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
     		if(nol.getDeleted()==0){
     			nolId=nol.getItemId();
     			min=itemDas.getMinItems(nolId);
-    			//Add entry to the map if value > 0
+    			// add entry to the map if value > 0
     			if(min>0){
     				minItemsMap.put(nolId, min); 
     			}

@@ -207,8 +207,6 @@ class CustomerController {
 		def x=webServicesSession.getOneTimersAndMANDSWithDescription(user.userId)
 		def maintenanceAndSupport=x.getAt(0)
 		def licensesAndSetup=x.getAt(1)
-		println x.size()
-		println licensesAndSetup
 		
 
         recentItemService.addRecentItem(user.userId, RecentItemType.CUSTOMER)
