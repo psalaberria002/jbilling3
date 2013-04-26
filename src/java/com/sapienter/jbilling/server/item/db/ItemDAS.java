@@ -17,6 +17,8 @@ package com.sapienter.jbilling.server.item.db;
 
 import com.sapienter.jbilling.server.util.db.AbstractDAS;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -90,7 +92,17 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
                    		"WHERE a.child_item_id=:childId ORDER BY a.item_id ASC")
                    		.setParameter("childId", childId);
       	 
-       	return query.list();
+      	 if(query.list()!=null && !query.list().isEmpty() && query.list().get(0) instanceof BigDecimal){
+      		 List<Integer> x=new ArrayList<Integer>();
+      		 List<BigDecimal> a=query.list();
+      		for(int i=0;i<a.size();i++){
+          		x.add(Integer.valueOf(a.get(i).intValue()));
+          	}
+      		return x;
+      	 }
+      	 else{
+      		return query.list();
+      	 }
        }
 	
 	/**
@@ -104,7 +116,20 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
                    .createSQLQuery("select a.child_item_id from item_dependency a " +
                    		"WHERE a.item_id=:parentId ORDER BY a.item_id ASC")
                    		.setParameter("parentId", parentId);
-       	return query.list();
+      	 if(query.list()!=null && !query.list().isEmpty() && query.list().get(0) instanceof BigDecimal){
+      		 List<Integer> x=new ArrayList<Integer>();
+      		 List<BigDecimal> a=query.list();
+      		for(int i=0;i<a.size();i++){
+          		x.add(Integer.valueOf(a.get(i).intValue()));
+          	}
+      		return x;
+      	 }
+      	 else{
+      		return query.list();
+      	 }
+      	
+      	
+       	
        }
 	
 	/**
@@ -119,7 +144,17 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
                 		"WHERE a.item_id=:parentId AND double_linked=1 ORDER BY a.item_id ASC")
                 		.setParameter("parentId", parentId);
    
-    	return query.list();
+		if(query.list()!=null && !query.list().isEmpty() && query.list().get(0) instanceof BigDecimal){
+     		 List<Integer> x=new ArrayList<Integer>();
+     		 List<BigDecimal> a=query.list();
+     		for(int i=0;i<a.size();i++){
+         		x.add(Integer.valueOf(a.get(i).intValue()));
+         	}
+     		return x;
+     	 }
+     	 else{
+     		return query.list();
+     	 }
 	}
 	
 	/**
@@ -134,7 +169,17 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
                 		"WHERE a.child_item_id=:childId AND double_linked=1 ORDER BY a.item_id ASC")
                 		.setParameter("childId", childId);
    
-    	return query.list();
+		if(query.list()!=null && !query.list().isEmpty() && query.list().get(0) instanceof BigDecimal){
+    		 List<Integer> x=new ArrayList<Integer>();
+    		 List<BigDecimal> a=query.list();
+    		for(int i=0;i<a.size();i++){
+        		x.add(Integer.valueOf(a.get(i).intValue()));
+        	}
+    		return x;
+    	 }
+    	 else{
+    		return query.list();
+    	 }
 	}
 	
 	/**
@@ -266,13 +311,17 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
                 .createSQLQuery("select quantity_invoice_one from item_period where item_id=:itemId")
             	.setParameter("itemId", itemId);
 		
-		Integer result=(Integer)query.uniqueResult();
-		if(result!=null){
-			return result;
-		}
-		else{
-			return new Integer(0);
-		}
+		Object result=query.uniqueResult();
+
+		if(result==null){
+   	 		return new Integer(0);
+   	 	}
+   	 	else if(query.list().get(0) instanceof BigDecimal){
+   	 		return Integer.valueOf(((BigDecimal)result).intValue());
+   	 	}
+   	 	else{
+   	 		return (Integer)result;
+   	 	}
 		
 	}
 	
@@ -289,13 +338,17 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
                    		"WHERE a.item_id=:itemId AND a.child_item_id=:itemId")
                    		.setParameter("itemId", itemId);
       	 
-      	Integer result=(Integer)query.uniqueResult();
-		if(result!=null){
-			return result;
-		}
-		else{
-			return new Integer(0);
-		}
+      	Object result=query.uniqueResult();
+
+		if(result==null){
+   	 		return new Integer(0);
+   	 	}
+   	 	else if(query.list().get(0) instanceof BigDecimal){
+   	 		return Integer.valueOf(((BigDecimal)result).intValue());
+   	 	}
+   	 	else{
+   	 		return (Integer)result;
+   	 	}
        }
 
 	/**

@@ -3298,16 +3298,31 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
     	while(it.hasNext()){
     		Map<String,String> map=new HashMap<String, String>();
     		Object[] o=(Object[])it.next();
-    		if(isOneTimer((Integer)o[1])){
-        		map.put("content",(String)o[0]);
-        		map.put("users", String.valueOf((Integer)o[2]));
-        		oneTimers.add(map);
+    		if(o[1] instanceof BigDecimal){
+    			if(isOneTimer(Integer.valueOf(((BigDecimal)o[1]).intValue()))){
+            		map.put("content",(String)o[0]);
+            		map.put("users", String.valueOf((BigDecimal)o[2]));
+            		oneTimers.add(map);
+        		}
+        		else{
+            		map.put("content",(String)o[0]);
+            		map.put("users", String.valueOf((BigDecimal)o[2]));
+            		mAndS.add(map);
+        		}
     		}
     		else{
-        		map.put("content",(String)o[0]);
-        		map.put("users", String.valueOf((Integer)o[2]));
-        		mAndS.add(map);
+    			if(isOneTimer((Integer)o[1])){
+            		map.put("content",(String)o[0]);
+            		map.put("users", String.valueOf((Integer)o[2]));
+            		oneTimers.add(map);
+        		}
+        		else{
+            		map.put("content",(String)o[0]);
+            		map.put("users", String.valueOf((Integer)o[2]));
+            		mAndS.add(map);
+        		}
     		}
+    		
     		
     	}
     	mapList.add(mAndS);

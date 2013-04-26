@@ -390,9 +390,15 @@ public class OrderDAS extends AbstractDAS<OrderDTO> {
                 .uniqueResult();
    	 	//System.out.println(result+" number of users for item "+itemId+" and user "+userId);
    	 	if(result==null){
-   	 		result=new Integer(0);
+   	 		return new Integer(0);
    	 	}
-    	return (Integer)result;
+   	 	else if(result instanceof BigDecimal){
+   	 		return Integer.valueOf(((BigDecimal)result).intValue());
+   	 	}
+   	 	else{
+   	 		return (Integer)result;
+   	 	}
+    	
     }
   
     public List<OrderDTO> findNormalByUser(Integer userId) {
@@ -433,11 +439,22 @@ public class OrderDAS extends AbstractDAS<OrderDTO> {
                 .createSQLQuery("select a.item_id from item_users a " +
                 		"where a.user_id=:userId AND a.users>0 ORDER BY a.item_id ASC")
                 .setParameter("userId", userId);
-		List<Integer> list=(ArrayList<Integer>)query.list();
-   	 	if(list==null){
-   	 		return new ArrayList<Integer>();
-   	 	}
-    	return list;
+		
+    	
+    	if(query.list()!=null && !query.list().isEmpty() && query.list().get(0) instanceof BigDecimal){
+    		 List<Integer> x=new ArrayList<Integer>();
+    		 List<BigDecimal> a=query.list();
+    		for(int i=0;i<a.size();i++){
+        		x.add(Integer.valueOf(a.get(i).intValue()));
+        	}
+    		return x;
+    	 }
+    	 else if(query.list()!=null){
+    		return (ArrayList<Integer>)query.list();
+    	 }
+    	 else{
+    		 return new ArrayList<Integer>();
+    	 }
 	}
     
     

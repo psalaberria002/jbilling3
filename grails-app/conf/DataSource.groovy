@@ -28,8 +28,7 @@ dataSource {
         org.hibernate.dialect.Oracle9Dialect
     */
     
-	dialect = "org.hibernate.dialect.PostgreSQLDialect"
-    driverClassName = "org.postgresql.Driver"
+	
 	
 	
 
@@ -54,7 +53,9 @@ environments {
 		dataSource {
 			username = "jbilling"
 			password = "jbilling"
-			url = "jdbc:postgresql://localhost:5432/jbilling_dev"
+			url = "jdbc:oracle:thin:@localhost:1521:orcl"
+			dialect = "org.hibernate.dialect.Oracle10gDialect"
+			driverClassName = "oracle.jdbc.OracleDriver"
 		}
 	}
 	test {
@@ -62,6 +63,8 @@ environments {
 			username = "jbilling"
 			password = "jbilling"
 			url = "jdbc:postgresql://localhost:5432/jbilling_test"
+			dialect = "org.hibernate.dialect.PostgreSQLDialect"
+			driverClassName = "org.postgresql.Driver"
 		}
 	}
 	production {
@@ -69,6 +72,8 @@ environments {
 			username = "jbilling"
 			password = "jbilling"
 			url = "jdbc:postgresql://localhost:5432/jbilling"
+			dialect = "org.hibernate.dialect.PostgreSQLDialect"
+			driverClassName = "org.postgresql.Driver"
 		}
 	}
 	}
