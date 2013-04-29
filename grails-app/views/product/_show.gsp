@@ -85,7 +85,7 @@
         </g:if>        
         
         <!-- flags -->
-        <table class="dataTable" cellspacing="0" cellpadding="0">
+        <table class="dataTableProduct" cellspacing="0" cellpadding="0">
             <tbody>
                 <tr>
                     <td><em><g:message code="product.detail.decimal"/></em></td>
@@ -101,7 +101,6 @@
         <p class="description">
             ${selectedProduct.description}
         </p>
-
         <!-- product categories cloud -->
         <div class="box-cards box-cards-open">
             <div class="box-cards-title">

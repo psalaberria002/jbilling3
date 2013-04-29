@@ -116,6 +116,7 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
                    .createSQLQuery("select a.child_item_id from item_dependency a " +
                    		"WHERE a.item_id=:parentId ORDER BY a.item_id ASC")
                    		.setParameter("parentId", parentId);
+      	 
       	 if(query.list()!=null && !query.list().isEmpty() && query.list().get(0) instanceof BigDecimal){
       		 List<Integer> x=new ArrayList<Integer>();
       		 List<BigDecimal> a=query.list();
@@ -207,7 +208,7 @@ public class ItemDAS extends AbstractDAS<ItemDTO> {
        	 	}
        	 	else{
        	 			query = getSession()
-       	 					.createSQLQuery("insert into item_dependency values (:parentId,:childId,:doubleLinked)")
+       	 					.createSQLQuery("insert into item_dependency (item_id,child_item_id,double_linked) values (:parentId,:childId,:doubleLinked)")
        	 					.setParameter("parentId", parentId)
                     		.setParameter("childId", childId)
                     		.setParameter("doubleLinked",isDoubleLinked);

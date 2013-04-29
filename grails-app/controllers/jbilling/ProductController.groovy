@@ -389,7 +389,7 @@ class ProductController {
 		def products =  ItemDTO.createCriteria().list(){
 			eq("deleted", 0)
 		}
-		
+		println products.get(0).getDescription()
         try {
             product = params.id ? webServicesSession.getItem(params.int('id'), session['user_id'], null) : null
         } catch (SessionInternalError e) {
