@@ -56,7 +56,12 @@ public class CurrencyExchangeDAS extends AbstractDAS<CurrencyExchangeDTO> {
                 .uniqueResult();
    	 
         
-        return (Integer)result;
+    	if(result instanceof BigDecimal){
+        	return Integer.valueOf(((BigDecimal)result).intValue());
+        }
+        else{
+        	return (Integer)result;
+        }
 	}
 
     public CurrencyExchangeDTO findExchange(Integer entityId,Integer currencyId) {

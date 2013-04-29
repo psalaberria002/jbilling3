@@ -133,11 +133,7 @@
                     <g:link controller="billing"><span><g:message code="menu.link.billing"/></span><em></em></g:link>
                 </li>
             </sec:access>
-            <sec:access url="/mediation/list">
-                <li class="${controllerName == 'mediation' ? 'active' : ''}">
-                    <g:link controller="mediation"><span><g:message code="menu.link.mediation"/></span><em></em></g:link>
-                </li>
-            </sec:access>
+            
             <sec:access url="/report/list">
                 <li class="${controllerName == 'report' ? 'active' : ''}">
                     <g:link controller="report"><span><g:message code="menu.link.reports"/></span><em></em></g:link>
@@ -148,11 +144,18 @@
                     <g:link controller="product"><span><g:message code="menu.link.products"/></span><em></em></g:link>
                 </li>
             </sec:access>
+            <%-- Plans and mediation are not included in this version, so there is no point in showing these fields
+            <sec:access url="/mediation/list">
+                <li class="${controllerName == 'mediation' ? 'active' : ''}">
+                    <g:link controller="mediation"><span><g:message code="menu.link.mediation"/></span><em></em></g:link>
+                </li>
+            </sec:access>
             <sec:access url="/plan/list">
                 <li class="${controllerName == 'plan' ? 'active' : ''}">
                     <g:link controller="plan"><span><g:message code="menu.link.plans"/></span><em></em></g:link>
                 </li>
             </sec:access>
+            --%>
             <sec:ifAllGranted roles="MENU_99">
                 %{
                     def isConfiguration = controllerName == 'config' ||

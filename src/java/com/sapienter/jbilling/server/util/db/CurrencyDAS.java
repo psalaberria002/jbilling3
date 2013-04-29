@@ -16,6 +16,8 @@
 
 package com.sapienter.jbilling.server.util.db;
 
+import java.math.BigDecimal;
+
 
 
 public class CurrencyDAS extends AbstractDAS<CurrencyDTO> {
@@ -27,8 +29,13 @@ public class CurrencyDAS extends AbstractDAS<CurrencyDTO> {
                 .setParameter("code", code)
                 .uniqueResult();
    	 
+        if(result instanceof BigDecimal){
+        	return Integer.valueOf(((BigDecimal)result).intValue());
+        }
+        else{
+        	return (Integer)result;
+        }
         
-        return (Integer)result;
     }
     
 }
