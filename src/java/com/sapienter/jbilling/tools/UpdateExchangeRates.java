@@ -20,7 +20,11 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import com.sapienter.jbilling.server.process.task.NorwegianTaxCompositionTask;
-
+/**
+ * This class gets the currency rates from the European Central Bank. They update the xml file every day around 15:00.
+ * @author Paul
+ *
+ */
 public class UpdateExchangeRates {
 	private Map<String, BigDecimal> map;
 
@@ -36,10 +40,19 @@ public class UpdateExchangeRates {
 
 	}
 
+	/**
+	 * Returns a map containing updates values of currencyCode-currencyRate(relative to USD)
+	 * @return
+	 */
 	public Map<String, BigDecimal> getMap() {
 		return map;
 	}
 
+	/**
+	 * This method adds currency rate values to the map. These currency rates are related to USD instead of EUR.
+	 * @param doc
+	 * @param map
+	 */
 	public static void updateMap(Document doc, Map<String, BigDecimal> map) {
 		NodeList nodes = doc.getElementsByTagName("Cube");
 		BigDecimal eurRate = new BigDecimal(0);
@@ -51,6 +64,7 @@ public class UpdateExchangeRates {
 				if (child.hasAttribute("currency")) {
 					String attribute = child.getAttribute("currency");
 					String attribute2 = child.getAttribute("rate");
+					// USD is the first value in the xml
 					if (attribute.equals("USD")) {
 						eurRate = (new BigDecimal(1)).divide(new BigDecimal(
 								attribute2),4, BigDecimal.ROUND_HALF_UP);

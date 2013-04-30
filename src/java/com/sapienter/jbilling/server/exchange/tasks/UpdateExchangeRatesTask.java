@@ -36,7 +36,7 @@ public class UpdateExchangeRatesTask extends AbstractCronTask {
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
 		UpdateExchangeRates uer=null;
 		try {
-			uer = new UpdateExchangeRates();
+			uer = new UpdateExchangeRates();// calling the European Central Bank
 		} catch (ParserConfigurationException
 				| SAXException | IOException e1) {
 			

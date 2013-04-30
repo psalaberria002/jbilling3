@@ -53,7 +53,7 @@ environments {
 		dataSource {
 			username = "jbilling"
 			password = "jbilling"
-			url = "jdbc:oracle:thin:@localhost:1521:orcl"
+			url = "jdbc:oracle:thin:@192.168.0.179:1521:orcl"
 			dialect = "org.hibernate.dialect.Oracle10gDialect"
 			driverClassName = "oracle.jdbc.OracleDriver"
 		}

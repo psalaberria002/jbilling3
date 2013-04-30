@@ -3695,7 +3695,7 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 	 * @param visited
 	 * @return a list of unvisited lines that have to be visited. Dependent lines.
 	 */
-	public ArrayList<OrderLineWS> getUnvisitedChildNodes(OrderLineWS line, ArrayList<OrderLineWS> lines, ArrayList<OrderLineWS> visited){
+	private ArrayList<OrderLineWS> getUnvisitedChildNodes(OrderLineWS line, ArrayList<OrderLineWS> lines, ArrayList<OrderLineWS> visited){
 		ArrayList<OrderLineWS> unvisited=new ArrayList<OrderLineWS>();
 		ArrayList<Integer> doubleLinkedChildren=(ArrayList<Integer>) getDoubleLinkedChildren(line.getItemId());
 		ArrayList<Integer> doubleLinkedParents=(ArrayList<Integer>) getDoubleLinkedParents(line.getItemId());
@@ -3854,29 +3854,6 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 	}
 	
 	/**
-	 * Returns the number of minimum items for a product,
-	 * when the item requires a minumum quantity. OLAP needs 5 for example.
-	 * @param itemId
-	 * @return Integer. Number of minimum items for a product itself.
-	 */
-	public Integer getMinItems(Integer itemId){
-		ItemDAS itemDas=new ItemDAS();
-		
-		return itemDas.getMinItems(itemId);
-	}
-	
-	/**
-	 * Sets the number of minimum items for a product.
-	 * @param itemId
-	 * @param minItems
-	 */
-	public void setMinItems(Integer itemId, Integer minItems){
-		ItemDAS itemDas=new ItemDAS();
-		
-		itemDas.setMinItems(itemId,minItems);
-	}
-	
-	/**
 	 * Returns a map containing itemIds and minumum quantity required
 	 * @param order
 	 * @return Map<Integer,Integer>.  Map<itemId,minQuantity>
@@ -3904,4 +3881,29 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
     	return minItemsMap;
 
 	}
+	
+	/**
+	 * Returns the number of minimum items for a product,
+	 * when the item requires a minumum quantity. OLAP needs 5 for example.
+	 * @param itemId
+	 * @return Integer. Number of minimum items for a product itself.
+	 */
+	public Integer getMinItems(Integer itemId){
+		ItemDAS itemDas=new ItemDAS();
+		
+		return itemDas.getMinItems(itemId);
+	}
+	
+	/**
+	 * Sets the number of minimum items for a product.
+	 * @param itemId
+	 * @param minItems
+	 */
+	public void setMinItems(Integer itemId, Integer minItems){
+		ItemDAS itemDas=new ItemDAS();
+		
+		itemDas.setMinItems(itemId,minItems);
+	}
+	
+	
 }

@@ -63,7 +63,7 @@
 
         <table class="dataTable" cellspacing="0" cellpadding="0">
             <tbody>	
-            <g:if test="${!maintenanceAndSupport.isEmpty()}"><th>Maintenance & Support</th></g:if>
+            <g:if test="${!maintenanceAndSupport?.isEmpty()}"><th>Maintenance & Support</th></g:if>
             	<g:each in="${maintenanceAndSupport}">
             	<g:if test="${!it.users.equals('0') }">
             		<tr>
@@ -77,7 +77,7 @@
         </table>
         <table class="dataTable" cellspacing="0" cellpadding="0">
             <tbody>
-            	<g:if test="${!licensesAndSetup.isEmpty()}"><th>License and setup fee</th></g:if>
+            	<g:if test="${!licensesAndSetup?.isEmpty()}"><th>License and setup fee</th></g:if>
             	<g:each in="${licensesAndSetup}">
             	<g:if test="${!it.users.equals('0') }">
             		<tr>

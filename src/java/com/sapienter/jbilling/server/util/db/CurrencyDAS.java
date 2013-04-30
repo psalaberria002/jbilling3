@@ -22,6 +22,11 @@ import java.math.BigDecimal;
 
 public class CurrencyDAS extends AbstractDAS<CurrencyDTO> {
 
+	/**
+	 * Returns the currency Id for a given code.
+	 * @param code
+	 * @return for example: return 110 if code="NOK"
+	 */
 	public Integer findIdByCode(String code) {
     	
     	Object result = (Object) getSession()

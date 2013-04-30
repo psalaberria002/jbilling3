@@ -37,7 +37,12 @@ public class CurrencyExchangeDAS extends AbstractDAS<CurrencyExchangeDTO> {
         "   FROM CurrencyExchangeDTO a " +
         "  WHERE a.entityId = :entity";
     
-    
+    /**
+     * Updates the exchange rate for the given currency Id
+     * @param id
+     * @param rate
+     * @return
+     */
     public int updateExchangeRateById(int id,BigDecimal rate){
    		 
    		 Query query = getSession().createSQLQuery(
@@ -48,6 +53,12 @@ public class CurrencyExchangeDAS extends AbstractDAS<CurrencyExchangeDTO> {
    		 return query.executeUpdate();
     }
     
+    /**
+     * Returns the Id of currency_exchange table for the given entityId and currencyId.
+     * @param entityId
+     * @param cid
+     * @return row identifier
+     */
     public Integer findExchangeId(int entityId, Integer cid) {
     	Object result = (Object) getSession()
                 .createSQLQuery("select id from currency_exchange where currency_id=:cid AND entity_id=:entityId")

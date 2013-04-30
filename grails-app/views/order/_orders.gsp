@@ -46,6 +46,9 @@
                     <th class="small">
                         <g:message code="order.label.amount"/>
                     </th>
+                    <th class="small">
+                        <g:message code="order.label.type"/>
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -78,6 +81,20 @@
                         <td>
                             <g:remoteLink breadcrumb="id" class="cell" action="show" id="${ordr.id}" params="['template': 'show']" before="register(this);" onSuccess="render(data, next);">
                                 <g:formatNumber number="${ordr?.total}" type="currency" currencySymbol="${ordr?.currency?.symbol}"/>
+                            </g:remoteLink>
+                        </td>
+                        <td>
+                            <g:remoteLink breadcrumb="id" class="cell" action="show" id="${ordr.id}" params="['template': 'show']" before="register(this);" onSuccess="render(data, next);">
+                                <g:if test="${ordr?.isMaster==1}">
+                                Master order
+                                </g:if>
+                                <g:elseif test="${ordr?.addToMaster==1}">
+                                Order added to master
+                                </g:elseif>
+                                <g:else>
+                                Normal order
+                                </g:else>
+                                
                             </g:remoteLink>
                         </td>
                     </tr>
