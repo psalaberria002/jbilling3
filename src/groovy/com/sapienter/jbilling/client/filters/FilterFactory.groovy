@@ -56,6 +56,7 @@ class FilterFactory {
 			new Filter(type: FilterType.ORDER, constraintType: FilterConstraint.STATUS, field: 'orderPeriod', template: 'order/period', visible: true),
             new Filter(type: FilterType.ORDER, constraintType: FilterConstraint.EQ, field: 'isCurrent', template: 'order/mainSubscription', visible: false),
 			new Filter(type: FilterType.ORDER, constraintType: FilterConstraint.EQ, field: 'isMaster', template: 'order/isMaster', visible: true),
+			new Filter(type: FilterType.ORDER, constraintType: FilterConstraint.EQ, field: 'addToMaster', template: 'order/addToMaster', visible: true),
         ],
         PRODUCT: [
             new Filter(type: FilterType.PRODUCT, constraintType: FilterConstraint.LIKE, field: 'internalNumber', template: 'product/internalNumber', visible: true),

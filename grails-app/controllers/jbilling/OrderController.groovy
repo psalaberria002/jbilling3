@@ -80,7 +80,8 @@ class OrderController {
             createAlias('baseUserByUserId', 'u', Criteria.LEFT_JOIN)
             and {
                 filters.each { filter ->
-                    if (filter.value) {
+					println filter
+                    if (filter.value!=null) {
                         //handle orderStatus & orderPeriod separately
                         if (filter.constraintType == FilterConstraint.STATUS) {
                             if (filter.field == 'orderStatus') {
@@ -112,7 +113,6 @@ class OrderController {
     def list = {
         def filters = filterService.getFilters(FilterType.ORDER, params)
         def orders = getFilteredOrders(filters, params)
-
         def selected = params.id ? webServicesSession.getOrder(params.int("id")) : null
         def user = selected ? webServicesSession.getUserWS(selected.userId) : null
 
