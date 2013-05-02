@@ -167,7 +167,6 @@ class Filter implements Serializable {
 
         switch (constraintType) {
             case FilterConstraint.EQ:
-				println field+getValue()+" getRestrictions"
                 return Restrictions.eq(field, getValue())
                 break
 

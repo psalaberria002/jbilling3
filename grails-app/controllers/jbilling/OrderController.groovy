@@ -80,7 +80,6 @@ class OrderController {
             createAlias('baseUserByUserId', 'u', Criteria.LEFT_JOIN)
             and {
                 filters.each { filter ->
-					println filter
                     if (filter.value!=null) {
                         //handle orderStatus & orderPeriod separately
                         if (filter.constraintType == FilterConstraint.STATUS) {
