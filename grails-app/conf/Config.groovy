@@ -107,7 +107,7 @@ log4j = {
  
         // Custom log file.
         rollingFile name:"appLog",
-                        file:"/usr/local/apache-tomcat-7.0.37/logs/jbilling.log".toString(),
+                        file:"/usr/local/apache-tomcat-7/logs/jbilling.log".toString(),
                         maxFileSize:'300kB',
                         maxBackupIndex:1,
                         layout:pattern(conversionPattern: '%d %-5p [%c] %m%n')
