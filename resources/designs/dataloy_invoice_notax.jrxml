@@ -6,7 +6,7 @@
 	<property name="com.jasperassistant.designer.Grid" value="false"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="30"/>
 	<parameter name="invoiceNumber" class="java.lang.String"/>
 	<parameter name="entityName" class="java.lang.String"/>
 	<parameter name="entityAddress" class="java.lang.String"/>
@@ -42,7 +42,7 @@
 					<reportElement positionType="Float" stretchType="RelativeToBandHeight" x="363" y="0" width="192" height="28"/>
 				</rectangle>
 				<staticText>
-					<reportElement positionType="Float" x="363" y="0" width="50" height="14"/>
+					<reportElement positionType="Float" x="363" y="0" width="58" height="14"/>
 					<textElement textAlignment="Left" verticalAlignment="Bottom">
 						<font size="10" isBold="false" isItalic="false"/>
 					</textElement>
@@ -155,7 +155,7 @@
 				<textFieldExpression class="java.lang.String"><![CDATA["Email:"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="375" y="42" width="51" height="14"/>
+				<reportElement x="375" y="42" width="46" height="14"/>
 				<textElement/>
 				<textFieldExpression class="java.lang.String"><![CDATA["Website:"]]></textFieldExpression>
 			</textField>
@@ -163,7 +163,7 @@
 				<reportElement x="0" y="69" width="555" height="1"/>
 			</line>
 			<textField>
-				<reportElement x="428" y="42" width="127" height="14"/>
+				<reportElement x="407" y="42" width="148" height="14"/>
 				<textElement textAlignment="Right"/>
 				<textFieldExpression class="java.lang.String"><![CDATA["www.dataloy-systems.com"]]></textFieldExpression>
 			</textField>
