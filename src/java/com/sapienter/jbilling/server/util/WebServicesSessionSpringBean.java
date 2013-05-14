@@ -3028,7 +3028,7 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 										if((BigDecimal.ZERO.compareTo(totalQuantity) != 0)){
 											String payPlan=masterOrder.getPayPlan();
 											molOldAvgPrice = mol.getPriceAsDecimal();
-											back=molOldAvgPrice.multiply(molQuantity).multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),2,RoundingMode.HALF_EVEN);
+											back=molOldAvgPrice.multiply(molQuantity).multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),Constants.BIGDECIMAL_SCALE, Constants.BIGDECIMAL_ROUND);
 											File file = new File("resources/pay_plans/"+payPlan+"_"+mol.getDescription()+".ods");
 											Sheet sheet = SpreadSheet.createFromFile(file).getSheet(""+masterYear);
 											
@@ -3050,7 +3050,7 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 												amount=amount.negate();
 											}
 											
-											BigDecimal avgPrice=(BigDecimal)(amount.divide(totalQuantity,2,RoundingMode.HALF_EVEN));
+											BigDecimal avgPrice=(BigDecimal)(amount.divide(totalQuantity,Constants.BIGDECIMAL_SCALE, Constants.BIGDECIMAL_ROUND));
 											
 											// edit master order line
 											mol.setPrice(avgPrice);
@@ -3060,8 +3060,8 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 											
 											// edit new order line
 											nol.setQuantity(totalQuantity);
-											nol.setAmount(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),2,RoundingMode.HALF_EVEN));
-											nol.setPrice(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),2,RoundingMode.HALF_EVEN).divide(totalQuantity,2,RoundingMode.HALF_EVEN));
+											nol.setAmount(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),Constants.BIGDECIMAL_SCALE, Constants.BIGDECIMAL_ROUND));
+											nol.setPrice(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),Constants.BIGDECIMAL_SCALE, Constants.BIGDECIMAL_ROUND).divide(totalQuantity,Constants.BIGDECIMAL_SCALE, Constants.BIGDECIMAL_ROUND));
 											String newstring = new SimpleDateFormat("dd/MM/yyyy").format(orderActiveDay);
 											String newstring2 = new SimpleDateFormat("dd/MM/yyyy").format(cal.getTime());
 											nol.setDescription(mol.getDescription()+" Period from "+newstring+" to "+newstring2);
@@ -3071,7 +3071,7 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 											OrderLineWS line = new OrderLineWS();
 											line.setTypeId(Constants.ORDER_LINE_TYPE_ITEM);
 											line.setQuantity(molQuantity.negate());
-											line.setPrice(molOldAvgPrice.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),2,RoundingMode.HALF_EVEN));
+											line.setPrice(molOldAvgPrice.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),Constants.BIGDECIMAL_SCALE, Constants.BIGDECIMAL_ROUND));
 											line.setAmount(back.negate());
 											line.setItemId(mol.getItemId());
 											line.setUseItem(false);
@@ -3090,7 +3090,7 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 										else{
 											
 											molOldAvgPrice = mol.getPriceAsDecimal();
-											back=molOldAvgPrice.multiply(molQuantity).multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),2,RoundingMode.HALF_EVEN);
+											back=molOldAvgPrice.multiply(molQuantity).multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),Constants.BIGDECIMAL_SCALE, Constants.BIGDECIMAL_ROUND);
 											
 											// edit master order line
 											mol.setQuantityAsDecimal(totalQuantity);
@@ -3105,7 +3105,7 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 											OrderLineWS line = new OrderLineWS();
 											line.setTypeId(Constants.ORDER_LINE_TYPE_ITEM);
 											line.setQuantity(molQuantity.negate());
-											line.setPrice(molOldAvgPrice.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),2,RoundingMode.HALF_EVEN));
+											line.setPrice(molOldAvgPrice.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),Constants.BIGDECIMAL_SCALE, Constants.BIGDECIMAL_ROUND));
 											line.setAmount(back.negate());
 											line.setItemId(mol.getItemId());
 											line.setUseItem(false);
@@ -3149,7 +3149,7 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 						// convert price from NOK to currency if the currency is NOT Norwegian Krone
 						amount=updateWhenNotNOK(masterOrder, nol, amount);
 						nol.setAmount(amount);
-						nol.setPrice(nol.getAmountAsDecimal().divide(nol.getQuantityAsDecimal(),2,RoundingMode.HALF_EVEN));
+						nol.setPrice(nol.getAmountAsDecimal().divide(nol.getQuantityAsDecimal(),Constants.BIGDECIMAL_SCALE, Constants.BIGDECIMAL_ROUND));
 						
 						amount=(BigDecimal) sheet.getCellAt("C"+backq.intValue()).getValue();
 						
@@ -3161,7 +3161,7 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 						// convert price from NOK to currency if the currency is NOT Norwegian Krone
 						amount=updateWhenNotNOK(masterOrder, line, amount);
 						line.setAmount(amount.negate());
-						line.setPrice(line.getAmountAsDecimal().divide(line.getQuantityAsDecimal(),2,RoundingMode.HALF_EVEN));
+						line.setPrice(line.getAmountAsDecimal().divide(line.getQuantityAsDecimal(),Constants.BIGDECIMAL_SCALE, Constants.BIGDECIMAL_ROUND));
 						line.setDescription(nol.getDescription());
 						line.setUseItem(false);
 						
@@ -3203,8 +3203,8 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 					amount=updateWhenNotNOK(masterOrder, nolclone, amount);
 					
 					// edit new order line
-					nol.setAmount(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),2,RoundingMode.HALF_EVEN));
-					nol.setPrice(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),2,RoundingMode.HALF_EVEN).divide(q,2,RoundingMode.HALF_EVEN));
+					nol.setAmount(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),Constants.BIGDECIMAL_SCALE, Constants.BIGDECIMAL_ROUND));
+					nol.setPrice(amount.multiply(new BigDecimal(monthsLeft)).divide(new BigDecimal(12),Constants.BIGDECIMAL_SCALE, Constants.BIGDECIMAL_ROUND).divide(q,Constants.BIGDECIMAL_SCALE, Constants.BIGDECIMAL_ROUND));
 					String newstring = new SimpleDateFormat("dd/MM/yyyy").format(orderActiveDay);
 					String newstring2 = new SimpleDateFormat("dd/MM/yyyy").format(cal.getTime());
 					nol.setDescription(nol.getDescription()+" Period from "+newstring+" to "+newstring2);

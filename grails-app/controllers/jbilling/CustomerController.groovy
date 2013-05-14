@@ -54,6 +54,7 @@ import com.sapienter.jbilling.server.user.contact.db.ContactDAS
 import com.sapienter.jbilling.server.process.db.PeriodUnitDTO
 import org.apache.commons.lang.StringUtils
 import com.sapienter.jbilling.server.user.contact.db.ContactFieldTypeDAS
+import com.sapienter.jbilling.tools.RandomString
 
 @Secured(["MENU_90"])
 class CustomerController {
@@ -310,8 +311,15 @@ class CustomerController {
         breadcrumbService.addBreadcrumb(controllerName, actionName, crumbName, params.int('id'), crumbDescription)
 
         def periodUnits = PeriodUnitDTO.list()
+		
+		def passwd=''
+		//Generate new password
+		if (SpringSecurityUtils.ifAllGranted("CUSTOMER_10")) {
+			RandomString rs=new RandomString();
+			passwd=rs.getRandomString();
+		}
 
-        [ user: user, contacts: contacts, parent: parent, company: company, currencies: currencies, periodUnits:periodUnits ]
+        [ user: user, contacts: contacts, parent: parent, company: company, currencies: currencies, periodUnits:periodUnits, passwd: passwd]
     }
 
     /**
@@ -353,7 +361,13 @@ class CustomerController {
             }
         }
         }
-
+		
+		//Set contact email as user name for new users
+		if (SpringSecurityUtils.ifAllGranted("CUSTOMER_10")) {
+			def primaryContactTypeId=params.primaryContactTypeId
+			params.user.userName=params."contact-${primaryContactTypeId}".email;
+		}
+		
         UserHelper.bindUser(user, params)
 
         def contacts = []

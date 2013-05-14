@@ -37,6 +37,7 @@ import com.sapienter.jbilling.server.order.db.OrderDAS;
 import com.sapienter.jbilling.server.order.db.OrderDTO;
 import com.sapienter.jbilling.server.pluggableTask.PluggableTask;
 import com.sapienter.jbilling.server.pluggableTask.TaskException;
+import com.sapienter.jbilling.server.util.Constants;
 
 public class DataloyPricingTask extends PluggableTask implements IPricing {
     
@@ -137,7 +138,7 @@ public class DataloyPricingTask extends PluggableTask implements IPricing {
 				
 				//BigDecimal value=(BigDecimal) sheet.getCellAt("B"+quantity.intValue()).getValue();
 				BigDecimal amount=(BigDecimal) sheet.getCellAt("C"+quantity.intValue()).getValue();
-				avgPrice=amount.divide(quantity, 10, RoundingMode.HALF_EVEN);
+				avgPrice=amount.divide(quantity, Constants.BIGDECIMAL_SCALE, Constants.BIGDECIMAL_ROUND);
 				
 				// back to negative
 				if(negative==true){
