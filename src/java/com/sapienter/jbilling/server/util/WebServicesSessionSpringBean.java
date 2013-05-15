@@ -3799,10 +3799,13 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 			order.setOrderLines(x);
 		}
 		if(newOrder!=null){
-			createOrder(newOrder);
+			createOrder(order);
+			return newOrder;
+		}
+		else{
+			return order;
 		}
 
-		return order;
 	}
 	
 	/**
