@@ -63,14 +63,15 @@
                         <td>
                             <g:remoteLink breadcrumb="id" class="double cell" action="show" id="${ordr.id}" params="['template': 'show']" before="register(this);" onSuccess="render(data, next);">
                                 <strong>
-                                    <g:if test="${contact?.firstName || contact?.lastName}">
+                                	${contact?.organizationName}
+                                </strong>
+                                <em><g:if test="${contact?.firstName || contact?.lastName}">
                                         ${contact.firstName} &nbsp;${contact.lastName}
                                     </g:if> 
                                     <g:else>
                                         ${ordr?.baseUserByUserId?.userName}
                                     </g:else>
-                                </strong>
-                                <em>${contact?.organizationName}</em>
+                                </em>
                             </g:remoteLink>
                         </td>
                         <td>

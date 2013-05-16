@@ -521,7 +521,7 @@ class OrderBuilderController {
             //on("save").to("saveOrder")
             // on("save").to("checkItem")  // check to see if an item exists, and show an information page before saving
             on("save").to("beforeSave") // show an information page before saving
-            //on("cancel").to("finish")
+            on("cancel").to("finish")
         }
 
         /**

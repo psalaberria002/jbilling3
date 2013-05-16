@@ -10,7 +10,7 @@
 		<queryString>
 			<![CDATA[select
                 count(u.id) as user_count,
-                cast(u.create_datetime as date) as create_date
+                TO_CHAR(u.create_datetime, 'YYYY-MM-DD') as create_date
             from
                 base_user u
                 inner join user_role_map r on r.user_id = u.id
@@ -20,8 +20,8 @@
                 and r.role_id = 5 -- is a customer
                 and u.create_datetime >= $P{startDate}
                 and u.create_datetime <= $P{endDate}
-            group by create_date
-            order by create_date]]>
+            group by TO_CHAR(u.create_datetime, 'YYYY-MM-DD')
+            order by TO_CHAR(u.create_datetime, 'YYYY-MM-DD')]]>
 		</queryString>
 		<field name="user_count" class="java.lang.Long"/>
 		<field name="create_date" class="java.sql.Date"/>
@@ -32,7 +32,7 @@
 	<queryString>
 		<![CDATA[select
             count(u.id) as user_count,
-            cast(u.create_datetime as date) as create_date
+            TO_CHAR(u.create_datetime, 'YYYY-MM-DD') as create_date
         from
             base_user u
             inner join user_role_map r on r.user_id = u.id
@@ -42,8 +42,8 @@
             and r.role_id = 5 -- is a customer
             and u.create_datetime >= $P{startDate}
             and u.create_datetime <= $P{endDate}
-        group by create_date
-        order by create_date]]>
+        group by TO_CHAR(u.create_datetime, 'YYYY-MM-DD')
+        order by TO_CHAR(u.create_datetime, 'YYYY-MM-DD')]]>
 	</queryString>
 	<field name="user_count" class="java.lang.Long"/>
 	<field name="create_date" class="java.sql.Date"/>

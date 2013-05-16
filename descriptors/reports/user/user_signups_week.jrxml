@@ -21,8 +21,8 @@
                 and r.role_id = 5 -- is a customer
                 and u.create_datetime >= $P{startDate}
                 and u.create_datetime <= $P{endDate}
-            group by week_of_year, year
-            order by year, week_of_year]]>
+            group by to_char(u.create_datetime, 'WW')
+            order by to_char(u.create_datetime, 'yyyy')]]>
 		</queryString>
 		<field name="user_count" class="java.lang.Long"/>
 		<field name="week_of_year" class="java.lang.String"/>
@@ -45,8 +45,8 @@
             and r.role_id = 5 -- is a customer
             and u.create_datetime >= $P{startDate}
             and u.create_datetime <= $P{endDate}
-        group by week_of_year, year
-        order by year, week_of_year]]>
+        group by to_char(u.create_datetime, 'WW')
+        order by to_char(u.create_datetime, 'yyyy')]]>
 	</queryString>
 	<field name="user_count" class="java.lang.Long"/>
 	<field name="week_of_year" class="java.lang.String"/>

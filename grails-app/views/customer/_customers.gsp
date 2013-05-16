@@ -61,14 +61,15 @@
                 <td>
                     <g:remoteLink class="cell double" action="show" id="${user.id}" before="register(this);" onSuccess="render(data, next);">
                         <strong>
-                            <g:if test="${contact?.firstName || contact?.lastName}">
+                        ${contact?.organizationName}
+                        </strong>
+                        <em><g:if test="${contact?.firstName || contact?.lastName}">
                                 ${contact.firstName} ${contact.lastName}
                             </g:if>
                             <g:else>
                                 ${user.userName}
                             </g:else>
-                        </strong>
-                        <em>${contact?.organizationName}</em>
+                        </em>
                     </g:remoteLink>
                 </td>
                 <td>

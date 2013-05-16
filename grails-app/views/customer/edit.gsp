@@ -154,7 +154,7 @@
                                       from="${currencies}"
                                       optionKey="id"
                                       optionValue="${{it.getDescription(session['language_id'])}}"
-                                      value="${user?.currencyId}" />
+                                      value="${user?.currencyId ?:'NOK'}" />
                         </g:applyLayout>
 
                         <g:applyLayout name="form/select">

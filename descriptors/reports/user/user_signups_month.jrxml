@@ -22,8 +22,8 @@
                 and r.role_id = 5 -- is a customer
                 and u.create_datetime >= $P{startDate}
                 and u.create_datetime <= $P{endDate}
-            group by month_of_year, month, year
-            order by year, month_of_year]]>
+            group by to_char(u.create_datetime, 'MM'), to_char(u.create_datetime, 'Month'), to_char(u.create_datetime, 'yyyy')
+            order by to_char(u.create_datetime, 'yyyy'), to_char(u.create_datetime, 'MM')]]>
 		</queryString>
 		<field name="user_count" class="java.lang.Long"/>
 		<field name="month_of_year" class="java.lang.String"/>
@@ -48,8 +48,8 @@
             and r.role_id = 5 -- is a customer
             and u.create_datetime >= $P{startDate}
             and u.create_datetime <= $P{endDate}
-        group by month_of_year, month, year
-        order by year, month_of_year]]>
+        group by to_char(u.create_datetime, 'MM'), to_char(u.create_datetime, 'Month'), to_char(u.create_datetime, 'yyyy')
+            order by to_char(u.create_datetime, 'yyyy'), to_char(u.create_datetime, 'MM')]]>
 	</queryString>
 	<field name="user_count" class="java.lang.Long"/>
 	<field name="month_of_year" class="java.lang.String"/>
