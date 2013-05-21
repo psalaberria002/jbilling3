@@ -318,7 +318,8 @@ class CustomerController {
 			RandomString rs=new RandomString();
 			passwd=rs.getRandomString();
 		}
-
+		println passwd+" password"
+		log.debug("Password generated for "+user+" = "+passwd)
         [ user: user, contacts: contacts, parent: parent, company: company, currencies: currencies, periodUnits:periodUnits, passwd: passwd]
     }
 
