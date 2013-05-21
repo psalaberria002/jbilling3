@@ -31,42 +31,44 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h1>Installing and running JBilling3.</h1>
+        <h2>Installing and running JBilling3.</h2>
 
-<h2>Requirements</h2>
+<p>This is a modified version of the JBilling3 billing system. Download the project, unzip it, and rename the folder name to jbilling.</p>
+
+<h3>Requirements</h3>
 
 <pre><code>- Grails 1.3.4
 - Java JDK &gt; 1.6
 - Apache Tomcat
 </code></pre>
 
-<h2>Run JBilling using the default built-in server</h2>
+<h3>Run JBilling using the default built-in server</h3>
 
 <pre><code>$ cd jbilling
 $ grails {dev|test|prod} run-app
 &gt; Running in http://localhost:8080/jbilling
 </code></pre>
 
-<h2>Run JBilling in Apache Tomcat</h2>
+<h3>Run JBilling in Apache Tomcat</h3>
 
-<h3>Create a .war</h3>
+<p>Create a .war</p>
 
 <pre><code>$ cd jbilling
 $ grails {dev|test|prod} war
 </code></pre>
 
-<h3>Copy the resources folder to the server (ssh)</h3>
+<p>Copy the resources folder to the server (ssh)</p>
 
 <pre><code>$ scp -r resources user/passwd@host:tomcat-home/
 </code></pre>
 
-<h3>Copy the .war to the server (ssh)</h3>
+<p>Copy the .war to the server (ssh)</p>
 
 <pre><code>$ cd target
 $ scp jbilling.war user/passwd@host:tomcat-home/webapps/jbilling.war
 </code></pre>
 
-<h3>Stop Tomcat</h3>
+<p>Stop Tomcat</p>
 
 <pre><code>$ cd tomcat-home
 $ sudo tomcat-home/bin/shutdown.sh
@@ -74,7 +76,7 @@ $ cd temp
 $ sudo rm -rf *
 </code></pre>
 
-<h3>Start Tomcat</h3>
+<p>Start Tomcat</p>
 
 <pre><code>$ cd tomcat-home
 $ sudo tomcat-home/bin/startup.sh
