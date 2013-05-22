@@ -315,6 +315,14 @@ public class BillingProcessSessionBean implements IBillingProcessSessionBean {
                     GregorianCalendar cal = new GregorianCalendar();
                     cal.setTime(billingDate);
                     cal.add(MapPeriodToCalendar.map(periodType), periodValue.intValue());
+                    
+                    //After running the billing process, set the first day of the month as next run date
+                    //Example: 01/01/2013 runs the billing process. The billing period is added with the method above, in our case 35 days.
+                    //Next running day is 05/02/2013, but we want it to be 01/02/2013.
+                    if(cal.get(Calendar.DAY_OF_MONTH)!=1){
+                    	cal.set(cal.get(Calendar.YEAR),cal.get(Calendar.MONTH),1);
+                    }
+                    
                     conf.getEntity().setNextRunDate(cal.getTime());
                     LOG.debug("Updated run date to " + cal.getTime());
                 }
