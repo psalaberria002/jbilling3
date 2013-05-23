@@ -6,7 +6,7 @@
 	<property name="com.jasperassistant.designer.Grid" value="false"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="165"/>
+	<property name="ireport.y" value="120"/>
 	<parameter name="invoiceNumber" class="java.lang.String"/>
 	<parameter name="entityName" class="java.lang.String"/>
 	<parameter name="entityAddress" class="java.lang.String"/>
@@ -139,14 +139,14 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{entityPostalCode} + " " +$P{entityCity}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="38" y="85" width="162" height="14"/>
+				<reportElement positionType="Float" x="38" y="85" width="273" height="14"/>
 				<textElement>
 					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{customerOrganization}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement positionType="Float" x="38" y="99" width="162" height="14"/>
+				<reportElement positionType="Float" x="38" y="99" width="273" height="14"/>
 				<textElement>
 					<font size="10"/>
 				</textElement>
@@ -236,13 +236,13 @@
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{invoiceDueDate}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="342" y="127" width="103" height="14"/>
+				<reportElement x="341" y="127" width="103" height="14"/>
 				<textElement textAlignment="Right" verticalAlignment="Bottom"/>
 				<textFieldExpression class="java.lang.String"><![CDATA["Your ref: "]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement positionType="Float" x="456" y="127" width="99" height="14"/>
-				<textElement textAlignment="Left" verticalAlignment="Bottom">
+				<reportElement positionType="Float" x="456" y="129" width="99" height="27"/>
+				<textElement textAlignment="Left" verticalAlignment="Top">
 					<font size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression class="java.lang.String"><![CDATA[$P{customerName}]]></textFieldExpression>
