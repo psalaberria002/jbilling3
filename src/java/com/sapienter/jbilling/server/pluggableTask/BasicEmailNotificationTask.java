@@ -28,6 +28,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.log4j.Logger;
+import org.jfree.util.Log;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -159,6 +160,7 @@ public class BasicEmailNotificationTask extends PluggableTask
 
         // create the session & message
         init();
+        LOG.info(server+username+password+port+tls+sslAuth);
         sender.setHost(server);
         sender.setUsername(username);
         sender.setPassword(password);
@@ -188,9 +190,11 @@ public class BasicEmailNotificationTask extends PluggableTask
             List contacts = contact.getAll(user.getUserId());
             List addresses = new ArrayList<InternetAddress>();
             boolean atLeastOne = false;
+            Log.info("contact size "+contacts.size());
             for (int f = 0; f < contacts.size(); f++) {
                 ContactDTOEx record = (ContactDTOEx) contacts.get(f);
                 String address = record.getEmail();
+                LOG.info(address);
                 if (record.getInclude() != null &&
                         record.getInclude().intValue() == 1 &&
                         address != null && address.trim().length() > 0) {

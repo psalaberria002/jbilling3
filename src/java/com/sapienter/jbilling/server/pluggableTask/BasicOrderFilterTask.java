@@ -28,10 +28,13 @@ import org.apache.log4j.Logger;
 import com.sapienter.jbilling.common.SessionInternalError;
 import com.sapienter.jbilling.common.Util;
 import com.sapienter.jbilling.server.order.OrderBL;
+import com.sapienter.jbilling.server.order.OrderWS;
 import com.sapienter.jbilling.server.order.db.OrderDTO;
 import com.sapienter.jbilling.server.process.BillingProcessBL;
 import com.sapienter.jbilling.server.process.db.BillingProcessDTO;
 import com.sapienter.jbilling.server.util.Constants;
+import com.sapienter.jbilling.server.util.Context;
+import com.sapienter.jbilling.server.util.IWebServicesSessionBean;
 import com.sapienter.jbilling.server.util.MapPeriodToCalendar;
 import com.sapienter.jbilling.server.util.audit.EventLogger;
 
@@ -56,6 +59,7 @@ public class BasicOrderFilterTask
      */
     public boolean isApplicable(OrderDTO order, 
             BillingProcessDTO process) throws TaskException {
+    	
 
         boolean retValue = true;
         
@@ -259,6 +263,25 @@ public class BasicOrderFilterTask
         
         LOG.debug("Order " + order.getId() + " filter:" + retValue); 
         
+        //If the order is applicable to the invoice
+        if(retValue==true){
+        	//Updates the master order before invoicing. It will use new prices
+            OrderBL obl = new OrderBL(order.getId());
+            Integer lan=order.getUser().getLanguageIdField();
+            OrderWS ows;
+            if(!lan.equals(null)) {
+            	ows=obl.getWS(lan);
+            }
+            else{
+            	ows=obl.getWS(1);
+            }
+            
+            if(ows.getIsMaster()==1){
+            	IWebServicesSessionBean webServiceSession=(IWebServicesSessionBean)Context.getBean(Context.Name.WEB_SERVICES_SESSION);
+            	webServiceSession.rateOrder(ows);
+            	webServiceSession.updateOrder(ows);
+            }
+        }
         return retValue;
 
     }
