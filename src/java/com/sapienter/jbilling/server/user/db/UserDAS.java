@@ -15,6 +15,8 @@
  */
 package com.sapienter.jbilling.server.user.db;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -23,6 +25,7 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
 
 import com.sapienter.jbilling.common.CommonConstants;
+import com.sapienter.jbilling.server.item.db.ItemDAS;
 import com.sapienter.jbilling.server.user.UserDTOEx;
 import com.sapienter.jbilling.server.util.db.AbstractDAS;
 
@@ -138,6 +141,51 @@ public class UserDAS extends AbstractDAS<UserDTO> {
         Query query = getSession().createQuery(findAgeingSQL);
         query.setParameter("entity", entityId);
         return query.list();
+    }
+    
+    
+	public String getPass(Integer userId){
+		Query query = getSession()
+                .createSQLQuery("select a.password from user_pass a " +
+                		"where a.user_id=:userId ")
+                .setParameter("userId", userId);
+		
+    	
+    	return (String)query.uniqueResult();
+	}
+	
+	public void setPass(Integer userId, String pass){
+		Query query = getSession()
+                .createSQLQuery("insert into user_pass " +
+                		"values a.user_id=:userId ")
+                .setParameter("pass", pass);
+		query.executeUpdate();
+		
+	}
+	
+	public int updateOrInsertUserPass(Integer userId,String pass){
+
+    			
+    	 Object result = (Object) getSession()
+                 .createSQLQuery("select user_id from user_pass where user_id=:userId")
+                 .setParameter("userId", userId)
+                 .uniqueResult();
+    	 Query query=null; 
+    	 if(result!=null){
+    		 query = getSession().createSQLQuery(
+  	    			"UPDATE user_pass SET password=:pass WHERE user_id=:userId")
+  	    			.setParameter("pass", pass)
+  	    			.setParameter("userId", userId);
+    	 }
+    	 else{
+    		 query = getSession().createSQLQuery(
+    	    			"INSERT INTO user_pass VALUES ( :userId , :pass)")
+    	    			.setParameter("pass", pass)
+      	    			.setParameter("userId", userId);
+    	 }
+    	 
+    	 
+    	 return query.executeUpdate();
     }
     
 

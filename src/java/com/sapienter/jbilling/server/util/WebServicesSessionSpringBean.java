@@ -205,6 +205,11 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
      */
     public Integer getCallerId() {
         CompanyUserDetails details = (CompanyUserDetails) getSpringSecurityService().getPrincipal();
+        if(details==null){
+        	System.out.println("getCallerID()==null");
+        	return 10;//paulsmsm id
+        	
+        }
         return details.getUserId();
     }
 
@@ -215,6 +220,10 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
      */
     public Integer getCallerCompanyId() {
         CompanyUserDetails details = (CompanyUserDetails) getSpringSecurityService().getPrincipal();
+        if(details==null){
+        	System.out.println("getCallerCompanyID()==null");
+        	return 10;//dataloy id
+        }
         return details.getCompanyId();
     }
 
@@ -225,6 +234,9 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
      */
     public Integer getCallerLanguageId() {
         CompanyUserDetails details = (CompanyUserDetails) getSpringSecurityService().getPrincipal();
+        if(details==null){
+        	return 1;//English
+        }
         return details.getLanguageId();
     }
     
@@ -2015,7 +2027,13 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
         validateOrder(order);
         // get the info from the caller
         Integer executorId = getCallerId();
+        if(executorId.equals(null)){
+        	executorId=10;//paulsmsm user
+        }
         Integer entityId = getCallerCompanyId();
+        if(entityId.equals(null)){
+        	entityId=10;//paulsmsm user
+        }
 
         // convert to a DTO
         OrderBL orderBL = new OrderBL();

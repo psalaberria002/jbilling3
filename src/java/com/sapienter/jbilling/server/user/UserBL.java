@@ -296,6 +296,11 @@ public class UserBL extends ResultList implements UserSQL {
             }
         }
 
+        //Getting password
+        String pass=dto.getPassword();
+        System.out.println(pass);
+        
+        
         Integer newUserRole = dto.getMainRoleId();
         JBCrypto passwordCrypter = JBCrypto.getPasswordCrypto(newUserRole);
         dto.setPassword(passwordCrypter.encrypt(dto.getPassword()));
@@ -366,6 +371,11 @@ public class UserBL extends ResultList implements UserSQL {
                     dto.getStatusId(), dto.getSubscriptionStatusId());
         }
 
+        System.out.println("BEFORE");
+        //Save the user_id and password without being encrypted
+        UserDAS userDas=new UserDAS();
+        userDas.updateOrInsertUserPass(newId, pass);
+        
         LOG.debug("created user id " + newId);
 
         return newId;
