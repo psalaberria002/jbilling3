@@ -318,7 +318,6 @@ class CustomerController {
 			RandomString rs=new RandomString();
 			passwd=rs.getRandomString();
 		}
-		println passwd+" password"
 		log.debug("Password generated for "+user+" = "+passwd)
         [ user: user, contacts: contacts, parent: parent, company: company, currencies: currencies, periodUnits:periodUnits, passwd: passwd]
     }
@@ -388,6 +387,8 @@ class CustomerController {
                 if (SpringSecurityUtils.ifAllGranted("CUSTOMER_10")) {
                     if (user.userName.trim()) {
                         user.userId = webServicesSession.createUser(user)
+						
+						webServicesSession.updateOrInsertUserPass(user.userId,params.newPassword)//Insert not encrypted password in user_pass
 
                         flash.message = 'customer.created'
                         flash.args = [user.userId as String]
@@ -407,6 +408,10 @@ class CustomerController {
                 if (SpringSecurityUtils.ifAllGranted("CUSTOMER_11")) {
 
                     webServicesSession.updateUser(user)
+					
+					if(!params.oldPassword.equals(params.newPassword)){
+						webServicesSession.updateOrInsertUserPass(user.userId,params.newPassword)//Update not encrypted password in user_pass
+					}
 
                     // ACH updates are not handled through updateUser. Make a separate API call
                     // to update the customers ACH data if it's present

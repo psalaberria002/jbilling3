@@ -154,14 +154,6 @@ public class UserDAS extends AbstractDAS<UserDTO> {
     	return (String)query.uniqueResult();
 	}
 	
-	public void setPass(Integer userId, String pass){
-		Query query = getSession()
-                .createSQLQuery("insert into user_pass " +
-                		"values a.user_id=:userId ")
-                .setParameter("pass", pass);
-		query.executeUpdate();
-		
-	}
 	
 	public int updateOrInsertUserPass(Integer userId,String pass){
 
