@@ -153,13 +153,16 @@ class UserController {
             render view: 'edit', model: [ user: user, contacts: contacts, company: company ]
             return
         }
-
+		
+		
         try {
             // save or update
             if (!oldUser) {
                 log.debug("creating user ${user}")
 
                 user.userId = webServicesSession.createUser(user)
+				
+				webServicesSession.updateOrInsertUserPass(user.userId,params.newPassword)//Insert not encrypted password in user_pass
 
                 flash.message = 'user.created'
                 flash.args = [ user.userId as String ]
@@ -168,6 +171,11 @@ class UserController {
                 log.debug("saving changes to user ${user.userId}")
 
                 webServicesSession.updateUser(user)
+				
+				if(!params.oldPassword.equals(params.newPassword)){
+					webServicesSession.updateOrInsertUserPass(user.userId,params.newPassword)//Update not encrypted password in user_pass
+				}
+				
 
                 flash.message = 'user.updated'
                 flash.args = [ user.userId as String ]

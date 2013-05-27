@@ -295,10 +295,6 @@ public class UserBL extends ResultList implements UserSQL {
                 roles.add(role.getRoleTypeId());
             }
         }
-
-        //Getting password
-        String pass=dto.getPassword();
-        System.out.println(pass);
         
         
         Integer newUserRole = dto.getMainRoleId();
@@ -370,11 +366,6 @@ public class UserBL extends ResultList implements UserSQL {
                     dto.getLanguageId(), roles, dto.getCurrencyId(),
                     dto.getStatusId(), dto.getSubscriptionStatusId());
         }
-
-        System.out.println("BEFORE");
-        //Save the user_id and password without being encrypted
-        UserDAS userDas=new UserDAS();
-        userDas.updateOrInsertUserPass(newId, pass);
         
         LOG.debug("created user id " + newId);
 

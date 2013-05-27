@@ -3926,5 +3926,9 @@ public class WebServicesSessionSpringBean implements IWebServicesSessionBean {
 		itemDas.setMinItems(itemId,minItems);
 	}
 	
-	
+	public void updateOrInsertUserPass(Integer userId, String pass){
+        //Save the user_id and password without being encrypted
+        UserDAS userDas=new UserDAS();
+        userDas.updateOrInsertUserPass(userId, pass);
+	}
 }
