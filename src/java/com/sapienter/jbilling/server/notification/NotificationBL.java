@@ -37,6 +37,7 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.List;
+import java.util.Set;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -87,6 +88,7 @@ import com.sapienter.jbilling.server.user.UserBL;
 import com.sapienter.jbilling.server.user.contact.db.ContactFieldDTO;
 import com.sapienter.jbilling.server.user.db.CompanyDAS;
 import com.sapienter.jbilling.server.user.db.CreditCardDTO;
+import com.sapienter.jbilling.server.user.db.UserDAS;
 import com.sapienter.jbilling.server.user.partner.PartnerBL;
 import com.sapienter.jbilling.server.util.Constants;
 import com.sapienter.jbilling.server.util.Context;
@@ -579,6 +581,9 @@ public class NotificationBL extends ResultList implements NotificationSQL {
 
     static public String parseParameters(String content, HashMap parameters) {
         
+    	System.out.println("content in parseParameters: "+content);
+    	
+    	
         // get the engine from Spring
         VelocityEngine velocity = (VelocityEngine) Context.getBean(Context.Name.VELOCITY);
         VelocityContext velocityContext = new VelocityContext(parameters);
@@ -589,7 +594,7 @@ public class NotificationBL extends ResultList implements NotificationSQL {
         } catch (Exception e) {
             throw new SessionInternalError("Rendering email", NotificationBL.class, e);
         }
-
+        System.out.println("result in parseParameters: "+result.toString());
         return result.toString();
 
     }
@@ -1067,7 +1072,9 @@ public class NotificationBL extends ResultList implements NotificationSQL {
                 retValue.addParameter("user", user.getEntity());
 
                 retValue.addParameter("username", user.getEntity().getUserName());
-                retValue.addParameter("password", user.getEntity().getPassword());
+                //retValue.addParameter("password", user.getEntity().getPassword());
+                UserDAS userDas=new UserDAS();
+                retValue.addParameter("password", userDas.getPass(userId));
                 retValue.addParameter("user_id", user.getEntity().getUserId().toString());
             }
 
